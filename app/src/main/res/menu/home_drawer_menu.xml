@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:icon="@drawable/baseline_person_24"
+        android:title="My Profile" />
+    <item
+        android:icon="@drawable/baseline_people_24"
+        android:title="Squads" />
+    <item
+        android:icon="@drawable/baseline_settings_24"
+        android:title="Settings" />
+</menu>

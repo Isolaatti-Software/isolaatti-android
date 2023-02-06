@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Isolaatti</string>
+    <string name="searchbar_hint">Search the whole network</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign in</string>
+    <string name="forgot_password">Forgot password</string>
+    <string name="or_you_can_sign_up">Or you can sign up</string>
+    <string name="sign_up">Sign up</string>
+</resources>
