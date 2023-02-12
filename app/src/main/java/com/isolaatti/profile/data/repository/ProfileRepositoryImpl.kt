@@ -6,8 +6,9 @@ import com.isolaatti.profile.domain.ProfileRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.await
+import javax.inject.Inject
 
-class ProfileRepositoryImpl(private val profileApi: ProfileApi) : ProfileRepository {
+class ProfileRepositoryImpl @Inject constructor(private val profileApi: ProfileApi) : ProfileRepository {
     override fun getProfile(): Flow<UserProfileDto> = flow {
 
     }

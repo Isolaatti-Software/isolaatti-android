@@ -3,7 +3,9 @@ package com.isolaatti.settings.ui
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.isolaatti.databinding.ActivitySettingsBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SettingsActivity : AppCompatActivity() {
 
     lateinit var viewBinding: ActivitySettingsBinding
