@@ -7,4 +7,8 @@
     <string name="forgot_password">Forgot password</string>
     <string name="or_you_can_sign_up">Or you can sign up</string>
     <string name="sign_up">Sign up</string>
+    <string name="discussions">Discussions</string>
+    <string name="audios">Audios</string>
+    <string name="images">Images</string>
+    <string name="account">Account</string>
 </resources>

@@ -25,7 +25,9 @@ class MainActivity : ComponentActivity() {
         val currentToken = authRepository.getCurrentToken()
 
         if(currentToken == null) {
-            startActivity(Intent(this@MainActivity, LogInActivity::class.java))
+            startActivity(Intent(this@MainActivity, LogInActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+            })
         } else {
             startActivity(Intent(this@MainActivity, HomeActivity::class.java))
         }

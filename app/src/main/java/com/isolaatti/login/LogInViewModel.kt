@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LogInViewModel @Inject constructor(private val authRepository: AuthRepository): ViewModel() {
-    val signInSuccess: MutableLiveData<Boolean> = MutableLiveData(false)
+    val signInSuccess: MutableLiveData<Boolean> = MutableLiveData()
     val formIsValid: MutableLiveData<Boolean> = MutableLiveData(false)
     val emailUserInputIsValid: MutableLiveData<Boolean> = MutableLiveData(false)
     val passwordUserInputIsValid: MutableLiveData<Boolean> = MutableLiveData(false)

@@ -24,6 +24,8 @@
         </activity>
         <activity android:name=".home.HomeActivity" android:theme="@style/Theme.Isolaatti" />
         <activity android:name=".login.LogInActivity" android:theme="@style/Theme.Isolaatti" />
+        <activity android:name=".profile.ui.ProfileActivity" android:theme="@style/Theme.Isolaatti"/>
+        <activity android:name=".settings.ui.SettingsActivity" android:theme="@style/Theme.Isolaatti"/>
     </application>
 <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

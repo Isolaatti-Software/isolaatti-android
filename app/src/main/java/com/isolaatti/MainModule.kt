@@ -1,27 +1,29 @@
 package com.isolaatti
 
-import com.isolaatti.auth.data.AuthRepositoryImpl
-import com.isolaatti.auth.data.local.TokenStorage
-import com.isolaatti.auth.data.remote.AuthApi
 import com.isolaatti.auth.domain.AuthRepository
+import com.isolaatti.connectivity.AuthenticationInterceptor
 import com.isolaatti.connectivity.RetrofitClient
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.RequestCreator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.components.SingletonComponent
+import io.noties.markwon.image.AsyncDrawable
+import io.noties.markwon.image.picasso.PicassoImagesPlugin
 
 @Module
 @InstallIn(SingletonComponent::class)
 class MainModule {
 
     @Provides
-    fun provideAuthApi():AuthApi {
-        return RetrofitClient.client.create(AuthApi::class.java)
+    fun provideAuthenticationInterceptor(authRepository: dagger.Lazy<AuthRepository>): AuthenticationInterceptor {
+        return AuthenticationInterceptor(authRepository)
+    }
+    @Provides
+    fun provideRetrofitClient(authenticationInterceptor: AuthenticationInterceptor) : RetrofitClient {
+        return RetrofitClient(authenticationInterceptor)
     }
 
-    @Provides
-    fun provideAuthRepository(tokenStorage: TokenStorage, authApi: AuthApi): AuthRepository {
-        return AuthRepositoryImpl(tokenStorage, authApi)
-    }
+
 }

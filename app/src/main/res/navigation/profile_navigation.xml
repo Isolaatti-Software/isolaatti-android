@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profile_navigation"
+    app:startDestination="@id/discussionsFragment">
+
+    <fragment
+        android:id="@+id/discussionsFragment"
+        android:name="com.isolaatti.profile.ui.DiscussionsFragment"
+        android:label="DiscussionsFragment" />
+    <fragment
+        android:id="@+id/audiosFragment"
+        android:name="com.isolaatti.profile.ui.AudiosFragment"
+        android:label="AudiosFragment" />
+    <fragment
+        android:id="@+id/imagesFragment"
+        android:name="com.isolaatti.profile.ui.ImagesFragment"
+        android:label="ImagesFragment" />
+</navigation>
