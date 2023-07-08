@@ -17,6 +17,10 @@ class SettingsFragment : Fragment() {
     ): View? {
         viewBinding = FragmentSettingsBinding.inflate(inflater)
 
+        viewBinding.topAppBar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
+
         return viewBinding.root
     }
 }

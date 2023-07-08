@@ -1,9 +1,9 @@
 package com.isolaatti.home
 
 import com.isolaatti.connectivity.RetrofitClient
-import com.isolaatti.home.feed.data.remote.FeedApi
-import com.isolaatti.home.feed.data.repository.FeedRepositoryImpl
-import com.isolaatti.home.feed.domain.repository.FeedRepository
+import com.isolaatti.feed.data.remote.FeedApi
+import com.isolaatti.feed.data.repository.FeedRepositoryImpl
+import com.isolaatti.feed.domain.repository.FeedRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

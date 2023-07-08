@@ -3,7 +3,6 @@ package com.isolaatti.connectivity
 import com.isolaatti.auth.domain.AuthRepository
 import okhttp3.Interceptor
 import okhttp3.Response
-
 class AuthenticationInterceptor(private val authRepository: dagger.Lazy<AuthRepository>) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -16,7 +15,10 @@ class AuthenticationInterceptor(private val authRepository: dagger.Lazy<AuthRepo
         // Add auth header here
         val tokenDto = authRepository.get().getCurrentToken()
         tokenDto?.token?.let {
-            val request = chain.request().newBuilder().addHeader("sessionToken", it) .build()
+            val request = chain.request().newBuilder()
+                .addHeader("Authorization", it)
+                .addHeader("client-id", ClientId.guid.toString())
+                .build()
             return chain.proceed(request)
         }
 

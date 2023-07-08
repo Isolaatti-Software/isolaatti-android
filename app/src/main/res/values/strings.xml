@@ -11,4 +11,12 @@
     <string name="audios">Audios</string>
     <string name="images">Images</string>
     <string name="account">Account</string>
+    <string name="settings">Settings</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="new_comment">New comment</string>
+    <string name="report">Report</string>
+
+    <!--Post options -->
+    <string name="post_options_title">Discussion options</string>
 </resources>
