@@ -4,12 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.dialog.MaterialDialogs
+import com.isolaatti.R
 import com.isolaatti.databinding.BottomSheetPostCommentsBinding
 import com.isolaatti.posting.common.domain.OnUserInteractedCallback
+import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
 import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
 import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
@@ -23,10 +31,19 @@ import io.noties.markwon.linkify.LinkifyPlugin
 
 @AndroidEntryPoint
 class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedCallback {
+
     private lateinit var viewBinding: BottomSheetPostCommentsBinding
     val viewModel: CommentsViewModel by viewModels()
 
+
     val optionsViewModel: BottomSheetPostOptionsViewModel by activityViewModels()
+
+    val optionsObserver: Observer<OptionClicked> = Observer {
+        if(it.callerId == CALLER_ID) {
+            optionsViewModel.optionClicked(-1)
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +60,7 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
     ): View {
         viewBinding = BottomSheetPostCommentsBinding.inflate(inflater)
 
+        (dialog as BottomSheetDialog).behavior.state = BottomSheetBehavior.STATE_EXPANDED
         return viewBinding.root
     }
 
@@ -71,12 +89,24 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
         viewModel.comments.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
+
+        // New comment area
+        val textField = viewBinding.newCommentTextField
+
+        textField.setStartIconOnClickListener {
+            AlertDialog.Builder(requireContext()).setView(R.layout.write_comment_multiline_dialog).show()
+        }
+
+        optionsViewModel.optionClicked(-1)
+        optionsViewModel.optionClicked.observe(viewLifecycleOwner, optionsObserver)
+
     }
 
     companion object {
         const val TAG = "BottomSheetPostComments"
 
         const val ARG_POST_ID = "postId"
+        const val CALLER_ID = 10
 
         fun getInstance(postId: Long): BottomSheetPostComments {
             return BottomSheetPostComments().apply {
@@ -89,9 +119,9 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
 
 
     override fun onOptions(postId: Long) {
+        optionsViewModel.setOptions(Options.commentOptions, CALLER_ID)
         val fragment = BottomSheetPostOptionsFragment()
         fragment.show(parentFragmentManager, BottomSheetPostOptionsFragment.TAG)
-        optionsViewModel.setOptions(Options.commentOptions)
     }
 
     override fun onProfileClick(userId: Int) {

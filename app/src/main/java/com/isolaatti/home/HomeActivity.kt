@@ -21,7 +21,8 @@ class HomeActivity : AppCompatActivity() {
         viewBinding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        viewBinding.bottomNavigation.setupWithNavController(navHostFragment.navController)
+        viewBinding.bottomNavigation?.setupWithNavController(navHostFragment.navController)
+        viewBinding.navigationRail?.setupWithNavController(navHostFragment.navController)
 
         if(savedInstanceState == null) {
             postsViewModel.getFeed()

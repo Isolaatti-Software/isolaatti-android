@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Isolaatti" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="android:colorPrimary">@color/purple</item>
+        <item name="android:statusBarColor">@color/purple</item>
+        <item name="colorOnSurface">@color/on_surface</item>
+
+    </style>
+</resources>

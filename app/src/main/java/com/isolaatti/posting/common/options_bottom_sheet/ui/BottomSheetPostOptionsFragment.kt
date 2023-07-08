@@ -8,14 +8,17 @@ import android.widget.ListAdapter
 import android.widget.ListView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.isolaatti.R
 import com.isolaatti.databinding.BottomSheetPostOptionsBinding
 import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
 import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
+import com.isolaatti.posting.common.options_bottom_sheet.presentation.OptionsRecyclerAdapter
 
-class BottomSheetPostOptionsFragment : BottomSheetDialogFragment() {
+class BottomSheetPostOptionsFragment : BottomSheetDialogFragment(), OptionsRecyclerAdapter.OptionsCallback {
     private lateinit var viewBinding: BottomSheetPostOptionsBinding
 
     private val viewModel: BottomSheetPostOptionsViewModel by activityViewModels()
@@ -28,32 +31,38 @@ class BottomSheetPostOptionsFragment : BottomSheetDialogFragment() {
     ): View {
         viewBinding = BottomSheetPostOptionsBinding.inflate(inflater)
 
-
         return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         viewModel.options.observe(viewLifecycleOwner) {
             renderOptions(it)
         }
+
+        viewModel.optionClicked.observe(viewLifecycleOwner) {
+            if(it.optionId > -1) {
+                (dialog as BottomSheetDialog).dismiss()
+            }
+
+        }
     }
 
+
     private fun renderOptions(options: Options) {
-        viewBinding.optionsContainer.removeAllViews()
-        for(option in options.items) {
-            val button = MaterialButton(requireContext(), null, com.google.android.material.R.style.Widget_Material3_Button_TextButton)
-            button.icon = AppCompatResources.getDrawable(requireContext(), option.icon)
-            button.text = requireContext().getText(option.stringRes)
-            button.textAlignment = MaterialButton.TEXT_ALIGNMENT_TEXT_START
-            viewBinding.optionsContainer.addView(button)
-        }
+        viewBinding.recyclerOptions.adapter = OptionsRecyclerAdapter(options.items, this)
+        viewBinding.recyclerOptions.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
 
     companion object {
         const val TAG = "BottomSheetPostOptions"
 
 
+    }
+
+    override fun optionClicked(optionId: Int) {
+        viewModel.optionClicked(optionId)
     }
 }

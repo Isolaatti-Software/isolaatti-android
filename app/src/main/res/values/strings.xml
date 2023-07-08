@@ -16,7 +16,11 @@
     <string name="delete">Delete</string>
     <string name="new_comment">New comment</string>
     <string name="report">Report</string>
+    <string name="close">Close</string>
 
     <!--Post options -->
     <string name="post_options_title">Discussion options</string>
+    <string name="home">Home</string>
+    <string name="notifications">Notifications</string>
+    <string name="search">Search</string>
 </resources>

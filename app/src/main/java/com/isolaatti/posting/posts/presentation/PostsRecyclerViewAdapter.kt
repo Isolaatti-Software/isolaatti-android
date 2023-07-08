@@ -34,11 +34,11 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
                             likeButton.isEnabled = true
 
                             if(postDto.liked) {
-                                likeButton.setIconTintResource(R.color.purple_700)
-                                likeButton.setTextColor(itemView.context.getColor(R.color.purple_700))
+                                likeButton.setIconTintResource(R.color.purple_lighter)
+                                likeButton.setTextColor(itemView.context.getColor(R.color.purple_lighter))
                             } else {
-                                likeButton.setIconTintResource(R.color.black)
-                                likeButton.setTextColor(itemView.context.getColor(R.color.black))
+                                likeButton.setIconTintResource(R.color.on_surface)
+                                likeButton.setTextColor(itemView.context.getColor(R.color.on_surface))
                             }
 
                             likeButton.text = postDto.numberOfLikes.toString()
@@ -70,11 +70,11 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
                 likeButton.isEnabled = true
 
                 if(postDto.liked) {
-                    likeButton.setIconTintResource(R.color.purple_700)
-                    likeButton.setTextColor(itemView.context.getColor(R.color.purple_700))
+                    likeButton.setIconTintResource(R.color.purple_lighter)
+                    likeButton.setTextColor(itemView.context.getColor(R.color.purple_lighter))
                 } else {
-                    likeButton.setIconTintResource(R.color.black)
-                    likeButton.setTextColor(itemView.context.getColor(R.color.black))
+                    likeButton.setIconTintResource(R.color.on_surface)
+                    likeButton.setTextColor(itemView.context.getColor(R.color.on_surface))
                 }
 
                 likeButton.text = postDto.numberOfLikes.toString()
