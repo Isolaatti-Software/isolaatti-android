@@ -6,11 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.isolaatti.posting.comments.data.remote.FeedCommentsDto
-import com.isolaatti.feed.data.remote.FeedDto
-import com.isolaatti.feed.domain.repository.FeedRepository
+import com.isolaatti.posting.posts.data.remote.FeedDto
 import com.isolaatti.posting.likes.data.remote.LikeDto
 import com.isolaatti.posting.likes.domain.repository.LikesRepository
+import com.isolaatti.posting.posts.data.repository.PostsRepositoryImpl
+import com.isolaatti.posting.posts.domain.PostsRepository
+import com.isolaatti.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -19,10 +22,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PostsViewModel @Inject constructor(private val feedRepository: FeedRepository, private val likesRepository: LikesRepository) : ViewModel() {
+class PostsViewModel @Inject constructor(private val postsRepository: PostsRepository, private val likesRepository: LikesRepository) : ViewModel() {
 
     private val _posts: MutableLiveData<FeedDto> = MutableLiveData()
     val posts: LiveData<FeedDto> get() = _posts
+
+    private val _loadingPosts = MutableLiveData(false)
+    val loadingPosts: LiveData<Boolean> get() = _loadingPosts
+
+    private val _errorLoading: MutableLiveData<Resource.Error.ErrorType?> = MutableLiveData()
+    val errorLoading: LiveData<Resource.Error.ErrorType?> get() = _errorLoading
 
     private val _comments: MutableLiveData<FeedCommentsDto> = MutableLiveData()
     val comments: LiveData<FeedCommentsDto> get() = _comments
@@ -34,19 +43,19 @@ class PostsViewModel @Inject constructor(private val feedRepository: FeedReposit
 
     fun getFeed() {
         viewModelScope.launch {
-            feedRepository.getNextPage(getLastId(), 20).onEach {feedDto ->
-                val temp = _posts.value
-                if(temp != null)  {
-                    feedDto?.data?.let { it ->
-                        temp.data.addAll(it)
+            postsRepository.getFeed(getLastId()).onEach {
+                when(it) {
+                    is Resource.Success -> {
+                        _loadingPosts.postValue(false)
+                        _posts.postValue(posts.value?.concatFeed(it.data) ?: it.data)
                     }
-                    temp.let {
-                        _posts.postValue(it)
+                    is Resource.Loading -> {
+                        _loadingPosts.postValue(true)
                     }
-                } else {
-                    _posts.postValue(feedDto)
+                    is Resource.Error -> {
+                        _errorLoading.postValue(it.errorType)
+                    }
                 }
-
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }

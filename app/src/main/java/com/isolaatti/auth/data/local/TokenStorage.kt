@@ -79,7 +79,9 @@ class TokenStorage @Inject constructor(@ApplicationContext private val applicati
 
     fun removeToken() {
         if(file.exists()) {
-            file.delete()
+            try {
+                file.delete()
+            } catch(_: SecurityException) { }
         }
     }
 }

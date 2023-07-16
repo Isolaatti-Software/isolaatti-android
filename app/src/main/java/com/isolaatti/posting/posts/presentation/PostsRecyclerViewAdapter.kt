@@ -11,15 +11,15 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.material.button.MaterialButton
 import com.isolaatti.R
-import com.isolaatti.feed.data.remote.PostDto
+import com.isolaatti.posting.posts.data.remote.FeedDto
 import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
 import com.isolaatti.utils.UrlGen.userProfileImage
 import com.squareup.picasso.Picasso
 import io.noties.markwon.Markwon
 
-class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callback: OnUserInteractedWithPostCallback, private var list: List<PostDto>) : RecyclerView.Adapter<PostsRecyclerViewAdapter.FeedViewHolder>(){
+class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callback: OnUserInteractedWithPostCallback, private var feedDto: FeedDto?) : RecyclerView.Adapter<PostsRecyclerViewAdapter.FeedViewHolder>(){
     inner class FeedViewHolder(itemView: View) : ViewHolder(itemView) {
-        fun bindView(postDto: PostDto, payloads: List<Any>) {
+        fun bindView(postDto: FeedDto.PostDto, payloads: List<Any>) {
 
             Log.d("payloads", payloads.count().toString())
             val likeButton: MaterialButton = itemView.findViewById(R.id.like_button)
@@ -120,29 +120,24 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
 
         return FeedViewHolder(view)
     }
-    override fun getItemCount(): Int = list.size
+    override fun getItemCount(): Int = feedDto?.data?.size ?: 0
 
-    override fun getItemId(position: Int): Long = list[position].post.id
 
     override fun setHasStableIds(hasStableIds: Boolean) {
         super.setHasStableIds(true)
     }
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(newList: List<PostDto>?, updateEvent: UpdateEvent? = null) {
+    fun updateList(updatedFeed: FeedDto, updateEvent: UpdateEvent? = null) {
         if(updateEvent == null) {
-            if(newList != null) {
-                list = newList
-            }
+            feedDto = updatedFeed
 
             notifyDataSetChanged()
             return
         }
-        val postUpdated = list.find { p -> p.post.id == updateEvent.affectedId } ?: return
-        val position = list.indexOf(postUpdated)
+        val postUpdated = feedDto?.data?.find { p -> p.post.id == updateEvent.affectedId } ?: return
+        val position = feedDto?.data?.indexOf(postUpdated) ?: return
 
-        if(newList != null) {
-            list = newList
-        }
+        feedDto = updatedFeed
 
         when(updateEvent.updateType) {
             UpdateEvent.UpdateType.POST_LIKED -> {
@@ -163,6 +158,6 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {}
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int, payloads: List<Any>) {
-        holder.bindView(list[position], payloads)
+        holder.bindView(feedDto?.data?.get(position) ?: return, payloads)
     }
 }

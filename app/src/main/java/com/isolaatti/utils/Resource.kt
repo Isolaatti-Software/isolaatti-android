@@ -1,9 +1,11 @@
 package com.isolaatti.utils
 
-class Resource<T> {
-    inner class Success(data: T)
-
-    inner class Loading()
-
-    inner class Error
+abstract class Resource<T> {
+    class Success<T>(val data: T?): Resource<T>()
+    class Loading<T>:  Resource<T>()
+    class Error<T>(val errorType: ErrorType? = null): Resource<T>() {
+        enum class ErrorType {
+            NetworkError, AuthError, NotFoundError, ServerError, OtherError
+        }
+    }
 }

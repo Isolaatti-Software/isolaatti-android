@@ -1,18 +1,16 @@
 package com.isolaatti.auth.data
 
-import android.util.Log
 import com.isolaatti.auth.data.remote.AuthTokenDto
 import com.isolaatti.auth.data.local.TokenStorage
 import com.isolaatti.auth.data.remote.AuthApi
 import com.isolaatti.auth.data.remote.Credential
 import com.isolaatti.auth.domain.AuthRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
+import com.isolaatti.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
+import retrofit2.await
 import retrofit2.awaitResponse
+import java.io.IOException
 import javax.inject.Inject
 
 
@@ -20,22 +18,41 @@ class AuthRepositoryImpl @Inject constructor(
     private val tokenStorage: TokenStorage,
     private val authApi: AuthApi
 ) : AuthRepository {
-    override fun authWithEmailAndPassword(email: String, password: String): Flow<Boolean> = flow {
-        val res = authApi.signInWithEmailAndPassword(Credential(email, password)).awaitResponse()
-        val authDto = res.body()
+    override fun authWithEmailAndPassword(
+        email: String,
+        password: String
+    ): Flow<Resource<Boolean>> = flow {
+        try {
+            val res =
+                authApi.signInWithEmailAndPassword(Credential(email, password)).awaitResponse()
 
+            if(res.isSuccessful) {
+                val dto = res.body()
+                if(dto == null) {
+                    emit(Resource.Error(Resource.Error.ErrorType.ServerError))
+                    return@flow
+                }
+                tokenStorage.storeToken(dto)
+                emit(Resource.Success(true))
+                return@flow
+            }
 
-        if(authDto != null) {
-            tokenStorage.storeToken(authDto)
-            emit(true)
-        } else {
-            emit(false)
+            when(res.code()){
+                401 -> emit(Resource.Error(Resource.Error.ErrorType.AuthError))
+                404 -> emit(Resource.Error(Resource.Error.ErrorType.NotFoundError))
+                500 -> emit(Resource.Error(Resource.Error.ErrorType.ServerError))
+                else -> emit(Resource.Error(Resource.Error.ErrorType.OtherError))
+            }
+        } catch (_: Exception) {
+            emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }
     }
 
     override fun logout(): Flow<Boolean> = flow {
         tokenStorage.removeToken()
-        authApi.signOut()
+        try {
+            authApi.signOut().awaitResponse()
+        } catch(_: Exception) { }
         emit(true)
     }
 

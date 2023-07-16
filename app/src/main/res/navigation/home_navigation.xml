@@ -7,12 +7,28 @@
 
     <fragment
         android:id="@+id/feedFragment"
-        android:name="com.isolaatti.feed.ui.FeedFragment"
+        android:name="com.isolaatti.home.FeedFragment"
         android:label="fragment_feed"
-        tools:layout="@layout/fragment_feed" />
+        tools:layout="@layout/fragment_feed" >
+        <action
+            android:id="@+id/action_feedFragment_to_profileActivity"
+            app:destination="@id/profileActivity" />
+    </fragment>
     <fragment
         android:id="@+id/notificationsFragment"
         android:name="com.isolaatti.home.notifications.ui.NotificationsFragment"
         android:label="fragment_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_notifications" >
+        <action
+            android:id="@+id/action_notificationsFragment_to_profileActivity"
+            app:destination="@id/profileActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/profileActivity"
+        android:name="com.isolaatti.profile.ui.ProfileActivity"
+        android:label="ProfileActivity" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.isolaatti.home.search.presentation.SearchFragment"
+        android:label="@string/search" />
 </navigation>

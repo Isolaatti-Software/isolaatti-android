@@ -1,4 +1,4 @@
-package com.isolaatti.feed.ui
+package com.isolaatti.home
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.isolaatti.R
+import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentFeedBinding
 import com.isolaatti.posting.posts.presentation.PostsViewModel
 import com.isolaatti.posting.comments.presentation.BottomSheetPostComments
@@ -34,6 +35,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
     }
 
     private val viewModel: PostsViewModel by activityViewModels()
+    private val errorViewModel: ErrorMessageViewModel by activityViewModels()
     private lateinit var viewBinding: FragmentFeedBinding
     private lateinit var adapter: PostsRecyclerViewAdapter
 
@@ -67,6 +69,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
             }
         }
 
+
         val markwon = Markwon.builder(requireContext())
             .usePlugin(object: AbstractMarkwonPlugin() {
                 override fun configureConfiguration(builder: MarkwonConfiguration.Builder) {
@@ -78,19 +81,31 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
             .usePlugin(PicassoImagesPluginDef.picassoImagePlugin)
             .usePlugin(LinkifyPlugin.create())
             .build()
-        adapter = PostsRecyclerViewAdapter(markwon, this, listOf())
+        adapter = PostsRecyclerViewAdapter(markwon, this, null)
         viewBinding.feedRecyclerView.adapter = adapter
         viewBinding.feedRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
 
         viewModel.posts.observe(viewLifecycleOwner){
             Log.d("recycler", it.data.toString())
-            adapter.updateList(it.data.toList(),null)
+            adapter.updateList(it,null)
+        }
+        Log.d("FeedFragment", errorViewModel.toString())
+        viewModel.errorLoading.observe(viewLifecycleOwner) {
+            errorViewModel.error.postValue(it)
+            Log.d("FeedFragment", it.toString())
         }
         viewModel.postLiked.observe(viewLifecycleOwner) {
-            adapter.updateList(viewModel.posts.value?.data, PostsRecyclerViewAdapter.UpdateEvent(
-                PostsRecyclerViewAdapter.UpdateEvent.UpdateType.POST_LIKED, it.postId))
+            viewModel.posts.value?.let { feed ->
+                adapter.updateList(
+                    feed, PostsRecyclerViewAdapter.UpdateEvent(
+                        PostsRecyclerViewAdapter.UpdateEvent.UpdateType.POST_LIKED, it.postId))
+            }
         }
+    }
+
+    fun onNewMenuItemClicked(v: View) {
+
     }
 
     override fun onLiked(postId: Long) = viewModel.likePost(postId)

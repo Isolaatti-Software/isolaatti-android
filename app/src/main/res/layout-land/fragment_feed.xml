@@ -17,7 +17,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/home_drawer"
             app:layout_constraintTop_toTopOf="parent"
-            tools:context=".feed.ui.FeedFragment">
+            tools:context=".home.FeedFragment">
 
 
 
@@ -48,6 +48,7 @@
                             android:layout_height="match_parent"
                             app:title="@string/app_name"
                             app:titleCentered="true"
+                            app:menu="@menu/new_menu"
                             tools:layout_conversion_absoluteHeight="64dp"
                             tools:layout_conversion_absoluteWidth="531dp"
                             tools:layout_editor_absoluteX="360dp"

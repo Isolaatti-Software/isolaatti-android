@@ -13,7 +13,7 @@
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".feed.ui.FeedFragment">
+            tools:context=".home.FeedFragment">
 
 
             <FrameLayout
@@ -29,7 +29,8 @@
                     <com.google.android.material.appbar.AppBarLayout
                         android:id="@+id/topAppBar_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        app:liftOnScroll="true">
 
                         <com.google.android.material.appbar.MaterialToolbar
                             android:id="@+id/topAppBar"
@@ -38,26 +39,23 @@
                             android:theme="@style/Theme.Isolaatti"
                             app:navigationIcon="@drawable/baseline_menu_24"
                             app:navigationIconTint="@color/on_surface"
+                            app:menu="@menu/new_menu"
                             app:title="@string/app_name"
                             app:titleCentered="true" />
 
 
                     </com.google.android.material.appbar.AppBarLayout>
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/feed_recycler_view"
+                    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent" >
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/feed_recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
                 </LinearLayout>
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/floating_action_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_margin="16dp"
-                    android:contentDescription=""
-                    app:srcCompat="@drawable/baseline_add_24" />
             </FrameLayout>
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -18,9 +18,27 @@
     <string name="report">Report</string>
     <string name="close">Close</string>
 
+    <!-- Common -->
+    <string name="accept">Accept</string>
+    <string name="no">No</string>
+
+    <!-- error messages-->
+    <string name="need_reauth_message">Your session is not valid, please enter your credentials.</string>
+    <string name="network_error">Network error occurred, it maybe is on our side. Please try again later</string>
+    <string name="server_error">An error on our side has occurred.</string>
+
     <!--Post options -->
     <string name="post_options_title">Discussion options</string>
     <string name="home">Home</string>
     <string name="notifications">Notifications</string>
     <string name="search">Search</string>
+
+    <!-- Audio recorder -->
+    <string name="audio_recorder">Record audio</string>
+    <string name="account_not_found">Could not find any account that matches %s</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="wrong_password">Could not sign in, password does not match</string>
+    <string name="new_post">New</string>
+    <string name="discussion">Discussion</string>
+    <string name="add_audio">New audio</string>
 </resources>

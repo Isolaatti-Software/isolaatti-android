@@ -2,15 +2,21 @@ package com.isolaatti.profile.ui
 
 import android.os.Bundle
 import androidx.activity.addCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.adapter.FragmentViewHolder
 import com.google.android.material.tabs.TabLayoutMediator
 import com.isolaatti.R
 import com.isolaatti.databinding.ActivityProfileBinding
+import com.isolaatti.profile.data.remote.UserProfileDto
+import com.isolaatti.profile.presentation.ProfileViewModel
+import com.isolaatti.utils.UrlGen
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,19 +44,24 @@ class ProfileActivity : AppCompatActivity() {
 
 
     lateinit var viewBinding: ActivityProfileBinding
+    private val viewModel: ProfileViewModel by viewModels()
 
+    private val profileObserver = Observer<UserProfileDto> { profile ->
+        Picasso.get()
+            .load(UrlGen.userProfileImage(profile.id))
+            .into(viewBinding.profileImageView)
+
+        viewBinding.textViewUsername.text = profile.name
+        viewBinding.textViewDescription.text = profile.descriptionText
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityProfileBinding.inflate(layoutInflater)
-
         setContentView(viewBinding.root)
 
-        Picasso.get().load("https://isolaatti.com/api/images/image/63a2a6c5270ecc2be2512799?mode=reduced").into(viewBinding.profileImageView)
-        viewBinding.textViewUsername.text = "Erik Everardo"
-        viewBinding.textViewDescription.text = "Hola"
         viewBinding.profileViewPager2.adapter = ViewPagerAdapter(this)
         viewBinding.topAppBar.setNavigationOnClickListener {
-            onBackPressed()
+            finish()
         }
 
         TabLayoutMediator(viewBinding.profileTabLayout, viewBinding.profileViewPager2) {tab, position ->
@@ -66,5 +77,11 @@ class ProfileActivity : AppCompatActivity() {
                 }
             }
         }.attach()
+
+        viewModel.profile.observe(this, profileObserver)
+    }
+
+    companion object {
+        const val EXTRA_USER_ID = "user_id"
     }
 }

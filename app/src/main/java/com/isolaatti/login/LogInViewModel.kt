@@ -5,16 +5,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.isolaatti.auth.domain.AuthRepository
+import com.isolaatti.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LogInViewModel @Inject constructor(private val authRepository: AuthRepository): ViewModel() {
     val signInSuccess: MutableLiveData<Boolean> = MutableLiveData()
+    val signInError: MutableLiveData<Resource.Error.ErrorType?> = MutableLiveData()
+    val signInLoading: MutableLiveData<Boolean> = MutableLiveData()
     val formIsValid: MutableLiveData<Boolean> = MutableLiveData(false)
     val emailUserInputIsValid: MutableLiveData<Boolean> = MutableLiveData(false)
     val passwordUserInputIsValid: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -33,11 +39,23 @@ class LogInViewModel @Inject constructor(private val authRepository: AuthReposit
     }
 
     fun signIn(email: String, password: String) {
+        signInError.postValue(null)
         viewModelScope.launch {
-            authRepository.authWithEmailAndPassword(email, password).collect {
+            authRepository.authWithEmailAndPassword(email, password).onEach {
                 Log.d("login", it.toString())
-                signInSuccess.postValue(it)
-            }
+                when(it) {
+                    is Resource.Success -> {
+                        signInLoading.postValue(false)
+                        signInSuccess.postValue(true)
+                    }
+                    is Resource.Error -> {
+                        signInLoading.postValue(false)
+                        signInError.postValue(it.errorType)
+                    }
+                    is Resource.Loading -> signInLoading.postValue(true)
+                }
+
+            }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }
 

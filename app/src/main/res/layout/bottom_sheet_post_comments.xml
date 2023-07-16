@@ -58,7 +58,7 @@
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
 
-            app:startIconDrawable="@drawable/baseline_open_in_full_24"
+            app:startIconDrawable="@drawable/baseline_keyboard_voice_24"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/submitCommentButton"

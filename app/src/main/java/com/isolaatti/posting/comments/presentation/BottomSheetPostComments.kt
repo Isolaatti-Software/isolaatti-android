@@ -94,7 +94,7 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
         val textField = viewBinding.newCommentTextField
 
         textField.setStartIconOnClickListener {
-            AlertDialog.Builder(requireContext()).setView(R.layout.write_comment_multiline_dialog).show()
+
         }
 
         optionsViewModel.optionClicked(-1)

@@ -1,6 +1,5 @@
 package com.isolaatti.profile.data.remote
 
-import com.isolaatti.feed.data.remote.FeedDto
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

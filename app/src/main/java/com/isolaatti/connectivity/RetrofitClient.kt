@@ -1,5 +1,6 @@
 package com.isolaatti.connectivity
 
+import com.isolaatti.BuildConfig
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -14,7 +15,7 @@ class RetrofitClient @Inject constructor(private val authenticationInterceptor: 
         val excludedUrlsFromAuthentication = listOf(
             "/api/LogIn"
         )
-        const val BASE_URL = "https://isolaatti.com/api/"
+        const val BASE_URL = "${BuildConfig.backend}/api/"
     }
 
     private val okHttpClient get() = OkHttpClient.Builder()
