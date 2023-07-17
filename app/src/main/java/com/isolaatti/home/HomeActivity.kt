@@ -32,7 +32,7 @@ class HomeActivity : IsolaattiBaseActivity() {
         viewBinding.navigationRail?.setupWithNavController(navHostFragment.navController)
 
         if(savedInstanceState == null) {
-            postsViewModel.getFeed()
+            postsViewModel.getFeed(false)
         }
 
     }

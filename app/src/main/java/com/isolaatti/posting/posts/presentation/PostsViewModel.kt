@@ -24,11 +24,14 @@ import javax.inject.Inject
 @HiltViewModel
 class PostsViewModel @Inject constructor(private val postsRepository: PostsRepository, private val likesRepository: LikesRepository) : ViewModel() {
 
-    private val _posts: MutableLiveData<FeedDto> = MutableLiveData()
-    val posts: LiveData<FeedDto> get() = _posts
+    private val _posts: MutableLiveData<FeedDto?> = MutableLiveData()
+    val posts: LiveData<FeedDto?> get() = _posts
 
     private val _loadingPosts = MutableLiveData(false)
     val loadingPosts: LiveData<Boolean> get() = _loadingPosts
+
+    private val _noMoreContent = MutableLiveData(false)
+    val noMoreContent: LiveData<Boolean> get() = _noMoreContent
 
     private val _errorLoading: MutableLiveData<Resource.Error.ErrorType?> = MutableLiveData()
     val errorLoading: LiveData<Resource.Error.ErrorType?> get() = _errorLoading
@@ -41,13 +44,17 @@ class PostsViewModel @Inject constructor(private val postsRepository: PostsRepos
     private val _postLiked: MutableLiveData<LikeDto> = MutableLiveData()
     val postLiked: LiveData<LikeDto> get() = _postLiked
 
-    fun getFeed() {
+    fun getFeed(refresh: Boolean) {
         viewModelScope.launch {
+            if(refresh) {
+                _posts.value = null
+            }
             postsRepository.getFeed(getLastId()).onEach {
                 when(it) {
                     is Resource.Success -> {
                         _loadingPosts.postValue(false)
                         _posts.postValue(posts.value?.concatFeed(it.data) ?: it.data)
+                        _noMoreContent.postValue(it.data?.moreContent == false)
                     }
                     is Resource.Loading -> {
                         _loadingPosts.postValue(true)

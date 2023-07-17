@@ -41,4 +41,6 @@
     <string name="new_post">New</string>
     <string name="discussion">Discussion</string>
     <string name="add_audio">New audio</string>
+    <string name="load_more">Load more</string>
+    <string name="there_is_no_more_content_to_show">There is no more content to show</string>
 </resources>

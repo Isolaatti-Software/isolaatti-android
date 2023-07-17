@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentFeedBinding
@@ -75,7 +76,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
                 override fun configureConfiguration(builder: MarkwonConfiguration.Builder) {
                     builder
                         .imageDestinationProcessor(ImageDestinationProcessorRelativeToAbsolute
-                            .create("https://isolaatti.com/"))
+                            .create(BuildConfig.backend))
                 }
             })
             .usePlugin(PicassoImagesPluginDef.picassoImagePlugin)
@@ -85,15 +86,40 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
         viewBinding.feedRecyclerView.adapter = adapter
         viewBinding.feedRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
+        viewBinding.refreshButton.setOnClickListener {
+            viewModel.getFeed(refresh = true)
+        }
+
+        viewBinding.swipeToRefresh.setOnRefreshListener {
+            viewModel.getFeed(refresh = true)
+            viewBinding.swipeToRefresh.isRefreshing = false
+        }
+
+        viewBinding.loadMoreButton.setOnClickListener {
+            viewModel.getFeed(refresh = false)
+        }
+
 
         viewModel.posts.observe(viewLifecycleOwner){
-            Log.d("recycler", it.data.toString())
-            adapter.updateList(it,null)
+            if (it != null) {
+                adapter.updateList(it,null)
+            }
         }
-        Log.d("FeedFragment", errorViewModel.toString())
+
+        viewModel.loadingPosts.observe(viewLifecycleOwner) {
+            viewBinding.progressBarLoading.visibility = if(it) View.VISIBLE else View.GONE
+            viewBinding.loadMoreButton.visibility = if(it) View.GONE else View.VISIBLE
+        }
+
+        viewModel.noMoreContent.observe(viewLifecycleOwner) {
+            val visibility = if(it) View.VISIBLE else View.GONE
+            viewBinding.noMoreContentToShowTextView.visibility = visibility
+            viewBinding.refreshButton.visibility = visibility
+            viewBinding.loadMoreButton.visibility = if(it) View.GONE else View.VISIBLE
+        }
+
         viewModel.errorLoading.observe(viewLifecycleOwner) {
             errorViewModel.error.postValue(it)
-            Log.d("FeedFragment", it.toString())
         }
         viewModel.postLiked.observe(viewLifecycleOwner) {
             viewModel.posts.value?.let { feed ->
@@ -107,6 +133,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
     fun onNewMenuItemClicked(v: View) {
 
     }
+
 
     override fun onLiked(postId: Long) = viewModel.likePost(postId)
 
