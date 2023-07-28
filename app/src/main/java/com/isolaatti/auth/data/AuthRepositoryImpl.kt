@@ -1,5 +1,7 @@
 package com.isolaatti.auth.data
 
+import com.isolaatti.auth.data.local.KeyValueDao
+import com.isolaatti.auth.data.local.KeyValueEntity
 import com.isolaatti.auth.data.remote.AuthTokenDto
 import com.isolaatti.auth.data.local.TokenStorage
 import com.isolaatti.auth.data.remote.AuthApi
@@ -8,16 +10,18 @@ import com.isolaatti.auth.domain.AuthRepository
 import com.isolaatti.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.await
 import retrofit2.awaitResponse
-import java.io.IOException
 import javax.inject.Inject
 
 
 class AuthRepositoryImpl @Inject constructor(
     private val tokenStorage: TokenStorage,
-    private val authApi: AuthApi
+    private val authApi: AuthApi,
+    private val keyValueDao: KeyValueDao
 ) : AuthRepository {
+    companion object {
+        val KEY_USERID = "user_id"
+    }
     override fun authWithEmailAndPassword(
         email: String,
         password: String
@@ -33,6 +37,7 @@ class AuthRepositoryImpl @Inject constructor(
                     return@flow
                 }
                 tokenStorage.storeToken(dto)
+                keyValueDao.setValue(KeyValueEntity(KEY_USERID, dto.userId.toString()))
                 emit(Resource.Success(true))
                 return@flow
             }
@@ -58,6 +63,10 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun getCurrentToken(): AuthTokenDto? {
         return tokenStorage.token
+    }
+
+    override fun getUserId(): Flow<Int?> = flow {
+        emit(keyValueDao.getValue(KEY_USERID).toIntOrNull())
     }
 
 }

@@ -8,4 +8,6 @@ interface AuthRepository {
     fun authWithEmailAndPassword(email: String, password: String): Flow<Resource<Boolean>>
     fun logout(): Flow<Boolean>
     fun getCurrentToken(): AuthTokenDto?
+    fun getUserId(): Flow<Int?>
+
 }

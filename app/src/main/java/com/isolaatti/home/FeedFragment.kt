@@ -1,5 +1,6 @@
 package com.isolaatti.home
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -7,20 +8,30 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentFeedBinding
+import com.isolaatti.home.presentation.FeedViewModel
 import com.isolaatti.posting.posts.presentation.PostsViewModel
 import com.isolaatti.posting.comments.presentation.BottomSheetPostComments
 import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
 import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
 import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
+import com.isolaatti.posting.posts.ui.CreatePostActivity
 import com.isolaatti.profile.ui.ProfileActivity
 import com.isolaatti.settings.ui.SettingsActivity
 import com.isolaatti.utils.PicassoImagesPluginDef
+import com.isolaatti.utils.UrlGen
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
@@ -37,8 +48,15 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
     private val viewModel: PostsViewModel by activityViewModels()
     private val errorViewModel: ErrorMessageViewModel by activityViewModels()
+    private val screenViewModel: FeedViewModel by viewModels()
     private lateinit var viewBinding: FragmentFeedBinding
     private lateinit var adapter: PostsRecyclerViewAdapter
+
+    private val createDiscussion = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if(it.resultCode == Activity.RESULT_OK) {
+            Toast.makeText(requireContext(), R.string.posted_successfully, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -99,6 +117,33 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
             viewModel.getFeed(refresh = false)
         }
 
+        viewBinding.topAppBar.setOnMenuItemClickListener {
+            when(it.itemId) {
+                R.id.menu_item_new_discussion -> {
+                    createDiscussion.launch(Intent(requireContext(),CreatePostActivity::class.java))
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
+        }
+
+        screenViewModel.userProfile.observe(viewLifecycleOwner) {
+            val header = viewBinding.homeDrawer.getHeaderView(0) as? ConstraintLayout
+
+            val image: ImageView? = header?.findViewById(R.id.profileImageView)
+            val textViewName: TextView? = header?.findViewById(R.id.textViewName)
+            val textViewEmail: TextView? = header?.findViewById(R.id.textViewEmail)
+
+            Picasso.get().load(UrlGen.userProfileImage(it.id)).into(image)
+
+            textViewName?.text = it.name
+            textViewEmail?.text = it.email
+        }
+
+
+
 
         viewModel.posts.observe(viewLifecycleOwner){
             if (it != null) {
@@ -128,6 +173,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
                         PostsRecyclerViewAdapter.UpdateEvent.UpdateType.POST_LIKED, it.postId))
             }
         }
+        screenViewModel.getProfile()
     }
 
     fun onNewMenuItemClicked(v: View) {

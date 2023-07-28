@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.isolaatti.R
 import com.isolaatti.home.HomeActivity
+import com.isolaatti.login.LogInActivity
 import com.isolaatti.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -46,7 +47,7 @@ abstract class IsolaattiBaseActivity : AppCompatActivity()  {
     abstract fun onRetry()
 
     private val onAcceptReAuthClick = DialogInterface.OnClickListener { _, _ ->
-
+        signInActivityResult.launch(Intent(this, LogInActivity::class.java))
     }
 
     private fun showReAuthDialog() {
