@@ -21,6 +21,7 @@ import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
 import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
 import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
+import com.isolaatti.profile.ui.ProfileActivity
 import com.isolaatti.utils.PicassoImagesPluginDef
 import dagger.hilt.android.AndroidEntryPoint
 import io.noties.markwon.AbstractMarkwonPlugin
@@ -125,6 +126,6 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
     }
 
     override fun onProfileClick(userId: Int) {
-
+        ProfileActivity.startActivity(requireContext(), userId)
     }
 }

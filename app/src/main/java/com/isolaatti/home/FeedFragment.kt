@@ -21,6 +21,7 @@ import com.isolaatti.R
 import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentFeedBinding
 import com.isolaatti.home.presentation.FeedViewModel
+import com.isolaatti.posting.PostViewerActivity
 import com.isolaatti.posting.posts.presentation.PostsViewModel
 import com.isolaatti.posting.comments.presentation.BottomSheetPostComments
 import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
@@ -195,8 +196,12 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
         modalBottomSheet.show(requireActivity().supportFragmentManager, BottomSheetPostComments.TAG)
     }
 
+    override fun onOpenPost(postId: Long) {
+        PostViewerActivity.startActivity(requireContext(), postId)
+    }
+
     override fun onProfileClick(userId: Int) {
-        TODO("Not yet implemented")
+        ProfileActivity.startActivity(requireContext(), userId)
     }
 
 }

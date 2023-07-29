@@ -10,6 +10,10 @@
         android:icon="@drawable/baseline_people_24"
         android:title="Squads" />
     <item
+        android:id="@+id/drafts_menu_item"
+        android:icon="@drawable/baseline_pending_24"
+        android:title="@string/drafts"/>
+    <item
         android:id="@+id/settings_menu_item"
         android:icon="@drawable/baseline_settings_24"
         android:title="Settings" />

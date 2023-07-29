@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 import com.isolaatti.R
 import com.isolaatti.posting.posts.data.remote.FeedDto
 import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
@@ -57,6 +58,9 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
             } else {
                 val username: TextView = itemView.findViewById(R.id.text_view_username)
                 username.text = postDto.userName
+                username.setOnClickListener {
+                    callback.onProfileClick(postDto.post.userId)
+                }
 
                 val profileImageView: ImageView = itemView.findViewById(R.id.avatar_picture)
                 Picasso.get().load(userProfileImage(postDto.post.userId)).into(profileImageView)
@@ -97,6 +101,11 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
                 commentsButton.setOnClickListener {
                     callback.onComment(postDto.post.id)
                 }
+
+                itemView.findViewById<MaterialCardView>(R.id.card).setOnClickListener {
+                    callback.onOpenPost(postDto.post.id)
+                }
+
             }
         }
     }

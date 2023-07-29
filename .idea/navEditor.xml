@@ -84,6 +84,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="postViewerActivity">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-520" />
+                            <option name="y" value="-373" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="profileActivity">
                     <value>
                       <LayoutPositions>
@@ -96,13 +108,13 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="searchFragment2">
+                  <entry key="searchFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-281" />
-                            <option name="y" value="221" />
+                            <option name="x" value="12" />
+                            <option name="y" value="12" />
                           </Point>
                         </option>
                       </LayoutPositions>

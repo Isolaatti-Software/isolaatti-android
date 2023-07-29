@@ -1,5 +1,7 @@
 package com.isolaatti.profile.ui
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.addCallback
 import androidx.activity.viewModels
@@ -83,5 +85,11 @@ class ProfileActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_USER_ID = "user_id"
+
+        fun startActivity(context: Context, userId: Int) {
+            context.startActivity(Intent(context, ProfileActivity::class.java).apply {
+                putExtra(EXTRA_USER_ID, userId)
+            })
+        }
     }
 }
