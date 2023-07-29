@@ -3,6 +3,7 @@ package com.isolaatti.profile.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.adapter.FragmentViewHolder
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import com.isolaatti.R
 import com.isolaatti.databinding.ActivityProfileBinding
@@ -24,35 +27,19 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ProfileActivity : AppCompatActivity() {
-    class ViewPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
-        override fun getItemCount(): Int = 3
-
-        override fun createFragment(position: Int): Fragment {
-            return when(position) {
-                0 -> {
-                    DiscussionsFragment()
-                }
-                1 -> {
-                    AudiosFragment()
-                }
-                2 -> {
-                    ImagesFragment()
-                }
-                else -> {Fragment()}
-            }
-        }
-
-    }
-
 
     lateinit var viewBinding: ActivityProfileBinding
     private val viewModel: ProfileViewModel by viewModels()
+    private var userId: Int? = null
+
+    private var title = ""
 
     private val profileObserver = Observer<UserProfileDto> { profile ->
         Picasso.get()
             .load(UrlGen.userProfileImage(profile.id))
             .into(viewBinding.profileImageView)
 
+        title = profile.name
         viewBinding.textViewUsername.text = profile.name
         viewBinding.textViewDescription.text = profile.descriptionText
     }
@@ -60,27 +47,34 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+        userId = intent.extras?.getInt(EXTRA_USER_ID)
+        var scrollRange = -1
+        var isShow = false
+        viewBinding.topAppBarLayout.addOnOffsetChangedListener(object: OnOffsetChangedListener {
 
-        viewBinding.profileViewPager2.adapter = ViewPagerAdapter(this)
+
+            override fun onOffsetChanged(appBarLayout: AppBarLayout, verticalOffset: Int) {
+                if (scrollRange == -1) scrollRange = appBarLayout.totalScrollRange
+                if(scrollRange + verticalOffset == 0) {
+                    viewBinding.collapsingToolbarLayout.title = title
+                    isShow = true
+                } else if(isShow) {
+                    viewBinding.collapsingToolbarLayout.title = " "
+                }
+
+            }
+
+        })
+
         viewBinding.topAppBar.setNavigationOnClickListener {
             finish()
         }
 
-        TabLayoutMediator(viewBinding.profileTabLayout, viewBinding.profileViewPager2) {tab, position ->
-            when(position) {
-                0 -> {
-                    tab.text = getText(R.string.discussions)
-                }
-                1 -> {
-                    tab.text = getText(R.string.audios)
-                }
-                2 -> {
-                    tab.text = getText(R.string.images)
-                }
-            }
-        }.attach()
 
         viewModel.profile.observe(this, profileObserver)
+
+        userId?.let { viewModel.getProfile(it) }
+
     }
 
     companion object {

@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
@@ -25,6 +26,9 @@ import com.isolaatti.posting.PostViewerActivity
 import com.isolaatti.posting.posts.presentation.PostsViewModel
 import com.isolaatti.posting.comments.presentation.BottomSheetPostComments
 import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
+import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
+import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
+import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
 import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
 import com.isolaatti.posting.posts.ui.CreatePostActivity
@@ -45,17 +49,36 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
     companion object {
         fun newInstance() = FeedFragment()
+        const val CALLER_ID = 20
     }
 
     private val viewModel: PostsViewModel by activityViewModels()
     private val errorViewModel: ErrorMessageViewModel by activityViewModels()
     private val screenViewModel: FeedViewModel by viewModels()
+    val optionsViewModel: BottomSheetPostOptionsViewModel by activityViewModels()
+
     private lateinit var viewBinding: FragmentFeedBinding
     private lateinit var adapter: PostsRecyclerViewAdapter
 
     private val createDiscussion = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if(it.resultCode == Activity.RESULT_OK) {
             Toast.makeText(requireContext(), R.string.posted_successfully, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val optionsObserver: Observer<OptionClicked> = Observer {
+        if(it.callerId == CALLER_ID) {
+            when(it.optionId) {
+                Options.Option.OPTION_DELETE -> {
+
+                }
+                Options.Option.OPTION_EDIT -> {
+
+                }
+                Options.Option.OPTION_REPORT -> {
+
+                }
+            }
         }
     }
 
@@ -175,6 +198,8 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
             }
         }
         screenViewModel.getProfile()
+
+        optionsViewModel.optionClicked.observe(viewLifecycleOwner, optionsObserver)
     }
 
     fun onNewMenuItemClicked(v: View) {
@@ -187,6 +212,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
     override fun onUnLiked(postId: Long) = viewModel.unLikePost(postId)
 
     override fun onOptions(postId: Long) {
+        optionsViewModel.setOptions(Options.postOptions, CALLER_ID)
         val modalBottomSheet = BottomSheetPostOptionsFragment()
         modalBottomSheet.show(requireActivity().supportFragmentManager, BottomSheetPostOptionsFragment.TAG)
     }
