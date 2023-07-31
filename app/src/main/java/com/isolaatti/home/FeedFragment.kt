@@ -21,6 +21,7 @@ import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentFeedBinding
+import com.isolaatti.drafts.ui.DraftsActivity
 import com.isolaatti.home.presentation.FeedViewModel
 import com.isolaatti.posting.PostViewerActivity
 import com.isolaatti.posting.posts.presentation.PostsViewModel
@@ -104,6 +105,10 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
                     startActivity(Intent(requireActivity(), ProfileActivity::class.java))
                     true
                 }
+                R.id.drafts_menu_item -> {
+                    startActivity(Intent(requireActivity(), DraftsActivity::class.java))
+                    true
+                }
                 R.id.settings_menu_item -> {
                     startActivity(Intent(requireActivity(), SettingsActivity::class.java))
                     true
@@ -128,18 +133,18 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
         viewBinding.feedRecyclerView.adapter = adapter
         viewBinding.feedRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        viewBinding.refreshButton.setOnClickListener {
-            viewModel.getFeed(refresh = true)
-        }
+//        viewBinding.refreshButton.setOnClickListener {
+//            viewModel.getFeed(refresh = true)
+//        }
 
         viewBinding.swipeToRefresh.setOnRefreshListener {
             viewModel.getFeed(refresh = true)
             viewBinding.swipeToRefresh.isRefreshing = false
         }
 
-        viewBinding.loadMoreButton.setOnClickListener {
-            viewModel.getFeed(refresh = false)
-        }
+//        viewBinding.loadMoreButton.setOnClickListener {
+//            viewModel.getFeed(refresh = false)
+//        }
 
         viewBinding.topAppBar.setOnMenuItemClickListener {
             when(it.itemId) {
@@ -175,17 +180,17 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
             }
         }
 
-        viewModel.loadingPosts.observe(viewLifecycleOwner) {
-            viewBinding.progressBarLoading.visibility = if(it) View.VISIBLE else View.GONE
-            viewBinding.loadMoreButton.visibility = if(it) View.GONE else View.VISIBLE
-        }
-
-        viewModel.noMoreContent.observe(viewLifecycleOwner) {
-            val visibility = if(it) View.VISIBLE else View.GONE
-            viewBinding.noMoreContentToShowTextView.visibility = visibility
-            viewBinding.refreshButton.visibility = visibility
-            viewBinding.loadMoreButton.visibility = if(it) View.GONE else View.VISIBLE
-        }
+//        viewModel.loadingPosts.observe(viewLifecycleOwner) {
+//            viewBinding.progressBarLoading.visibility = if(it) View.VISIBLE else View.GONE
+//            viewBinding.loadMoreButton.visibility = if(it) View.GONE else View.VISIBLE
+//        }
+//
+//        viewModel.noMoreContent.observe(viewLifecycleOwner) {
+//            val visibility = if(it) View.VISIBLE else View.GONE
+//            viewBinding.noMoreContentToShowTextView.visibility = visibility
+//            viewBinding.refreshButton.visibility = visibility
+//            viewBinding.loadMoreButton.visibility = if(it) View.GONE else View.VISIBLE
+//        }
 
         viewModel.errorLoading.observe(viewLifecycleOwner) {
             errorViewModel.error.postValue(it)

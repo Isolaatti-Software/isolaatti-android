@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.isolaatti.posting.posts.data.remote.FeedDto
+import com.isolaatti.posting.posts.data.remote.FeedFilterDto
 import com.isolaatti.profile.data.remote.UserProfileDto
 import com.isolaatti.profile.domain.ProfileRepository
 import com.isolaatti.profile.domain.use_case.GetProfile
@@ -16,6 +17,10 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.Month
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,6 +42,25 @@ class ProfileViewModel @Inject constructor(private val getProfileUseCase: GetPro
     }
 
     fun getPosts(profileId: Int, refresh: Boolean) {
-
+        viewModelScope.launch {
+            getProfilePosts(
+                profileId,
+                -1,
+                false,
+                FeedFilterDto(
+                    "both",
+                    "both",
+                    FeedFilterDto.DataRange(
+                        false,
+                        LocalDate.of(2020, 1, 1),
+                        LocalDate.now()
+                    )
+                )
+            ).onEach {
+                if(it is Resource.Success) {
+                    _posts.postValue(it.data!!)
+                }
+            }.flowOn(Dispatchers.IO).launchIn(this)
+        }
     }
 }

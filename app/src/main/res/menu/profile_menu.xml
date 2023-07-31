@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:title="Item" />
+    <item
+        android:id="@+id/user_link_menu_item"
+        android:title="@string/user_link"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/report_profile_menu_item"
+        android:title="@string/report_profile"
+        app:showAsAction="never"
+        android:icon="@drawable/baseline_report_24"/>
+    <item
+        android:id="@+id/block_profile_menu_item"
+        android:title="@string/block_profile"
+        app:showAsAction="never"
+        android:icon="@drawable/baseline_block_24" />
 </menu>

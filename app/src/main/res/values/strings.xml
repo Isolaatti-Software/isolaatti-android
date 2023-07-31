@@ -48,4 +48,13 @@
     <string name="what_do_you_want_to_talk_about_markdown_is_compatible_you_can_record_an_audio_if_you_want">What do you want to talk about? Markdown is compatible. You can record an audio if you want.</string>
     <string name="posted_successfully">Posted!</string>
     <string name="drafts">Drafts</string>
+    <string name="report_profile">Report profile</string>
+    <string name="block_profile">Block profile</string>
+    <string name="sort">Sort</string>
+    <string name="followers">Followers</string>
+    <string name="followings">Following</string>
+    <string name="following_user">Following</string>
+    <string name="mutually_following">Mutually following</string>
+    <string name="following_you">Following you</string>
+    <string name="user_link">User link</string>
 </resources>

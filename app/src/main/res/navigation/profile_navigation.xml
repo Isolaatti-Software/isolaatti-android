@@ -7,7 +7,26 @@
     <fragment
         android:id="@+id/discussionsFragment"
         android:name="com.isolaatti.profile.ui.DiscussionsFragment"
-        android:label="DiscussionsFragment" />
+        android:label="DiscussionsFragment" >
+        <action
+            android:id="@+id/action_discussionsFragment_to_audiosFragment"
+            app:destination="@id/audiosFragment" />
+        <action
+            android:id="@+id/action_discussionsFragment_to_imagesFragment"
+            app:destination="@id/imagesFragment" />
+        <action
+            android:id="@+id/action_discussionsFragment_to_blockProfileFragment"
+            app:destination="@id/blockProfileFragment" />
+        <action
+            android:id="@+id/action_discussionsFragment_to_reportProfileFragment"
+            app:destination="@id/reportProfileFragment" />
+        <action
+            android:id="@+id/action_discussionsFragment_to_userLinkFragment"
+            app:destination="@id/userLinkFragment" />
+        <action
+            android:id="@+id/action_discussionsFragment_to_mainFollowersFragment"
+            app:destination="@id/mainFollowersFragment" />
+    </fragment>
     <fragment
         android:id="@+id/audiosFragment"
         android:name="com.isolaatti.profile.ui.AudiosFragment"
@@ -16,4 +35,20 @@
         android:id="@+id/imagesFragment"
         android:name="com.isolaatti.profile.ui.ImagesFragment"
         android:label="ImagesFragment" />
+    <fragment
+        android:id="@+id/blockProfileFragment"
+        android:name="com.isolaatti.profile.ui.BlockProfileFragment"
+        android:label="BlockProfileFragment" />
+    <fragment
+        android:id="@+id/reportProfileFragment"
+        android:name="com.isolaatti.profile.ui.ReportProfileFragment"
+        android:label="ReportProfileFragment" />
+    <fragment
+        android:id="@+id/userLinkFragment"
+        android:name="com.isolaatti.profile.ui.UserLinkFragment"
+        android:label="UserLinkFragment" />
+    <fragment
+        android:id="@+id/mainFollowersFragment"
+        android:name="com.isolaatti.profile.ui.MainFollowersFragment"
+        android:label="MainFollowersFragment" />
 </navigation>
