@@ -8,6 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetProfilePosts @Inject constructor(private val postsRepository: PostsRepository) {
-    operator fun invoke(userId: Int, lastId: Long, olderFirst: Boolean, filter: FeedFilterDto): Flow<Resource<FeedDto>> =
+    operator fun invoke(userId: Int, lastId: Long, olderFirst: Boolean, filter: FeedFilterDto?): Flow<Resource<FeedDto>> =
         postsRepository.getProfilePosts(userId, lastId, olderFirst, filter)
 }

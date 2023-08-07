@@ -114,15 +114,6 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
     data class LikeCountUpdatePayload(val likeCount: Int)
     data class CommentsCountUpdatePayload(val commentsCount: Int)
 
-    data class UpdateEvent(val updateType: UpdateType, val affectedId: Long) {
-        enum class UpdateType {
-            POST_LIKED,
-            POST_COMMENTED,
-            POST_REMOVED,
-            POST_ADDED
-        }
-    }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.post_layout, parent, false)
@@ -143,23 +134,33 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
             notifyDataSetChanged()
             return
         }
-        val postUpdated = feedDto?.data?.find { p -> p.post.id == updateEvent.affectedId } ?: return
-        val position = feedDto?.data?.indexOf(postUpdated) ?: return
+        val postUpdated = feedDto?.data?.find { p -> p.post.id == updateEvent.affectedId }
+        val position = feedDto?.data?.indexOf(postUpdated)
 
         feedDto = updatedFeed
 
         when(updateEvent.updateType) {
             UpdateEvent.UpdateType.POST_LIKED -> {
-                notifyItemChanged(position, LikeCountUpdatePayload(postUpdated.numberOfLikes))
+                if(postUpdated != null && position != null)
+                    notifyItemChanged(position, LikeCountUpdatePayload(postUpdated.numberOfLikes))
             }
             UpdateEvent.UpdateType.POST_COMMENTED -> {
-                notifyItemChanged(position, CommentsCountUpdatePayload(postUpdated.numberOfComments))
+                if(postUpdated != null && position != null)
+                    notifyItemChanged(position, CommentsCountUpdatePayload(postUpdated.numberOfComments))
             }
             UpdateEvent.UpdateType.POST_REMOVED -> {
-                notifyItemRemoved(position)
+                if(postUpdated != null && position != null)
+                    notifyItemRemoved(position)
             }
             UpdateEvent.UpdateType.POST_ADDED -> {
                 notifyItemInserted(0)
+            }
+
+            UpdateEvent.UpdateType.PAGE_ADDED -> {
+                notifyItemInserted(itemCount - 1)
+            }
+            UpdateEvent.UpdateType.REFRESH -> {
+                notifyDataSetChanged()
             }
         }
     }

@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.isolaatti.posting.posts.data.remote.FeedDto
 import com.isolaatti.posting.posts.data.remote.FeedFilterDto
+import com.isolaatti.posting.posts.presentation.PostListingViewModelBase
+import com.isolaatti.posting.posts.presentation.UpdateEvent
 import com.isolaatti.profile.data.remote.UserProfileDto
 import com.isolaatti.profile.domain.ProfileRepository
 import com.isolaatti.profile.domain.use_case.GetProfile
@@ -24,14 +26,13 @@ import java.time.Month
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(private val getProfileUseCase: GetProfile, private val getProfilePosts: GetProfilePosts) : ViewModel() {
+class ProfileViewModel @Inject constructor(private val getProfileUseCase: GetProfile, private val getProfilePostsUseCase: GetProfilePosts) : PostListingViewModelBase() {
     private val _profile = MutableLiveData<UserProfileDto>()
     val profile: LiveData<UserProfileDto> get() = _profile
 
-    private val _posts = MutableLiveData<FeedDto>()
-    val posts: LiveData<FeedDto> get() = _posts
+    var profileId: Int  = 0
 
-    fun getProfile(profileId: Int) {
+    fun getProfile() {
         viewModelScope.launch {
             getProfileUseCase(profileId).onEach {
                 if(it is Resource.Success) {
@@ -41,24 +42,23 @@ class ProfileViewModel @Inject constructor(private val getProfileUseCase: GetPro
         }
     }
 
-    fun getPosts(profileId: Int, refresh: Boolean) {
+    override fun getFeed(refresh: Boolean) {
         viewModelScope.launch {
-            getProfilePosts(
-                profileId,
-                -1,
-                false,
-                FeedFilterDto(
-                    "both",
-                    "both",
-                    FeedFilterDto.DataRange(
-                        false,
-                        LocalDate.of(2020, 1, 1),
-                        LocalDate.now()
-                    )
-                )
-            ).onEach {
-                if(it is Resource.Success) {
-                    _posts.postValue(it.data!!)
+            getProfilePostsUseCase(profileId, getLastId(), false, null).onEach { feedDtoResource ->
+                when (feedDtoResource) {
+                    is Resource.Success -> {
+                        loadingPosts.postValue(false)
+                        posts.postValue(Pair(posts.value?.first?.concatFeed(feedDtoResource.data) ?: feedDtoResource.data, UpdateEvent(UpdateEvent.UpdateType.PAGE_ADDED, null)))
+                        noMoreContent.postValue(feedDtoResource.data?.moreContent == false)
+                    }
+
+                    is Resource.Loading -> {
+                        loadingPosts.postValue(true)
+                    }
+
+                    is Resource.Error -> {
+                        errorLoading.postValue(feedDtoResource.errorType)
+                    }
                 }
             }.flowOn(Dispatchers.IO).launchIn(this)
         }

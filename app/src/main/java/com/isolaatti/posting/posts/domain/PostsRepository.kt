@@ -11,7 +11,7 @@ interface PostsRepository {
 
     fun getFeed(lastId: Long): Flow<Resource<FeedDto>>
 
-    fun getProfilePosts(userId: Int, lastId: Long, olderFirst: Boolean, filter: FeedFilterDto): Flow<Resource<FeedDto>>
+    fun getProfilePosts(userId: Int, lastId: Long, olderFirst: Boolean, filter: FeedFilterDto?): Flow<Resource<FeedDto>>
 
     fun makePost(createPostDto: CreatePostDto): Flow<Resource<FeedDto.PostDto>>
     fun editPost(editPostDto: EditPostDto): Flow<Resource<FeedDto.PostDto>>

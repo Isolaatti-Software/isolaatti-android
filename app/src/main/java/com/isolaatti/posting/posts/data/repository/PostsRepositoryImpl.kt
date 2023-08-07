@@ -10,14 +10,8 @@ import com.isolaatti.posting.posts.data.remote.PostApi
 import com.isolaatti.posting.posts.domain.PostsRepository
 import com.isolaatti.utils.Resource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
-import retrofit2.await
-import java.io.IOException
-import java.lang.RuntimeException
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class PostsRepositoryImpl @Inject constructor(private val feedsApi: FeedsApi, private val postApi: PostApi) : PostsRepository {
     override fun getFeed(lastId: Long): Flow<Resource<FeedDto>> = flow {
@@ -39,7 +33,7 @@ class PostsRepositoryImpl @Inject constructor(private val feedsApi: FeedsApi, pr
         }
     }
 
-    override fun getProfilePosts(userId: Int, lastId: Long, olderFirst: Boolean, filter: FeedFilterDto): Flow<Resource<FeedDto>> = flow {
+    override fun getProfilePosts(userId: Int, lastId: Long, olderFirst: Boolean, filter: FeedFilterDto?): Flow<Resource<FeedDto>> = flow {
         emit(Resource.Loading())
         try {
             val gson = Gson()

@@ -24,7 +24,6 @@ import com.isolaatti.databinding.FragmentFeedBinding
 import com.isolaatti.drafts.ui.DraftsActivity
 import com.isolaatti.home.presentation.FeedViewModel
 import com.isolaatti.posting.PostViewerActivity
-import com.isolaatti.posting.posts.presentation.PostsViewModel
 import com.isolaatti.posting.comments.presentation.BottomSheetPostComments
 import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
 import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
@@ -32,6 +31,7 @@ import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
 import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
 import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
+import com.isolaatti.posting.posts.presentation.UpdateEvent
 import com.isolaatti.posting.posts.ui.CreatePostActivity
 import com.isolaatti.profile.ui.ProfileActivity
 import com.isolaatti.settings.ui.SettingsActivity
@@ -53,9 +53,8 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
         const val CALLER_ID = 20
     }
 
-    private val viewModel: PostsViewModel by activityViewModels()
     private val errorViewModel: ErrorMessageViewModel by activityViewModels()
-    private val screenViewModel: FeedViewModel by viewModels()
+    private val viewModel: FeedViewModel by activityViewModels()
     val optionsViewModel: BottomSheetPostOptionsViewModel by activityViewModels()
 
     private lateinit var viewBinding: FragmentFeedBinding
@@ -158,7 +157,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
             }
         }
 
-        screenViewModel.userProfile.observe(viewLifecycleOwner) {
+        viewModel.userProfile.observe(viewLifecycleOwner) {
             val header = viewBinding.homeDrawer.getHeaderView(0) as? ConstraintLayout
 
             val image: ImageView? = header?.findViewById(R.id.profileImageView)
@@ -175,34 +174,23 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
 
         viewModel.posts.observe(viewLifecycleOwner){
-            if (it != null) {
-                adapter.updateList(it,null)
+            if (it.first != null) {
+                adapter.updateList(it.first!!, it.second)
             }
         }
 
-//        viewModel.loadingPosts.observe(viewLifecycleOwner) {
-//            viewBinding.progressBarLoading.visibility = if(it) View.VISIBLE else View.GONE
-//            viewBinding.loadMoreButton.visibility = if(it) View.GONE else View.VISIBLE
-//        }
-//
+        viewModel.loadingPosts.observe(viewLifecycleOwner) {
+            viewBinding.swipeToRefresh.isRefreshing = it
+        }
+
 //        viewModel.noMoreContent.observe(viewLifecycleOwner) {
-//            val visibility = if(it) View.VISIBLE else View.GONE
-//            viewBinding.noMoreContentToShowTextView.visibility = visibility
-//            viewBinding.refreshButton.visibility = visibility
-//            viewBinding.loadMoreButton.visibility = if(it) View.GONE else View.VISIBLE
+//
 //        }
 
         viewModel.errorLoading.observe(viewLifecycleOwner) {
             errorViewModel.error.postValue(it)
         }
-        viewModel.postLiked.observe(viewLifecycleOwner) {
-            viewModel.posts.value?.let { feed ->
-                adapter.updateList(
-                    feed, PostsRecyclerViewAdapter.UpdateEvent(
-                        PostsRecyclerViewAdapter.UpdateEvent.UpdateType.POST_LIKED, it.postId))
-            }
-        }
-        screenViewModel.getProfile()
+        viewModel.getProfile()
 
         optionsViewModel.optionClicked.observe(viewLifecycleOwner, optionsObserver)
     }
@@ -210,8 +198,6 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
     fun onNewMenuItemClicked(v: View) {
 
     }
-
-
     override fun onLiked(postId: Long) = viewModel.likePost(postId)
 
     override fun onUnLiked(postId: Long) = viewModel.unLikePost(postId)
@@ -234,5 +220,4 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
     override fun onProfileClick(userId: Int) {
         ProfileActivity.startActivity(requireContext(), userId)
     }
-
 }

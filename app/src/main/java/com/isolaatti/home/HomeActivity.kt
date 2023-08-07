@@ -8,16 +8,13 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.isolaatti.R
-import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.common.IsolaattiBaseActivity
 import com.isolaatti.databinding.ActivityHomeBinding
-import com.isolaatti.posting.posts.presentation.PostsViewModel
-import com.isolaatti.utils.Resource
-import dagger.hilt.android.AndroidEntryPoint
+import com.isolaatti.home.presentation.FeedViewModel
 
 class HomeActivity : IsolaattiBaseActivity() {
     private lateinit var viewBinding: ActivityHomeBinding
-    private val postsViewModel: PostsViewModel by viewModels()
+    private val feedViewModel: FeedViewModel by viewModels()
     override fun onRetry() {
 
     }
@@ -32,7 +29,7 @@ class HomeActivity : IsolaattiBaseActivity() {
         viewBinding.navigationRail?.setupWithNavController(navHostFragment.navController)
 
         if(savedInstanceState == null) {
-            postsViewModel.getFeed(false)
+            feedViewModel.getFeed(false)
         }
 
     }

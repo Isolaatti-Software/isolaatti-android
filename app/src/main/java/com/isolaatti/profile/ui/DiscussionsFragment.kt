@@ -1,29 +1,36 @@
 package com.isolaatti.profile.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.appbar.AppBarLayout
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.databinding.FragmentDiscussionsBinding
+import com.isolaatti.home.FeedFragment
+import com.isolaatti.posting.PostViewerActivity
+import com.isolaatti.posting.comments.presentation.BottomSheetPostComments
 import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
+import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
+import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
+import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
 import com.isolaatti.posting.posts.data.remote.FeedDto
+import com.isolaatti.posting.posts.presentation.PostListingRecyclerViewAdapterWiring
 import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
+import com.isolaatti.posting.posts.presentation.UpdateEvent
 import com.isolaatti.profile.data.remote.UserProfileDto
 import com.isolaatti.profile.presentation.ProfileViewModel
 import com.isolaatti.utils.PicassoImagesPluginDef
 import com.isolaatti.utils.UrlGen
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonConfiguration
@@ -31,14 +38,19 @@ import io.noties.markwon.image.destination.ImageDestinationProcessorRelativeToAb
 import io.noties.markwon.linkify.LinkifyPlugin
 
 @AndroidEntryPoint
-class DiscussionsFragment : Fragment(), OnUserInteractedWithPostCallback {
+class DiscussionsFragment : Fragment() {
     lateinit var viewBinding: FragmentDiscussionsBinding
-
     private val viewModel: ProfileViewModel by viewModels()
+    val optionsViewModel: BottomSheetPostOptionsViewModel by activityViewModels()
     private var userId: Int? = null
 
+    lateinit var postsAdapter: PostsRecyclerViewAdapter
+
+    // collapsing bar
     private var title = ""
-    lateinit var feedAdapter: PostsRecyclerViewAdapter
+    private var scrollRange = -1
+    private var isShow = false
+
 
     private val profileObserver = Observer<UserProfileDto> { profile ->
         Picasso.get()
@@ -50,30 +62,18 @@ class DiscussionsFragment : Fragment(), OnUserInteractedWithPostCallback {
         viewBinding.textViewDescription.text = profile.descriptionText
     }
 
-    private val postsObserver: Observer<FeedDto> = Observer {
-        feedAdapter.updateList(it, null)
+    private val postsObserver: Observer<Pair<FeedDto?, UpdateEvent>> = Observer {
+        if(it.first != null) {
+            postsAdapter.updateList(it.first!!, it.second)
+        }
+
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private lateinit var postListingRecyclerViewAdapterWiring: PostListingRecyclerViewAdapterWiring
 
-        userId = (requireActivity()).intent.extras?.getInt(ProfileActivity.EXTRA_USER_ID)
-    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        viewBinding = FragmentDiscussionsBinding.inflate(inflater)
+    private fun setupCollapsingBar() {
 
-        return viewBinding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        var scrollRange = -1
-        var isShow = false
         viewBinding.topAppBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             if (scrollRange == -1) scrollRange = appBarLayout.totalScrollRange
             if (scrollRange + verticalOffset == 0) {
@@ -83,37 +83,15 @@ class DiscussionsFragment : Fragment(), OnUserInteractedWithPostCallback {
                 viewBinding.collapsingToolbarLayout.title = " "
             }
         }
+    }
+
+    private fun bind() {
+
 
         viewBinding.topAppBar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
-
-        viewModel.profile.observe(viewLifecycleOwner, profileObserver)
-        viewModel.posts.observe(viewLifecycleOwner, postsObserver)
-
-        userId?.let {
-            viewModel.getProfile(it)
-            viewModel.getPosts(it, true)
-        }
-
-        val markwon = Markwon.builder(requireContext())
-            .usePlugin(object: AbstractMarkwonPlugin() {
-                override fun configureConfiguration(builder: MarkwonConfiguration.Builder) {
-                    builder
-                        .imageDestinationProcessor(
-                            ImageDestinationProcessorRelativeToAbsolute
-                                .create(BuildConfig.backend))
-                }
-            })
-            .usePlugin(PicassoImagesPluginDef.picassoImagePlugin)
-            .usePlugin(LinkifyPlugin.create())
-            .build()
-
-        feedAdapter = PostsRecyclerViewAdapter(markwon, this, null)
-
-        viewBinding.feedRecyclerView.adapter = feedAdapter
-        viewBinding.feedRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
         viewBinding.bottomAppBar.setOnMenuItemClickListener {
             when(it.itemId) {
@@ -129,29 +107,88 @@ class DiscussionsFragment : Fragment(), OnUserInteractedWithPostCallback {
             }
         }
 
+        viewBinding.feedRecyclerView.adapter = postsAdapter
+        viewBinding.feedRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
 
-    override fun onLiked(postId: Long) {
-        TODO("Not yet implemented")
+    private fun setObservers() {
+        viewModel.profile.observe(viewLifecycleOwner, profileObserver)
+        viewModel.posts.observe(viewLifecycleOwner, postsObserver)
     }
 
-    override fun onUnLiked(postId: Long) {
-        TODO("Not yet implemented")
+    private fun getData() {
+
+        userId?.let { profileId ->
+            viewModel.profileId = profileId
+            viewModel.getProfile()
+            viewModel.getFeed(true)
+        }
     }
 
-    override fun onComment(postId: Long) {
-        TODO("Not yet implemented")
+    private fun setupPostsAdapter() {
+        val markwon = Markwon.builder(requireContext())
+            .usePlugin(object: AbstractMarkwonPlugin() {
+                override fun configureConfiguration(builder: MarkwonConfiguration.Builder) {
+                    builder
+                        .imageDestinationProcessor(
+                            ImageDestinationProcessorRelativeToAbsolute
+                            .create(BuildConfig.backend))
+                }
+            })
+            .usePlugin(PicassoImagesPluginDef.picassoImagePlugin)
+            .usePlugin(LinkifyPlugin.create())
+            .build()
+
+        postsAdapter = PostsRecyclerViewAdapter(markwon,postListingRecyclerViewAdapterWiring, null )
+
     }
 
-    override fun onOpenPost(postId: Long) {
-        TODO("Not yet implemented")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        userId = (requireActivity()).intent.extras?.getInt(ProfileActivity.EXTRA_USER_ID)
     }
 
-    override fun onOptions(postId: Long) {
-        TODO("Not yet implemented")
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        postListingRecyclerViewAdapterWiring = object: PostListingRecyclerViewAdapterWiring(viewModel) {
+            override fun onComment(postId: Long) {
+                val modalBottomSheet = BottomSheetPostComments.getInstance(postId)
+                modalBottomSheet.show(requireActivity().supportFragmentManager, BottomSheetPostComments.TAG)
+            }
+
+            override fun onOpenPost(postId: Long) {
+                PostViewerActivity.startActivity(requireContext(), postId)
+            }
+
+            override fun onOptions(postId: Long) {
+                optionsViewModel.setOptions(Options.postOptions, FeedFragment.CALLER_ID)
+                val modalBottomSheet = BottomSheetPostOptionsFragment()
+                modalBottomSheet.show(requireActivity().supportFragmentManager, BottomSheetPostOptionsFragment.TAG)
+            }
+
+            override fun onProfileClick(userId: Int) {
+                //ProfileActivity.startActivity(requireContext(), userId)
+            }
+        }
     }
 
-    override fun onProfileClick(userId: Int) {
-        TODO("Not yet implemented")
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        viewBinding = FragmentDiscussionsBinding.inflate(inflater)
+
+        return viewBinding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupCollapsingBar()
+        setupPostsAdapter()
+        bind()
+        setObservers()
+        getData()
     }
 }
