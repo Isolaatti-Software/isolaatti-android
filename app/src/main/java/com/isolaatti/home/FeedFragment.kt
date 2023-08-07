@@ -57,6 +57,8 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
     private val viewModel: FeedViewModel by activityViewModels()
     val optionsViewModel: BottomSheetPostOptionsViewModel by activityViewModels()
 
+    private var currentUserId = 0
+
     private lateinit var viewBinding: FragmentFeedBinding
     private lateinit var adapter: PostsRecyclerViewAdapter
 
@@ -101,7 +103,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
         viewBinding.homeDrawer.setNavigationItemSelectedListener {
             when(it.itemId) {
                 R.id.my_profile_menu_item -> {
-                    startActivity(Intent(requireActivity(), ProfileActivity::class.java))
+                    ProfileActivity.startActivity(requireContext(), currentUserId)
                     true
                 }
                 R.id.drafts_menu_item -> {
@@ -168,13 +170,12 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
             textViewName?.text = it.name
             textViewEmail?.text = it.email
+            currentUserId = it.id
         }
 
 
-
-
         viewModel.posts.observe(viewLifecycleOwner){
-            if (it.first != null) {
+            if (it?.first != null) {
                 adapter.updateList(it.first!!, it.second)
             }
         }
@@ -183,9 +184,6 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
             viewBinding.swipeToRefresh.isRefreshing = it
         }
 
-//        viewModel.noMoreContent.observe(viewLifecycleOwner) {
-//
-//        }
 
         viewModel.errorLoading.observe(viewLifecycleOwner) {
             errorViewModel.error.postValue(it)

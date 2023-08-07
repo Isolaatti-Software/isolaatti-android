@@ -17,7 +17,6 @@ import com.isolaatti.databinding.FragmentDiscussionsBinding
 import com.isolaatti.home.FeedFragment
 import com.isolaatti.posting.PostViewerActivity
 import com.isolaatti.posting.comments.presentation.BottomSheetPostComments
-import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
 import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
 import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
@@ -38,7 +37,7 @@ import io.noties.markwon.image.destination.ImageDestinationProcessorRelativeToAb
 import io.noties.markwon.linkify.LinkifyPlugin
 
 @AndroidEntryPoint
-class DiscussionsFragment : Fragment() {
+class ProfileMainFragment : Fragment() {
     lateinit var viewBinding: FragmentDiscussionsBinding
     private val viewModel: ProfileViewModel by viewModels()
     val optionsViewModel: BottomSheetPostOptionsViewModel by activityViewModels()
@@ -62,8 +61,8 @@ class DiscussionsFragment : Fragment() {
         viewBinding.textViewDescription.text = profile.descriptionText
     }
 
-    private val postsObserver: Observer<Pair<FeedDto?, UpdateEvent>> = Observer {
-        if(it.first != null) {
+    private val postsObserver: Observer<Pair<FeedDto?, UpdateEvent>?> = Observer {
+        if(it?.first != null) {
             postsAdapter.updateList(it.first!!, it.second)
         }
 
@@ -96,11 +95,11 @@ class DiscussionsFragment : Fragment() {
         viewBinding.bottomAppBar.setOnMenuItemClickListener {
             when(it.itemId) {
                 R.id.audios_menu_item -> {
-                    findNavController().navigate(DiscussionsFragmentDirections.actionDiscussionsFragmentToAudiosFragment())
+                    findNavController().navigate(ProfileMainFragmentDirections.actionDiscussionsFragmentToAudiosFragment())
                     true
                 }
                 R.id.images_menu_item -> {
-                    findNavController().navigate(DiscussionsFragmentDirections.actionDiscussionsFragmentToImagesFragment())
+                    findNavController().navigate(ProfileMainFragmentDirections.actionDiscussionsFragmentToImagesFragment())
                     true
                 }
                 else -> { false }
@@ -109,11 +108,18 @@ class DiscussionsFragment : Fragment() {
 
         viewBinding.feedRecyclerView.adapter = postsAdapter
         viewBinding.feedRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+        viewBinding.swipeToRefresh.setOnRefreshListener {
+            viewModel.getFeed(true)
+        }
     }
 
     private fun setObservers() {
         viewModel.profile.observe(viewLifecycleOwner, profileObserver)
         viewModel.posts.observe(viewLifecycleOwner, postsObserver)
+        viewModel.loadingPosts.observe(viewLifecycleOwner) {
+            viewBinding.swipeToRefresh.isRefreshing = it
+        }
     }
 
     private fun getData() {

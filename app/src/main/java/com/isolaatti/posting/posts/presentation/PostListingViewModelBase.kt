@@ -22,7 +22,7 @@ abstract class PostListingViewModelBase : ViewModel() {
     @Inject
     lateinit var getProfilePosts: GetProfilePosts
 
-    val posts: MutableLiveData<Pair<FeedDto?, UpdateEvent>> = MutableLiveData()
+    val posts: MutableLiveData<Pair<FeedDto?, UpdateEvent>?> = MutableLiveData()
 
     val loadingPosts = MutableLiveData(false)
 

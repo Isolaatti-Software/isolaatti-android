@@ -44,11 +44,15 @@ class ProfileViewModel @Inject constructor(private val getProfileUseCase: GetPro
 
     override fun getFeed(refresh: Boolean) {
         viewModelScope.launch {
+            if(refresh) {
+                posts.value = Pair(null, UpdateEvent(UpdateEvent.UpdateType.REFRESH, null))
+                getLastId()
+            }
             getProfilePostsUseCase(profileId, getLastId(), false, null).onEach { feedDtoResource ->
                 when (feedDtoResource) {
                     is Resource.Success -> {
                         loadingPosts.postValue(false)
-                        posts.postValue(Pair(posts.value?.first?.concatFeed(feedDtoResource.data) ?: feedDtoResource.data, UpdateEvent(UpdateEvent.UpdateType.PAGE_ADDED, null)))
+                        posts.postValue(Pair(posts.value?.first?.concatFeed(feedDtoResource.data) ?: feedDtoResource.data, UpdateEvent(if(refresh) UpdateEvent.UpdateType.REFRESH else UpdateEvent.UpdateType.PAGE_ADDED, null)))
                         noMoreContent.postValue(feedDtoResource.data?.moreContent == false)
                     }
 
