@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.isolaatti.followers.domain.FollowingState
 import com.isolaatti.posting.posts.data.remote.FeedDto
 import com.isolaatti.posting.posts.data.remote.FeedFilterDto
 import com.isolaatti.posting.posts.presentation.PostListingViewModelBase
@@ -32,11 +33,23 @@ class ProfileViewModel @Inject constructor(private val getProfileUseCase: GetPro
 
     var profileId: Int  = 0
 
+    val followingState: MutableLiveData<FollowingState> = MutableLiveData()
+
     fun getProfile() {
         viewModelScope.launch {
             getProfileUseCase(profileId).onEach {
                 if(it is Resource.Success) {
                     _profile.postValue(it.data!!)
+                    followingState.postValue(
+                        it.data.let {user->
+                            when {
+                                user.followingThisUser && user.thisUserIsFollowingMe -> FollowingState.MutuallyFollowing
+                                user.followingThisUser -> FollowingState.FollowingThisUser
+                                user.thisUserIsFollowingMe -> FollowingState.ThisUserIsFollowingMe
+                                else -> FollowingState.NotMutuallyFollowing
+                            }
+                        }
+                    )
                 }
             }.flowOn(Dispatchers.IO).launchIn(this)
         }

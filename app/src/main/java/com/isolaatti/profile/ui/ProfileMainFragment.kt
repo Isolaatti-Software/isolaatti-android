@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.databinding.FragmentDiscussionsBinding
+import com.isolaatti.followers.domain.FollowingState
 import com.isolaatti.home.FeedFragment
 import com.isolaatti.posting.PostViewerActivity
 import com.isolaatti.posting.comments.presentation.BottomSheetPostComments
@@ -68,6 +69,27 @@ class ProfileMainFragment : Fragment() {
 
     }
 
+    private val followingStateObserver: Observer<FollowingState> = Observer {
+        when(it) {
+            FollowingState.FollowingThisUser -> {
+                viewBinding.textViewFollowingState.setText(R.string.following_user)
+                viewBinding.followButton.setText(R.string.unfollow)
+            }
+            FollowingState.MutuallyFollowing -> {
+                viewBinding.textViewFollowingState.setText(R.string.mutually_following)
+                viewBinding.followButton.setText(R.string.unfollow)
+            }
+            FollowingState.ThisUserIsFollowingMe -> {
+                viewBinding.textViewFollowingState.setText(R.string.following_you)
+                viewBinding.followButton.setText(R.string.follow)
+            }
+            FollowingState.NotMutuallyFollowing -> {
+                viewBinding.textViewFollowingState.text = ""
+                viewBinding.followButton.setText(R.string.follow)
+            }
+        }
+    }
+
     private lateinit var postListingRecyclerViewAdapterWiring: PostListingRecyclerViewAdapterWiring
 
 
@@ -117,6 +139,7 @@ class ProfileMainFragment : Fragment() {
     private fun setObservers() {
         viewModel.profile.observe(viewLifecycleOwner, profileObserver)
         viewModel.posts.observe(viewLifecycleOwner, postsObserver)
+        viewModel.followingState.observe(viewLifecycleOwner, followingStateObserver)
         viewModel.loadingPosts.observe(viewLifecycleOwner) {
             viewBinding.swipeToRefresh.isRefreshing = it
         }
