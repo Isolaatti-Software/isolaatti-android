@@ -5,12 +5,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.content.res.ResourcesCompat.ThemeCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.R.color.m3_icon_button_icon_color_selector
+import com.google.android.material.button.MaterialButton
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.databinding.FragmentDiscussionsBinding
@@ -51,7 +55,6 @@ class ProfileMainFragment : Fragment() {
     private var scrollRange = -1
     private var isShow = false
 
-
     private val profileObserver = Observer<UserProfileDto> { profile ->
         Picasso.get()
             .load(UrlGen.userProfileImage(profile.id))
@@ -60,6 +63,12 @@ class ProfileMainFragment : Fragment() {
         title = profile.name
         viewBinding.textViewUsername.text = profile.name
         viewBinding.textViewDescription.text = profile.descriptionText
+
+        viewBinding.goToFollowersBtn.text = getString(
+            R.string.go_to_followers_btn_text,
+            profile.numberOfFollowers.toString(),
+            profile.numberOfFollowing.toString()
+        )
     }
 
     private val postsObserver: Observer<Pair<FeedDto?, UpdateEvent>?> = Observer {
@@ -74,18 +83,22 @@ class ProfileMainFragment : Fragment() {
             FollowingState.FollowingThisUser -> {
                 viewBinding.textViewFollowingState.setText(R.string.following_user)
                 viewBinding.followButton.setText(R.string.unfollow)
+                viewBinding.followButton.isChecked = true
             }
             FollowingState.MutuallyFollowing -> {
                 viewBinding.textViewFollowingState.setText(R.string.mutually_following)
                 viewBinding.followButton.setText(R.string.unfollow)
+                viewBinding.followButton.isChecked = true
             }
             FollowingState.ThisUserIsFollowingMe -> {
                 viewBinding.textViewFollowingState.setText(R.string.following_you)
                 viewBinding.followButton.setText(R.string.follow)
+                viewBinding.followButton.isChecked = false
             }
             FollowingState.NotMutuallyFollowing -> {
                 viewBinding.textViewFollowingState.text = ""
                 viewBinding.followButton.setText(R.string.follow)
+                viewBinding.followButton.isChecked = false
             }
         }
     }
@@ -126,6 +139,10 @@ class ProfileMainFragment : Fragment() {
                 }
                 else -> { false }
             }
+        }
+
+        viewBinding.goToFollowersBtn.setOnClickListener {
+            findNavController().navigate(ProfileMainFragmentDirections.actionDiscussionsFragmentToMainFollowersFragment())
         }
 
         viewBinding.feedRecyclerView.adapter = postsAdapter
@@ -191,7 +208,7 @@ class ProfileMainFragment : Fragment() {
             }
 
             override fun onOptions(postId: Long) {
-                optionsViewModel.setOptions(Options.postOptions, FeedFragment.CALLER_ID)
+                optionsViewModel.setOptions(Options.myPostOptions, FeedFragment.CALLER_ID)
                 val modalBottomSheet = BottomSheetPostOptionsFragment()
                 modalBottomSheet.show(requireActivity().supportFragmentManager, BottomSheetPostOptionsFragment.TAG)
             }

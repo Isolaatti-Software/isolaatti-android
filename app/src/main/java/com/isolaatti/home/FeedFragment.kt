@@ -3,7 +3,6 @@ package com.isolaatti.home
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +13,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.isolaatti.BuildConfig
@@ -31,7 +29,6 @@ import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
 import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
 import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
-import com.isolaatti.posting.posts.presentation.UpdateEvent
 import com.isolaatti.posting.posts.ui.CreatePostActivity
 import com.isolaatti.profile.ui.ProfileActivity
 import com.isolaatti.settings.ui.SettingsActivity
@@ -201,7 +198,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
     override fun onUnLiked(postId: Long) = viewModel.unLikePost(postId)
 
     override fun onOptions(postId: Long) {
-        optionsViewModel.setOptions(Options.postOptions, CALLER_ID)
+        optionsViewModel.setOptions(Options.myPostOptions, CALLER_ID)
         val modalBottomSheet = BottomSheetPostOptionsFragment()
         modalBottomSheet.show(requireActivity().supportFragmentManager, BottomSheetPostOptionsFragment.TAG)
     }

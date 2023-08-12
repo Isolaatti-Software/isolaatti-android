@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -12,9 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.dialog.MaterialDialogs
-import com.isolaatti.R
 import com.isolaatti.databinding.BottomSheetPostCommentsBinding
 import com.isolaatti.posting.common.domain.OnUserInteractedCallback
 import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
@@ -120,7 +116,7 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
 
 
     override fun onOptions(postId: Long) {
-        optionsViewModel.setOptions(Options.commentOptions, CALLER_ID)
+        optionsViewModel.setOptions(Options.myCommentOptions, CALLER_ID)
         val fragment = BottomSheetPostOptionsFragment()
         fragment.show(parentFragmentManager, BottomSheetPostOptionsFragment.TAG)
     }

@@ -51,6 +51,7 @@
     <string name="report_profile">Report profile</string>
     <string name="block_profile">Block profile</string>
     <string name="sort">Sort</string>
+
     <string name="followers">Followers</string>
     <string name="followings">Following</string>
     <string name="following_user">Following</string>
@@ -59,4 +60,7 @@
     <string name="user_link">User link</string>
     <string name="follow">Follow</string>
     <string name="unfollow">Unfollow</string>
+    <string name="go_to_followers_btn_text">Followers: %s Following: %s</string>
+    <string name="thousand_suffix">K</string>
+    <string name="million_suffix">M</string>
 </resources>

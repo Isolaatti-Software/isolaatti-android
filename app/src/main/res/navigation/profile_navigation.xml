@@ -49,6 +49,6 @@
         android:label="UserLinkFragment" />
     <fragment
         android:id="@+id/mainFollowersFragment"
-        android:name="com.isolaatti.profile.ui.MainFollowersFragment"
+        android:name="com.isolaatti.followers.ui.MainFollowersFragment"
         android:label="MainFollowersFragment" />
 </navigation>
