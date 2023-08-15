@@ -59,7 +59,12 @@
                     android:layout_height="match_parent" />
 
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/loading_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:layout_gravity="bottom"/>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <com.google.android.material.navigation.NavigationView

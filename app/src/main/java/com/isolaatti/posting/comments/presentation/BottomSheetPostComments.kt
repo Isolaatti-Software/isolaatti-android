@@ -124,4 +124,8 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
     override fun onProfileClick(userId: Int) {
         ProfileActivity.startActivity(requireContext(), userId)
     }
+
+    override fun onLoadMore() {
+        TODO("Not yet implemented")
+    }
 }

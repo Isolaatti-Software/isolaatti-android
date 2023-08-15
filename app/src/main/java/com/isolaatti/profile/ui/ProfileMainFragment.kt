@@ -74,6 +74,7 @@ class ProfileMainFragment : Fragment() {
     private val postsObserver: Observer<Pair<FeedDto?, UpdateEvent>?> = Observer {
         if(it?.first != null) {
             postsAdapter.updateList(it.first!!, it.second)
+            postsAdapter.newContentRequestFinished()
         }
 
     }
@@ -121,6 +122,10 @@ class ProfileMainFragment : Fragment() {
 
     private fun bind() {
 
+        if(userId == null) {
+            return
+        }
+
 
         viewBinding.topAppBar.setNavigationOnClickListener {
             findNavController().popBackStack()
@@ -142,7 +147,7 @@ class ProfileMainFragment : Fragment() {
         }
 
         viewBinding.goToFollowersBtn.setOnClickListener {
-            findNavController().navigate(ProfileMainFragmentDirections.actionDiscussionsFragmentToMainFollowersFragment())
+            findNavController().navigate(ProfileMainFragmentDirections.actionDiscussionsFragmentToMainFollowersFragment(userId!!))
         }
 
         viewBinding.feedRecyclerView.adapter = postsAdapter
@@ -158,7 +163,7 @@ class ProfileMainFragment : Fragment() {
         viewModel.posts.observe(viewLifecycleOwner, postsObserver)
         viewModel.followingState.observe(viewLifecycleOwner, followingStateObserver)
         viewModel.loadingPosts.observe(viewLifecycleOwner) {
-            viewBinding.swipeToRefresh.isRefreshing = it
+            viewBinding.loadingIndicator.visibility = if(it) View.VISIBLE else View.GONE
         }
     }
 
@@ -215,6 +220,10 @@ class ProfileMainFragment : Fragment() {
 
             override fun onProfileClick(userId: Int) {
                 //ProfileActivity.startActivity(requireContext(), userId)
+            }
+
+            override fun onLoadMore() {
+                viewModel.getFeed(false)
             }
         }
     }

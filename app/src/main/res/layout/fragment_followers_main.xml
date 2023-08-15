@@ -9,6 +9,7 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:title="@string/people"
             app:navigationIcon="@drawable/baseline_arrow_back_24"
             app:navigationIconTint="@color/on_surface"/>
         <com.google.android.material.tabs.TabLayout

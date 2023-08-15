@@ -40,13 +40,15 @@ class FeedViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> {
-                        loadingPosts.postValue(true)
+                        if(!refresh)
+                            loadingPosts.postValue(true)
                     }
 
                     is Resource.Error -> {
                         errorLoading.postValue(feedDtoResource.errorType)
                     }
                 }
+                isLoadingFromScrolling = false
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }

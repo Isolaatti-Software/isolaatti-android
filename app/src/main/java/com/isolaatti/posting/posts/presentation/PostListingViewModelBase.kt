@@ -29,6 +29,7 @@ abstract class PostListingViewModelBase : ViewModel() {
     val noMoreContent = MutableLiveData(false)
 
     val errorLoading: MutableLiveData<Resource.Error.ErrorType?> = MutableLiveData()
+    var isLoadingFromScrolling = false
 
     fun getLastId(): Long = try { posts.value?.first?.data?.last()?.post?.id ?: 0 } catch (e: NoSuchElementException) { 0 }
 

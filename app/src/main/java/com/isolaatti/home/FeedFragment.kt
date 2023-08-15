@@ -15,6 +15,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.common.ErrorMessageViewModel
@@ -131,18 +132,12 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
         viewBinding.feedRecyclerView.adapter = adapter
         viewBinding.feedRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-//        viewBinding.refreshButton.setOnClickListener {
-//            viewModel.getFeed(refresh = true)
-//        }
 
         viewBinding.swipeToRefresh.setOnRefreshListener {
             viewModel.getFeed(refresh = true)
             viewBinding.swipeToRefresh.isRefreshing = false
         }
 
-//        viewBinding.loadMoreButton.setOnClickListener {
-//            viewModel.getFeed(refresh = false)
-//        }
 
         viewBinding.topAppBar.setOnMenuItemClickListener {
             when(it.itemId) {
@@ -174,11 +169,12 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
         viewModel.posts.observe(viewLifecycleOwner){
             if (it?.first != null) {
                 adapter.updateList(it.first!!, it.second)
+                adapter.newContentRequestFinished()
             }
         }
 
         viewModel.loadingPosts.observe(viewLifecycleOwner) {
-            viewBinding.swipeToRefresh.isRefreshing = it
+            viewBinding.loadingIndicator.visibility = if(it) View.VISIBLE else View.GONE
         }
 
 
@@ -214,5 +210,9 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
     override fun onProfileClick(userId: Int) {
         ProfileActivity.startActivity(requireContext(), userId)
+    }
+
+    override fun onLoadMore() {
+        viewModel.getFeed(false)
     }
 }

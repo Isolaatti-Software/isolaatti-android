@@ -167,7 +167,23 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {}
 
+    private var requestedNewContent = false
+
+    /**
+     * Call this method when new content has been added on onLoadMore() callback
+     */
+    fun newContentRequestFinished() {
+        requestedNewContent = false
+    }
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int, payloads: List<Any>) {
         holder.bindView(feedDto?.data?.get(position) ?: return, payloads)
+        val totalItems = feedDto?.data?.size
+        if(totalItems != null && totalItems > 0 && !requestedNewContent) {
+            if(position == totalItems - 1) {
+                requestedNewContent = true
+                callback.onLoadMore()
+            }
+        }
+
     }
 }

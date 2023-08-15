@@ -32,6 +32,10 @@ class MainFollowersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        arguments?.getInt(ARGUMENT_USER_ID)?.let {
+            viewModel.userId = it
+        }
+
         binding.viewPagerFollowersMain.adapter = FollowersViewPagerAdapter(this)
         TabLayoutMediator(binding.tabLayoutFollowers, binding.viewPagerFollowersMain) { tab, position ->
             when(position) {
@@ -39,5 +43,9 @@ class MainFollowersFragment : Fragment() {
                 1 -> tab.text = getText(R.string.followings)
             }
         }.attach()
+    }
+
+    companion object {
+        const val ARGUMENT_USER_ID = "userId"
     }
 }

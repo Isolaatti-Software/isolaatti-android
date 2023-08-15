@@ -25,7 +25,9 @@
             app:destination="@id/userLinkFragment" />
         <action
             android:id="@+id/action_discussionsFragment_to_mainFollowersFragment"
-            app:destination="@id/mainFollowersFragment" />
+            app:destination="@id/mainFollowersFragment">
+
+        </action>
     </fragment>
     <fragment
         android:id="@+id/audiosFragment"
@@ -50,5 +52,9 @@
     <fragment
         android:id="@+id/mainFollowersFragment"
         android:name="com.isolaatti.followers.ui.MainFollowersFragment"
-        android:label="MainFollowersFragment" />
+        android:label="MainFollowersFragment">
+        <argument
+            android:name="userId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

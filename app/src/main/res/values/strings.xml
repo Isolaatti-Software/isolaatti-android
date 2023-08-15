@@ -63,4 +63,5 @@
     <string name="go_to_followers_btn_text">Followers: %s Following: %s</string>
     <string name="thousand_suffix">K</string>
     <string name="million_suffix">M</string>
+    <string name="people">People</string>
 </resources>
