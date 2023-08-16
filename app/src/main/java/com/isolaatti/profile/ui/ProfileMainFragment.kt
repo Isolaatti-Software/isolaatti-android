@@ -5,16 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.content.res.ResourcesCompat.ThemeCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.R.color.m3_icon_button_icon_color_selector
-import com.google.android.material.button.MaterialButton
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.databinding.FragmentDiscussionsBinding
@@ -164,6 +160,9 @@ class ProfileMainFragment : Fragment() {
         viewModel.followingState.observe(viewLifecycleOwner, followingStateObserver)
         viewModel.loadingPosts.observe(viewLifecycleOwner) {
             viewBinding.loadingIndicator.visibility = if(it) View.VISIBLE else View.GONE
+            if(!it) {
+                viewBinding.swipeToRefresh.isRefreshing = false
+            }
         }
     }
 

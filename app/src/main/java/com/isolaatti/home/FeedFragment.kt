@@ -135,7 +135,6 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
         viewBinding.swipeToRefresh.setOnRefreshListener {
             viewModel.getFeed(refresh = true)
-            viewBinding.swipeToRefresh.isRefreshing = false
         }
 
 
@@ -175,6 +174,9 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
         viewModel.loadingPosts.observe(viewLifecycleOwner) {
             viewBinding.loadingIndicator.visibility = if(it) View.VISIBLE else View.GONE
+            if(!it) {
+                viewBinding.swipeToRefresh.isRefreshing = false
+            }
         }
 
 

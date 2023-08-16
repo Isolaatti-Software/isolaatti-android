@@ -120,6 +120,8 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
 
         return FeedViewHolder(view)
     }
+
+    var previousSize = 0
     override fun getItemCount(): Int = feedDto?.data?.size ?: 0
 
 
@@ -137,6 +139,7 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
         val postUpdated = feedDto?.data?.find { p -> p.post.id == updateEvent.affectedId }
         val position = feedDto?.data?.indexOf(postUpdated)
 
+        previousSize = itemCount
         feedDto = updatedFeed
 
         when(updateEvent.updateType) {
@@ -157,7 +160,7 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
             }
 
             UpdateEvent.UpdateType.PAGE_ADDED -> {
-                notifyItemInserted(itemCount - 1)
+                notifyItemInserted(previousSize)
             }
             UpdateEvent.UpdateType.REFRESH -> {
                 notifyDataSetChanged()

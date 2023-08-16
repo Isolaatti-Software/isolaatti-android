@@ -12,6 +12,7 @@ import com.isolaatti.common.UserListRecyclerViewAdapter
 import com.isolaatti.databinding.FragmentFollowersBinding
 import com.isolaatti.followers.presentation.FollowersViewModel
 import com.isolaatti.profile.domain.entity.ProfileListItem
+import com.isolaatti.profile.ui.ProfileActivity
 
 class FollowingFragment : Fragment(), UserItemCallback {
     private lateinit var binding: FragmentFollowersBinding
@@ -48,7 +49,7 @@ class FollowingFragment : Fragment(), UserItemCallback {
     }
 
     override fun itemClick(userId: Int) {
-
+        ProfileActivity.startActivity(requireContext(), userId)
     }
 
     override fun followButtonClick(user: ProfileListItem, action: UserItemCallback.FollowButtonAction) {
