@@ -36,6 +36,7 @@
                     android:layout_height="match_parent"
                     app:title="@string/app_name"
                     app:titleCentered="true"
+                    app:titleTextAppearance="@style/toolbar_text"
                     app:menu="@menu/new_menu"
                     tools:layout_conversion_absoluteHeight="64dp"
                     tools:layout_conversion_absoluteWidth="531dp"

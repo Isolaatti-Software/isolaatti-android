@@ -124,9 +124,8 @@ class ProfileMainFragment : Fragment() {
 
 
         viewBinding.topAppBar.setNavigationOnClickListener {
-            findNavController().popBackStack()
+            requireActivity().finish()
         }
-
 
         viewBinding.bottomAppBar.setOnMenuItemClickListener {
             when(it.itemId) {

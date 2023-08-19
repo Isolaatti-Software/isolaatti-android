@@ -30,6 +30,7 @@
                     app:navigationIconTint="@color/on_surface"
                     app:menu="@menu/new_menu"
                     app:title="@string/app_name"
+                    app:titleTextAppearance="@style/toolbar_text"
                     app:titleCentered="true" />
 
 
