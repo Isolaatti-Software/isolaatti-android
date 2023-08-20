@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/picture_viewer_navigation"
+    app:startDestination="@id/pictureViewerMainFragment">
+
+    <fragment
+        android:id="@+id/pictureViewerMainFragment"
+        android:name="com.isolaatti.picture_viewer.ui.PictureViewerMainFragment"
+        android:label="PictureViewerMainFragment" />
+</navigation>

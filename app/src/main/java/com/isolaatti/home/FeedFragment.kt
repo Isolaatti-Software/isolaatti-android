@@ -23,6 +23,7 @@ import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentFeedBinding
 import com.isolaatti.drafts.ui.DraftsActivity
 import com.isolaatti.home.presentation.FeedViewModel
+import com.isolaatti.picture_viewer.ui.PictureViewerActivity
 import com.isolaatti.posting.PostViewerActivity
 import com.isolaatti.posting.comments.presentation.BottomSheetPostComments
 import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
@@ -163,6 +164,9 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
             val textViewEmail: TextView? = header?.findViewById(R.id.textViewEmail)
 
             Picasso.get().load(UrlGen.userProfileImage(it.id)).into(image)
+            image?.setOnClickListener {_ ->
+                PictureViewerActivity.startActivityWithUrls(requireContext(), arrayOf(UrlGen.userProfileImageFullQuality(it.id)))
+            }
 
             textViewName?.text = it.name
             textViewEmail?.text = it.email
