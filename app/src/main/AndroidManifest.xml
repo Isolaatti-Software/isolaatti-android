@@ -32,6 +32,7 @@
         <activity android:name=".posting.posts.ui.CreatePostActivity" android:theme="@style/Theme.Isolaatti" android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".posting.PostViewerActivity" android:theme="@style/Theme.Isolaatti"/>
         <activity android:name=".drafts.ui.DraftsActivity" android:theme="@style/Theme.Isolaatti"/>
+        <activity android:name=".about.AboutActivity" android:theme="@style/Theme.Isolaatti"/>
     </application>
 <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

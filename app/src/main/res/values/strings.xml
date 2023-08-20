@@ -64,4 +64,5 @@
     <string name="thousand_suffix">K</string>
     <string name="million_suffix">M</string>
     <string name="people">People</string>
+    <string name="about">About</string>
 </resources>

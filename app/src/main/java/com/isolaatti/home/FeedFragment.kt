@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
+import com.isolaatti.about.AboutActivity
 import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentFeedBinding
 import com.isolaatti.drafts.ui.DraftsActivity
@@ -110,6 +111,10 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
                 }
                 R.id.settings_menu_item -> {
                     startActivity(Intent(requireActivity(), SettingsActivity::class.java))
+                    true
+                }
+                R.id.about_menu_item -> {
+                    startActivity(Intent(requireActivity(), AboutActivity::class.java))
                     true
                 }
                 else -> {true}

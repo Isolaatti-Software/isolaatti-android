@@ -17,4 +17,8 @@
         android:id="@+id/settings_menu_item"
         android:icon="@drawable/baseline_settings_24"
         android:title="Settings" />
+    <item
+        android:id="@+id/about_menu_item"
+        android:icon="@drawable/baseline_info_24"
+        android:title="@string/about"/>
 </menu>
