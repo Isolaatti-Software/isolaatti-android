@@ -111,4 +111,23 @@ class PostsRepositoryImpl @Inject constructor(private val feedsApi: FeedsApi, pr
             emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }
     }
+
+    override fun loadPost(postId: Long): Flow<Resource<FeedDto.PostDto>> = flow {
+        emit(Resource.Loading())
+        try {
+            val result = postApi.getPost(postId).execute()
+            if(result.isSuccessful) {
+                emit(Resource.Success(result.body()))
+                return@flow
+            }
+            when(result.code()) {
+                401 -> emit(Resource.Error(Resource.Error.ErrorType.AuthError))
+                404 -> emit(Resource.Error(Resource.Error.ErrorType.NotFoundError))
+                500 -> emit(Resource.Error(Resource.Error.ErrorType.ServerError))
+                else -> emit(Resource.Error(Resource.Error.ErrorType.OtherError))
+            }
+        } catch(_: Exception) {
+            emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
+        }
+    }
 }

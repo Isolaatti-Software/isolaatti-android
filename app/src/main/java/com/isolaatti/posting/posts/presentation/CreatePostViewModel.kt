@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.isolaatti.posting.posts.data.remote.CreatePostDto
 import com.isolaatti.posting.posts.data.remote.EditPostDto
+import com.isolaatti.posting.posts.data.remote.EditPostDto.Companion.PRIVACY_ISOLAATTI
 import com.isolaatti.posting.posts.data.remote.FeedDto
 import com.isolaatti.posting.posts.domain.use_case.EditPost
+import com.isolaatti.posting.posts.domain.use_case.LoadSinglePost
 import com.isolaatti.posting.posts.domain.use_case.MakePost
 import com.isolaatti.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,11 +20,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CreatePostViewModel @Inject constructor(private val makePost: MakePost, private val editPost: EditPost) : ViewModel() {
+class CreatePostViewModel @Inject constructor(private val makePost: MakePost, private val editPost: EditPost, private val loadPost: LoadSinglePost) : ViewModel() {
     val validation: MutableLiveData<Boolean> = MutableLiveData(false)
     val posted: MutableLiveData<FeedDto.PostDto?> = MutableLiveData()
     val error: MutableLiveData<Resource.Error.ErrorType?> = MutableLiveData()
     val loading: MutableLiveData<Boolean> = MutableLiveData(false)
+    val postToEdit: MutableLiveData<EditPostDto> = MutableLiveData()
 
     fun postDiscussion(content: String) {
         viewModelScope.launch {
@@ -58,6 +61,18 @@ class CreatePostViewModel @Inject constructor(private val makePost: MakePost, pr
                     }
                     is Resource.Loading -> {
                         loading.postValue(true)
+                    }
+                }
+            }.flowOn(Dispatchers.IO).launchIn(this)
+        }
+    }
+
+    fun loadDiscussion(postId: Long) {
+        viewModelScope.launch {
+            loadPost(postId).onEach { postRes ->
+                if(postRes is Resource.Success) {
+                    postRes.data?.let {
+                        postToEdit.postValue(EditPostDto(PRIVACY_ISOLAATTI, content = it.post.textContent, postId = it.post.id))
                     }
                 }
             }.flowOn(Dispatchers.IO).launchIn(this)

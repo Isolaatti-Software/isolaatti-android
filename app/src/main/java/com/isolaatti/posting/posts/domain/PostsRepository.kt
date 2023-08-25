@@ -17,4 +17,5 @@ interface PostsRepository {
     fun makePost(createPostDto: CreatePostDto): Flow<Resource<FeedDto.PostDto>>
     fun editPost(editPostDto: EditPostDto): Flow<Resource<FeedDto.PostDto>>
     fun deletePost(postId: Long): Flow<Resource<PostDeletedDto>>
+    fun loadPost(postId: Long): Flow<Resource<FeedDto.PostDto>>
 }

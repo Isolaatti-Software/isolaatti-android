@@ -3,8 +3,8 @@ package com.isolaatti.posting.posts.data.remote
 data class EditPostDto(
     val privacy: Int,
     val content: String,
-    val audioId: String?,
-    val squadId: String?,
+    val audioId: String? = null,
+    val squadId: String? = null,
     val postId: Long
 ) {
     companion object {

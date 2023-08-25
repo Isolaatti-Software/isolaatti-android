@@ -93,4 +93,8 @@ abstract class PostListingViewModelBase : ViewModel() {
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }
+
+    fun onPostUpdate(post: FeedDto.PostDto) {
+
+    }
 }

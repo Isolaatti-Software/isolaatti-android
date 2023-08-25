@@ -1,14 +1,10 @@
 package com.isolaatti.posting.posts.ui
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.View
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doOnTextChanged
 import com.isolaatti.R
 import com.isolaatti.common.IsolaattiBaseActivity
@@ -32,14 +28,6 @@ class CreatePostActivity : IsolaattiBaseActivity() {
         const val EXTRA_KEY_POST_ID = "postId"
 
         const val EXTRA_KEY_POST_POSTED = "post"
-
-        fun startActivityEditMode(context: Context, postId: Long) {
-            val intent = Intent(context, CreatePostActivity::class.java).apply {
-                putExtra(EXTRA_KEY_MODE, EXTRA_MODE_EDIT)
-                putExtra(EXTRA_KEY_POST_ID, postId)
-            }
-            context.startActivity(intent)
-        }
     }
 
     lateinit var binding: ActivityCreatePostBinding
@@ -64,6 +52,10 @@ class CreatePostActivity : IsolaattiBaseActivity() {
 
 
         binding = ActivityCreatePostBinding.inflate(layoutInflater)
+
+        if(mode == EXTRA_MODE_EDIT && postId != 0L) {
+            viewModel.loadDiscussion(postId)
+        }
 
 
 
@@ -116,6 +108,10 @@ class CreatePostActivity : IsolaattiBaseActivity() {
 
         viewModel.loading.observe(this@CreatePostActivity) {
             binding.progressBarLoading.visibility = if(it) View.VISIBLE else View.GONE
+        }
+
+        viewModel.postToEdit.observe(this) {
+            binding.filledTextField.editText?.setText(it.content)
         }
     }
 

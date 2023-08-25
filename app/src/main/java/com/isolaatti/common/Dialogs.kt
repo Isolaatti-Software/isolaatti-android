@@ -11,5 +11,6 @@ object Dialogs {
             .setMessage(R.string.post_will_dropped)
             .setPositiveButton(R.string.yes_continue) {_, _ -> onContinue(true)}
             .setNegativeButton(R.string.cancel) { _, _ -> onContinue(false)}
+            .setOnCancelListener { onContinue(false) }
     }
 }

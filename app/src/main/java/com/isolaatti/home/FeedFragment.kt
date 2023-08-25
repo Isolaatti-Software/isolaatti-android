@@ -1,6 +1,5 @@
 package com.isolaatti.home
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -31,8 +29,9 @@ import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
 import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
 import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
+import com.isolaatti.posting.posts.presentation.CreatePostContract
+import com.isolaatti.posting.posts.presentation.EditPostContract
 import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
-import com.isolaatti.posting.posts.ui.CreatePostActivity
 import com.isolaatti.profile.ui.ProfileActivity
 import com.isolaatti.settings.ui.SettingsActivity
 import com.isolaatti.utils.PicassoImagesPluginDef
@@ -62,11 +61,23 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
     private lateinit var viewBinding: FragmentFeedBinding
     private lateinit var adapter: PostsRecyclerViewAdapter
 
-    private val createDiscussion = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if(it.resultCode == Activity.RESULT_OK) {
+    // region launchers
+
+    private val createDiscussion = registerForActivityResult(CreatePostContract()) {
+        if(it != null) {
             Toast.makeText(requireContext(), R.string.posted_successfully, Toast.LENGTH_SHORT).show()
         }
     }
+
+    private val editDiscussion = registerForActivityResult(EditPostContract()) {
+        if(it != null) {
+            viewModel.onPostUpdate(it)
+        }
+    }
+
+    // endregion
+
+    // region observers
 
     val optionsObserver: Observer<OptionClicked?> = Observer { optionClicked ->
         if(optionClicked?.callerId == CALLER_ID) {
@@ -84,7 +95,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
                 }
                 Options.Option.OPTION_EDIT -> {
                     optionsViewModel.handle()
-                    CreatePostActivity.startActivityEditMode(requireContext(), postId)
+                    editDiscussion.launch(postId)
                 }
                 Options.Option.OPTION_REPORT -> {
 
@@ -93,6 +104,9 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
         }
     }
 
+    // endregion
+
+    // region lifecycle
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -102,6 +116,9 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
         return viewBinding.root
     }
 
+    // endregion
+
+    // region events
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewBinding.topAppBar.setNavigationOnClickListener {
@@ -156,7 +173,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
         viewBinding.topAppBar.setOnMenuItemClickListener {
             when(it.itemId) {
                 R.id.menu_item_new_discussion -> {
-                    createDiscussion.launch(Intent(requireContext(),CreatePostActivity::class.java))
+                    createDiscussion.launch(Unit)
                     true
                 }
                 else -> {
@@ -232,4 +249,6 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
     override fun onLoadMore() {
         viewModel.getFeed(false)
     }
+
+    // endregion
 }
