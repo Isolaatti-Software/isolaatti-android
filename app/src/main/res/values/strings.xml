@@ -65,4 +65,7 @@
     <string name="million_suffix">M</string>
     <string name="people">People</string>
     <string name="about">About</string>
+    <string name="post_will_dropped">This discussion and all related content will be dropped. Continue?</string>
+    <string name="yes_continue">Yes, delete</string>
+    <string name="cancel">Cancel</string>
 </resources>

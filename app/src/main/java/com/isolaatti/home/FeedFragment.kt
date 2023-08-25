@@ -15,10 +15,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.about.AboutActivity
+import com.isolaatti.common.Dialogs
 import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentFeedBinding
 import com.isolaatti.drafts.ui.DraftsActivity
@@ -68,14 +68,23 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
         }
     }
 
-    val optionsObserver: Observer<OptionClicked> = Observer {
-        if(it.callerId == CALLER_ID) {
-            when(it.optionId) {
+    val optionsObserver: Observer<OptionClicked?> = Observer { optionClicked ->
+        if(optionClicked?.callerId == CALLER_ID) {
+            // post id should come as payload
+            val postId = optionClicked.payload as? Long ?: return@Observer
+            when(optionClicked.optionId) {
                 Options.Option.OPTION_DELETE -> {
+                    Dialogs.buildDeletePostDialog(requireContext()) { delete ->
+                        optionsViewModel.handle()
+                        if(delete) {
+                            viewModel.deletePost(postId)
+                        }
+                    }.show()
 
                 }
                 Options.Option.OPTION_EDIT -> {
-
+                    optionsViewModel.handle()
+                    CreatePostActivity.startActivityEditMode(requireContext(), postId)
                 }
                 Options.Option.OPTION_REPORT -> {
 
@@ -197,15 +206,12 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
         optionsViewModel.optionClicked.observe(viewLifecycleOwner, optionsObserver)
     }
 
-    fun onNewMenuItemClicked(v: View) {
-
-    }
     override fun onLiked(postId: Long) = viewModel.likePost(postId)
 
     override fun onUnLiked(postId: Long) = viewModel.unLikePost(postId)
 
     override fun onOptions(postId: Long) {
-        optionsViewModel.setOptions(Options.myPostOptions, CALLER_ID)
+        optionsViewModel.setOptions(Options.myPostOptions, CALLER_ID, postId)
         val modalBottomSheet = BottomSheetPostOptionsFragment()
         modalBottomSheet.show(requireActivity().supportFragmentManager, BottomSheetPostOptionsFragment.TAG)
     }

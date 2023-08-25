@@ -12,16 +12,24 @@ class BottomSheetPostOptionsViewModel : ViewModel() {
 
     private var _callerId: Int = 0
 
-    private val _optionClicked: MutableLiveData<OptionClicked> = MutableLiveData()
-    val optionClicked: LiveData<OptionClicked> get() = _optionClicked
+    private val _optionClicked: MutableLiveData<OptionClicked?> = MutableLiveData()
+    val optionClicked: LiveData<OptionClicked?> get() = _optionClicked
 
-    fun setOptions(options: Options, callerId: Int) {
+    private var _payload: Any? = null
+
+    fun handle() {
+        _optionClicked.postValue(null)
+    }
+
+    fun setOptions(options: Options, callerId: Int, payload: Any? = null) {
         _options.postValue(options)
         _callerId = callerId
+        _payload = payload
+
     }
 
     fun optionClicked(optionId: Int) {
-        _optionClicked.postValue(OptionClicked(optionId, _callerId))
+        _optionClicked.postValue(OptionClicked(optionId, _callerId, _payload))
     }
 
 }

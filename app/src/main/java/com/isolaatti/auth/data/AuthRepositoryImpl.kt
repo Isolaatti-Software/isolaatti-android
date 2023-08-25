@@ -1,7 +1,7 @@
 package com.isolaatti.auth.data
 
-import com.isolaatti.auth.data.local.KeyValueDao
-import com.isolaatti.auth.data.local.KeyValueEntity
+import com.isolaatti.settings.data.KeyValueDao
+import com.isolaatti.settings.data.KeyValueEntity
 import com.isolaatti.auth.data.remote.AuthTokenDto
 import com.isolaatti.auth.data.local.TokenStorage
 import com.isolaatti.auth.data.remote.AuthApi

@@ -1,6 +1,7 @@
 package com.isolaatti.posting.posts.ui
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -31,6 +32,14 @@ class CreatePostActivity : IsolaattiBaseActivity() {
         const val EXTRA_KEY_POST_ID = "postId"
 
         const val EXTRA_KEY_POST_POSTED = "post"
+
+        fun startActivityEditMode(context: Context, postId: Long) {
+            val intent = Intent(context, CreatePostActivity::class.java).apply {
+                putExtra(EXTRA_KEY_MODE, EXTRA_MODE_EDIT)
+                putExtra(EXTRA_KEY_POST_ID, postId)
+            }
+            context.startActivity(intent)
+        }
     }
 
     lateinit var binding: ActivityCreatePostBinding

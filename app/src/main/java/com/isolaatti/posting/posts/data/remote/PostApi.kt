@@ -12,6 +12,6 @@ interface PostApi  {
     fun editPost(@Body editedPost: EditPostDto): Call<FeedDto.PostDto>
 
     @POST("Posting/Delete")
-    fun deletePost(@Body postToDelete: DeletePostDto): Call<Any>
+    fun deletePost(@Body postToDelete: DeletePostDto): Call<PostDeletedDto>
 
 }

@@ -136,8 +136,8 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
             notifyDataSetChanged()
             return
         }
-        val postUpdated = feedDto?.data?.find { p -> p.post.id == updateEvent.affectedId }
-        val position = feedDto?.data?.indexOf(postUpdated)
+        val postUpdated = updateEvent.affectedPosition?.let { feedDto?.data?.get(it) }
+        val position = updateEvent.affectedPosition
 
         previousSize = itemCount
         feedDto = updatedFeed

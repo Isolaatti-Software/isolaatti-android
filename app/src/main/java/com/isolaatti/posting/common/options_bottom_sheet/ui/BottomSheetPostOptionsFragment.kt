@@ -1,6 +1,7 @@
 package com.isolaatti.posting.common.options_bottom_sheet.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,13 +40,15 @@ class BottomSheetPostOptionsFragment : BottomSheetDialogFragment(), OptionsRecyc
 
 
         viewModel.options.observe(viewLifecycleOwner) {
+            Log.d("BottomSheetPostOptionsFragment", "entra")
             renderOptions(it)
         }
 
         viewModel.optionClicked.observe(viewLifecycleOwner) {
-            if(it.optionId > -1) {
+            if(it != null) {
                 (dialog as BottomSheetDialog).dismiss()
             }
+
 
         }
     }

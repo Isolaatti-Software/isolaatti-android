@@ -1,6 +1,6 @@
 package com.isolaatti.posting.posts.presentation
 
-data class UpdateEvent(val updateType: UpdateType, val affectedId: Long?) {
+data class UpdateEvent(val updateType: UpdateType, val affectedPosition: Int?) {
     enum class UpdateType {
         POST_LIKED,
         POST_COMMENTED,

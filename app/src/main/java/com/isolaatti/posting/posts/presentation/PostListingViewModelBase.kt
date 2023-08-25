@@ -4,9 +4,9 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.isolaatti.posting.likes.data.remote.LikeDto
 import com.isolaatti.posting.likes.domain.repository.LikesRepository
 import com.isolaatti.posting.posts.data.remote.FeedDto
+import com.isolaatti.posting.posts.domain.use_case.DeletePost
 import com.isolaatti.profile.domain.use_case.GetProfilePosts
 import com.isolaatti.utils.Resource
 import kotlinx.coroutines.Dispatchers
@@ -21,8 +21,11 @@ abstract class PostListingViewModelBase : ViewModel() {
     lateinit var likesRepository: LikesRepository
     @Inject
     lateinit var getProfilePosts: GetProfilePosts
+    @Inject
+    lateinit var deletePostUseCase: DeletePost
 
     val posts: MutableLiveData<Pair<FeedDto?, UpdateEvent>?> = MutableLiveData()
+
 
     val loadingPosts = MutableLiveData(false)
 
@@ -50,7 +53,7 @@ abstract class PostListingViewModelBase : ViewModel() {
 
                     })
                 }
-                posts.postValue(posts.value?.copy(second = UpdateEvent(UpdateEvent.UpdateType.POST_LIKED, likedPost?.post?.id)))
+                posts.postValue(posts.value?.copy(second = UpdateEvent(UpdateEvent.UpdateType.POST_LIKED, index)))
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }
@@ -66,7 +69,27 @@ abstract class PostListingViewModelBase : ViewModel() {
                         numberOfLikes = likeDto.likesCount
                     })
                 }
-                posts.postValue(posts.value?.copy(second = UpdateEvent(UpdateEvent.UpdateType.POST_LIKED, likedPost?.post?.id)))
+                posts.postValue(posts.value?.copy(second = UpdateEvent(UpdateEvent.UpdateType.POST_LIKED, index)))
+            }.flowOn(Dispatchers.IO).launchIn(this)
+        }
+    }
+
+    fun deletePost(postId: Long) {
+        viewModelScope.launch {
+            deletePostUseCase(postId).onEach { res ->
+                when(res) {
+                    is Resource.Success -> {
+                        val postDeleted = posts.value?.first?.data?.find { postDto -> postDto.post.id == postId }
+                            ?: return@onEach
+                        val index = posts.value?.first?.data?.indexOf(postDeleted)
+
+                        posts.value?.first?.data?.removeAt(index!!)
+                        posts.postValue(posts.value?.copy(second = UpdateEvent(UpdateEvent.UpdateType.POST_REMOVED, index)))
+                    }
+                    is Resource.Loading -> {}
+                    is Resource.Error -> {}
+                }
+
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }

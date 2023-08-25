@@ -1,4 +1,4 @@
-package com.isolaatti.auth.data.local
+package com.isolaatti.settings.data
 
 import androidx.room.Dao
 import androidx.room.Insert

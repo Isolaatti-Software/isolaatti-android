@@ -21,6 +21,7 @@ data class Options(
     }
 
     companion object {
+        val noOptions = Options(0, listOf())
         val myPostOptions = Options(R.string.post_options_title, listOf(
             Option(R.string.delete, R.drawable.baseline_delete_24, Option.OPTION_DELETE),
             Option(R.string.edit, R.drawable.baseline_edit_24, Option.OPTION_EDIT),

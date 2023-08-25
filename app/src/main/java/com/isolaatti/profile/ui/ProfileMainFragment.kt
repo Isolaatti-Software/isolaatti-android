@@ -211,7 +211,7 @@ class ProfileMainFragment : Fragment() {
             }
 
             override fun onOptions(postId: Long) {
-                optionsViewModel.setOptions(Options.myPostOptions, FeedFragment.CALLER_ID)
+                optionsViewModel.setOptions(Options.myPostOptions, FeedFragment.CALLER_ID, postId)
                 val modalBottomSheet = BottomSheetPostOptionsFragment()
                 modalBottomSheet.show(requireActivity().supportFragmentManager, BottomSheetPostOptionsFragment.TAG)
             }

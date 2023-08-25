@@ -35,8 +35,8 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
 
     val optionsViewModel: BottomSheetPostOptionsViewModel by activityViewModels()
 
-    val optionsObserver: Observer<OptionClicked> = Observer {
-        if(it.callerId == CALLER_ID) {
+    val optionsObserver: Observer<OptionClicked?> = Observer {
+        if(it?.callerId == CALLER_ID) {
             optionsViewModel.optionClicked(-1)
         }
 

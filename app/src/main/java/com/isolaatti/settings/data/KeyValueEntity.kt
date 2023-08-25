@@ -1,4 +1,4 @@
-package com.isolaatti.auth.data.local
+package com.isolaatti.settings.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
