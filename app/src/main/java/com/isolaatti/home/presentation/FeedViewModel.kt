@@ -2,7 +2,6 @@ package com.isolaatti.home.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.isolaatti.auth.domain.AuthRepository
 import com.isolaatti.posting.posts.domain.PostsRepository
@@ -31,12 +30,16 @@ class FeedViewModel @Inject constructor(
             if (refresh) {
                 posts.value = null
             }
-            postsRepository.getFeed(getLastId()).onEach { feedDtoResource ->
-                when (feedDtoResource) {
+            postsRepository.getFeed(getLastId()).onEach { listResource ->
+                when (listResource) {
                     is Resource.Success -> {
                         loadingPosts.postValue(false)
-                        posts.postValue(Pair(posts.value?.first?.concatFeed(feedDtoResource.data) ?: feedDtoResource.data, UpdateEvent(UpdateEvent.UpdateType.PAGE_ADDED, null)))
-                        noMoreContent.postValue(feedDtoResource.data?.moreContent == false)
+                        posts.postValue(Pair(postsList?.apply {
+                            addAll(listResource.data ?: listOf())
+                        } ?: listResource.data,
+                            UpdateEvent(UpdateEvent.UpdateType.PAGE_ADDED, null)))
+
+                        noMoreContent.postValue(listResource.data?.size == 0)
                     }
 
                     is Resource.Loading -> {
@@ -45,7 +48,7 @@ class FeedViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        errorLoading.postValue(feedDtoResource.errorType)
+                        //errorLoading.postValue(feedDtoResource.errorType)
                     }
                 }
                 isLoadingFromScrolling = false

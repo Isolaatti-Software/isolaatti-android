@@ -8,8 +8,8 @@ import androidx.room.Query
 @Dao
 interface KeyValueDao {
     @Query("SELECT value FROM key_values WHERE id = :key")
-    fun getValue(key: String): String
+    suspend fun getValue(key: String): String
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun setValue(entity: KeyValueEntity)
+    suspend fun setValue(entity: KeyValueEntity)
 }

@@ -7,6 +7,7 @@ import com.isolaatti.auth.data.local.TokenStorage
 import com.isolaatti.auth.data.remote.AuthApi
 import com.isolaatti.auth.data.remote.Credential
 import com.isolaatti.auth.domain.AuthRepository
+import com.isolaatti.settings.domain.UserIdSetting
 import com.isolaatti.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -17,11 +18,8 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val tokenStorage: TokenStorage,
     private val authApi: AuthApi,
-    private val keyValueDao: KeyValueDao
+    private val userIdSetting: UserIdSetting
 ) : AuthRepository {
-    companion object {
-        val KEY_USERID = "user_id"
-    }
     override fun authWithEmailAndPassword(
         email: String,
         password: String
@@ -37,7 +35,7 @@ class AuthRepositoryImpl @Inject constructor(
                     return@flow
                 }
                 tokenStorage.storeToken(dto)
-                keyValueDao.setValue(KeyValueEntity(KEY_USERID, dto.userId.toString()))
+                userIdSetting.setUserId(dto.userId)
                 emit(Resource.Success(true))
                 return@flow
             }
@@ -66,7 +64,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun getUserId(): Flow<Int?> = flow {
-        emit(keyValueDao.getValue(KEY_USERID).toIntOrNull())
+        emit(userIdSetting.getUserId())
     }
 
 }

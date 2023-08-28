@@ -25,6 +25,7 @@ import com.isolaatti.picture_viewer.ui.PictureViewerActivity
 import com.isolaatti.posting.PostViewerActivity
 import com.isolaatti.posting.comments.presentation.BottomSheetPostComments
 import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
+import com.isolaatti.posting.common.domain.Ownable
 import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
 import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
 import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
@@ -160,7 +161,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
             .usePlugin(PicassoImagesPluginDef.picassoImagePlugin)
             .usePlugin(LinkifyPlugin.create())
             .build()
-        adapter = PostsRecyclerViewAdapter(markwon, this, null)
+        adapter = PostsRecyclerViewAdapter(markwon, this)
         viewBinding.feedRecyclerView.adapter = adapter
         viewBinding.feedRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -227,8 +228,8 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
     override fun onUnLiked(postId: Long) = viewModel.unLikePost(postId)
 
-    override fun onOptions(postId: Long) {
-        optionsViewModel.setOptions(Options.myPostOptions, CALLER_ID, postId)
+    override fun onOptions(post: Ownable) {
+        optionsViewModel.setOptions(Options.POST_OPTIONS, CALLER_ID, post)
         val modalBottomSheet = BottomSheetPostOptionsFragment()
         modalBottomSheet.show(requireActivity().supportFragmentManager, BottomSheetPostOptionsFragment.TAG)
     }

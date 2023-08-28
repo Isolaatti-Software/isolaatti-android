@@ -65,8 +65,8 @@ class ProfileViewModel @Inject constructor(private val getProfileUseCase: GetPro
                 when (feedDtoResource) {
                     is Resource.Success -> {
                         loadingPosts.postValue(false)
-                        posts.postValue(Pair(posts.value?.first?.concatFeed(feedDtoResource.data) ?: feedDtoResource.data, UpdateEvent(if(refresh) UpdateEvent.UpdateType.REFRESH else UpdateEvent.UpdateType.PAGE_ADDED, null)))
-                        noMoreContent.postValue(feedDtoResource.data?.moreContent == false)
+                        posts.postValue(Pair(posts.value?.first?.apply { addAll(feedDtoResource.data ?: listOf()) } ?: feedDtoResource.data, UpdateEvent(if(refresh) UpdateEvent.UpdateType.REFRESH else UpdateEvent.UpdateType.PAGE_ADDED, null)))
+                        noMoreContent.postValue(feedDtoResource.data?.size == 0)
                     }
 
                     is Resource.Loading -> {

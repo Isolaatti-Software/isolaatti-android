@@ -7,6 +7,7 @@ import com.isolaatti.auth.data.remote.AuthApi
 import com.isolaatti.auth.domain.AuthRepository
 import com.isolaatti.connectivity.RetrofitClient
 import com.isolaatti.database.AppDatabase
+import com.isolaatti.settings.domain.UserIdSetting
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,7 +22,7 @@ class Module {
     }
 
     @Provides
-    fun provideAuthRepository(tokenStorage: TokenStorage, authApi: AuthApi, keyValueDao: KeyValueDao): AuthRepository {
-        return AuthRepositoryImpl(tokenStorage, authApi, keyValueDao)
+    fun provideAuthRepository(tokenStorage: TokenStorage, authApi: AuthApi, userIdSetting: UserIdSetting): AuthRepository {
+        return AuthRepositoryImpl(tokenStorage, authApi, userIdSetting)
     }
 }

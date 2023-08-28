@@ -10,18 +10,19 @@ import com.isolaatti.posting.posts.data.remote.FeedsApi
 import com.isolaatti.posting.posts.data.remote.PostApi
 import com.isolaatti.posting.posts.data.remote.PostDeletedDto
 import com.isolaatti.posting.posts.domain.PostsRepository
+import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class PostsRepositoryImpl @Inject constructor(private val feedsApi: FeedsApi, private val postApi: PostApi) : PostsRepository {
-    override fun getFeed(lastId: Long): Flow<Resource<FeedDto>> = flow {
+    override fun getFeed(lastId: Long): Flow<Resource<MutableList<Post>>> = flow {
         emit(Resource.Loading())
         try {
             val result = feedsApi.getChronology(lastId, 20).execute()
             if(result.isSuccessful) {
-                emit(Resource.Success(result.body()))
+                emit(Resource.Success(result.body()?.let { Post.fromFeedDto(it) }))
                 return@flow
             }
             when(result.code()) {
@@ -35,13 +36,13 @@ class PostsRepositoryImpl @Inject constructor(private val feedsApi: FeedsApi, pr
         }
     }
 
-    override fun getProfilePosts(userId: Int, lastId: Long, olderFirst: Boolean, filter: FeedFilterDto?): Flow<Resource<FeedDto>> = flow {
+    override fun getProfilePosts(userId: Int, lastId: Long, olderFirst: Boolean, filter: FeedFilterDto?): Flow<Resource<MutableList<Post>>> = flow {
         emit(Resource.Loading())
         try {
             val gson = Gson()
             val result = feedsApi.postsOfUser(userId, 20, lastId, olderFirst, gson.toJson(filter)).execute()
             if(result.isSuccessful) {
-                emit(Resource.Success(result.body()))
+                emit(Resource.Success(result.body()?.let { Post.fromFeedDto(it) }))
                 return@flow
             }
             when(result.code()) {

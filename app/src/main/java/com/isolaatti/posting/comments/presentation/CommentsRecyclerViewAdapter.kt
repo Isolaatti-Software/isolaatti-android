@@ -5,12 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.isolaatti.databinding.CommentLayoutBinding
 import com.isolaatti.posting.comments.data.remote.CommentDto
+import com.isolaatti.posting.comments.domain.model.Comment
 import com.isolaatti.posting.common.domain.OnUserInteractedCallback
 import com.isolaatti.utils.UrlGen
 import com.squareup.picasso.Picasso
 import io.noties.markwon.Markwon
 
-class CommentsRecyclerViewAdapter(private var list: List<CommentDto>, private val markwon: Markwon, private val callback: OnUserInteractedCallback) : RecyclerView.Adapter<CommentsRecyclerViewAdapter.CommentViewHolder>() {
+class CommentsRecyclerViewAdapter(private var list: List<Comment>, private val markwon: Markwon, private val callback: OnUserInteractedCallback) : RecyclerView.Adapter<CommentsRecyclerViewAdapter.CommentViewHolder>() {
 
     inner class CommentViewHolder(val viewBinding: CommentLayoutBinding) : RecyclerView.ViewHolder(viewBinding.root)
 
@@ -23,21 +24,21 @@ class CommentsRecyclerViewAdapter(private var list: List<CommentDto>, private va
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
         val comment = list[position]
 
-        holder.viewBinding.textViewDate.text = comment.comment.date
-        markwon.setMarkdown(holder.viewBinding.postContent, comment.comment.textContent)
+        holder.viewBinding.textViewDate.text = comment.date
+        markwon.setMarkdown(holder.viewBinding.postContent, comment.textContent)
         holder.viewBinding.textViewUsername.text = comment.username
         holder.viewBinding.textViewUsername.setOnClickListener {
-            callback.onProfileClick(comment.comment.userId)
+            callback.onProfileClick(comment.userId)
         }
         holder.viewBinding.moreButton.setOnClickListener {
-            callback.onOptions(comment.comment.id)
+            callback.onOptions(comment)
         }
         Picasso.get()
-            .load(UrlGen.userProfileImage(comment.comment.userId))
+            .load(UrlGen.userProfileImage(comment.userId))
             .into(holder.viewBinding.avatarPicture)
     }
 
-    fun submitList(commentDtoList: List<CommentDto>) {
+    fun submitList(commentDtoList: List<Comment>) {
         val lastIndex = if(list.count() - 1 < 1) 0 else list.count() - 1
         list = commentDtoList
         notifyItemRangeChanged(lastIndex, commentDtoList.count())

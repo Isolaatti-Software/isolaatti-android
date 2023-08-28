@@ -12,15 +12,16 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.isolaatti.R
-import com.isolaatti.posting.posts.data.remote.FeedDto
 import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
+import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.utils.UrlGen.userProfileImage
 import com.squareup.picasso.Picasso
 import io.noties.markwon.Markwon
 
-class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callback: OnUserInteractedWithPostCallback, private var feedDto: FeedDto?) : RecyclerView.Adapter<PostsRecyclerViewAdapter.FeedViewHolder>(){
+class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callback: OnUserInteractedWithPostCallback) : RecyclerView.Adapter<PostsRecyclerViewAdapter.FeedViewHolder>(){
+    private var postList: List<Post>? = null
     inner class FeedViewHolder(itemView: View) : ViewHolder(itemView) {
-        fun bindView(postDto: FeedDto.PostDto, payloads: List<Any>) {
+        fun bindView(postDto: Post, payloads: List<Any>) {
 
             Log.d("payloads", payloads.count().toString())
             val likeButton: MaterialButton = itemView.findViewById(R.id.like_button)
@@ -59,17 +60,17 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
                 val username: TextView = itemView.findViewById(R.id.text_view_username)
                 username.text = postDto.userName
                 username.setOnClickListener {
-                    callback.onProfileClick(postDto.post.userId)
+                    callback.onProfileClick(postDto.userId)
                 }
 
                 val profileImageView: ImageView = itemView.findViewById(R.id.avatar_picture)
-                Picasso.get().load(userProfileImage(postDto.post.userId)).into(profileImageView)
+                Picasso.get().load(userProfileImage(postDto.userId)).into(profileImageView)
 
                 val dateTextView: TextView = itemView.findViewById(R.id.text_view_date)
-                dateTextView.text = postDto.post.date
+                dateTextView.text = postDto.date
 
                 val content: TextView = itemView.findViewById(R.id.post_content)
-                markwon.setMarkdown(content, postDto.post.textContent)
+                markwon.setMarkdown(content, postDto.textContent)
 
                 likeButton.isEnabled = true
 
@@ -87,23 +88,23 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
 
                 val moreButton: MaterialButton = itemView.findViewById(R.id.more_button)
                 moreButton.setOnClickListener {
-                    callback.onOptions(postDto.post.id)
+                    callback.onOptions(postDto)
                 }
 
                 likeButton.setOnClickListener {
                     likeButton.isEnabled = false
                     if(postDto.liked){
-                        callback.onUnLiked(postDto.post.id)
+                        callback.onUnLiked(postDto.id)
                     } else {
-                        callback.onLiked(postDto.post.id)
+                        callback.onLiked(postDto.id)
                     }
                 }
                 commentsButton.setOnClickListener {
-                    callback.onComment(postDto.post.id)
+                    callback.onComment(postDto.id)
                 }
 
                 itemView.findViewById<MaterialCardView>(R.id.card).setOnClickListener {
-                    callback.onOpenPost(postDto.post.id)
+                    callback.onOpenPost(postDto.id)
                 }
 
             }
@@ -122,25 +123,25 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
     }
 
     var previousSize = 0
-    override fun getItemCount(): Int = feedDto?.data?.size ?: 0
+    override fun getItemCount(): Int = postList?.size ?: 0
 
 
     override fun setHasStableIds(hasStableIds: Boolean) {
         super.setHasStableIds(true)
     }
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(updatedFeed: FeedDto, updateEvent: UpdateEvent? = null) {
+    fun updateList(updatedFeed: List<Post>, updateEvent: UpdateEvent? = null) {
         if(updateEvent == null) {
-            feedDto = updatedFeed
+            postList = updatedFeed
 
             notifyDataSetChanged()
             return
         }
-        val postUpdated = updateEvent.affectedPosition?.let { feedDto?.data?.get(it) }
+        val postUpdated = updateEvent.affectedPosition?.let { postList?.get(it) }
         val position = updateEvent.affectedPosition
 
         previousSize = itemCount
-        feedDto = updatedFeed
+        postList = updatedFeed
 
         when(updateEvent.updateType) {
             UpdateEvent.UpdateType.POST_LIKED -> {
@@ -179,8 +180,8 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
         requestedNewContent = false
     }
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int, payloads: List<Any>) {
-        holder.bindView(feedDto?.data?.get(position) ?: return, payloads)
-        val totalItems = feedDto?.data?.size
+        holder.bindView(postList?.get(position) ?: return, payloads)
+        val totalItems = postList?.size
         if(totalItems != null && totalItems > 0 && !requestedNewContent) {
             if(position == totalItems - 1) {
                 requestedNewContent = true

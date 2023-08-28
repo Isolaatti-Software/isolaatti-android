@@ -18,10 +18,12 @@ import com.isolaatti.followers.domain.FollowingState
 import com.isolaatti.home.FeedFragment
 import com.isolaatti.posting.PostViewerActivity
 import com.isolaatti.posting.comments.presentation.BottomSheetPostComments
+import com.isolaatti.posting.common.domain.Ownable
 import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
 import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
 import com.isolaatti.posting.posts.data.remote.FeedDto
+import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.posting.posts.presentation.PostListingRecyclerViewAdapterWiring
 import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
 import com.isolaatti.posting.posts.presentation.UpdateEvent
@@ -67,7 +69,7 @@ class ProfileMainFragment : Fragment() {
         )
     }
 
-    private val postsObserver: Observer<Pair<FeedDto?, UpdateEvent>?> = Observer {
+    private val postsObserver: Observer<Pair<List<Post>?, UpdateEvent>?> = Observer {
         if(it?.first != null) {
             postsAdapter.updateList(it.first!!, it.second)
             postsAdapter.newContentRequestFinished()
@@ -188,7 +190,7 @@ class ProfileMainFragment : Fragment() {
             .usePlugin(LinkifyPlugin.create())
             .build()
 
-        postsAdapter = PostsRecyclerViewAdapter(markwon,postListingRecyclerViewAdapterWiring, null )
+        postsAdapter = PostsRecyclerViewAdapter(markwon,postListingRecyclerViewAdapterWiring )
 
     }
 
@@ -210,8 +212,8 @@ class ProfileMainFragment : Fragment() {
                 PostViewerActivity.startActivity(requireContext(), postId)
             }
 
-            override fun onOptions(postId: Long) {
-                optionsViewModel.setOptions(Options.myPostOptions, FeedFragment.CALLER_ID, postId)
+            override fun onOptions(post: Ownable) {
+                optionsViewModel.setOptions(Options.POST_OPTIONS, FeedFragment.CALLER_ID, post)
                 val modalBottomSheet = BottomSheetPostOptionsFragment()
                 modalBottomSheet.show(requireActivity().supportFragmentManager, BottomSheetPostOptionsFragment.TAG)
             }

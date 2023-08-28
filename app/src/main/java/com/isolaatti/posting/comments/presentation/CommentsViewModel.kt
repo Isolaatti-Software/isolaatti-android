@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.isolaatti.posting.comments.data.remote.CommentDto
+import com.isolaatti.posting.comments.domain.model.Comment
 import com.isolaatti.posting.comments.domain.use_case.GetComments
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,9 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CommentsViewModel @Inject constructor(private val getComments: GetComments) : ViewModel() {
-    private val _comments: MutableLiveData<List<CommentDto>> = MutableLiveData()
+    private val _comments: MutableLiveData<List<Comment>> = MutableLiveData()
 
-    val comments: LiveData<List<CommentDto>> get() = _comments
+    val comments: LiveData<List<Comment>> get() = _comments
 
     /**
      * postId to query comments for. First page will be fetched when set.
@@ -36,10 +37,10 @@ class CommentsViewModel @Inject constructor(private val getComments: GetComments
         viewModelScope.launch {
             getComments(postId, lastId).onEach {
                 val newList = _comments.value?.toMutableList() ?: mutableListOf()
-                newList.addAll(it.data)
+                newList.addAll(it)
                 _comments.postValue(newList)
-                if(it.data.isNotEmpty()){
-                    lastId = it.data.last().comment.id
+                if(it.isNotEmpty()){
+                    lastId = it.last().id
                 }
 
             }.flowOn(Dispatchers.IO).launchIn(this)
@@ -49,8 +50,8 @@ class CommentsViewModel @Inject constructor(private val getComments: GetComments
     /**
      * Use when new comment has been posted
      */
-    fun putCommentAtTheBeginning(commentDto: CommentDto) {
-        val newList: MutableList<CommentDto> = mutableListOf(commentDto)
+    fun putCommentAtTheBeginning(commentDto: Comment) {
+        val newList: MutableList<Comment> = mutableListOf(commentDto)
         newList.addAll(_comments.value ?: mutableListOf())
         _comments.postValue(newList)
     }

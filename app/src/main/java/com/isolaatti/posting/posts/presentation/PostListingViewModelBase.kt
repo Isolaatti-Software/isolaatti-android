@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.isolaatti.posting.likes.domain.repository.LikesRepository
 import com.isolaatti.posting.posts.data.remote.FeedDto
+import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.posting.posts.domain.use_case.DeletePost
 import com.isolaatti.profile.domain.use_case.GetProfilePosts
 import com.isolaatti.utils.Resource
@@ -24,8 +25,9 @@ abstract class PostListingViewModelBase : ViewModel() {
     @Inject
     lateinit var deletePostUseCase: DeletePost
 
-    val posts: MutableLiveData<Pair<FeedDto?, UpdateEvent>?> = MutableLiveData()
+    val posts: MutableLiveData<Pair<MutableList<Post>?, UpdateEvent>?> = MutableLiveData()
 
+    val postsList get() = posts.value?.first
 
     val loadingPosts = MutableLiveData(false)
 
@@ -34,7 +36,7 @@ abstract class PostListingViewModelBase : ViewModel() {
     val errorLoading: MutableLiveData<Resource.Error.ErrorType?> = MutableLiveData()
     var isLoadingFromScrolling = false
 
-    fun getLastId(): Long = try { posts.value?.first?.data?.last()?.post?.id ?: 0 } catch (e: NoSuchElementException) { 0 }
+    fun getLastId(): Long = try { posts.value?.first?.last()?.id ?: 0 } catch (e: NoSuchElementException) { 0 }
 
 
     abstract fun getFeed(refresh: Boolean)
@@ -42,12 +44,12 @@ abstract class PostListingViewModelBase : ViewModel() {
     fun likePost(postId: Long) {
         viewModelScope.launch {
             likesRepository.likePost(postId).onEach {likeDto ->
-                val likedPost = posts.value?.first?.data?.find { post -> post.post.id == likeDto.postId }
-                val index = posts.value?.first?.data?.indexOf(likedPost)
+                val likedPost = posts.value?.first?.find { post -> post.id == likeDto.postId }
+                val index = posts.value?.first?.indexOf(likedPost)
                 if(index != null){
-                    val temp = posts.value?.first
+                    val temp = posts.value?.first?.toMutableList()
                     Log.d("***", temp.toString())
-                    temp?.data?.set(index, likedPost!!.apply {
+                    temp?.set(index, likedPost!!.apply {
                         liked = true
                         numberOfLikes = likeDto.likesCount
 
@@ -61,10 +63,11 @@ abstract class PostListingViewModelBase : ViewModel() {
     fun unLikePost(postId: Long) {
         viewModelScope.launch {
             likesRepository.unLikePost(postId).onEach {likeDto ->
-                val likedPost = posts.value?.first?.data?.find { post -> post.post.id == likeDto.postId }
-                val index = posts.value?.first?.data?.indexOf(likedPost)
+                val likedPost = posts.value?.first?.find { post -> post.id == likeDto.postId }
+                val index = posts.value?.first?.indexOf(likedPost)
                 if(index != null){
-                    posts.value?.first?.data?.set(index, likedPost!!.apply {
+                    val temp = posts.value?.first?.toMutableList()
+                    temp?.set(index, likedPost!!.apply {
                         liked = false
                         numberOfLikes = likeDto.likesCount
                     })
@@ -79,11 +82,11 @@ abstract class PostListingViewModelBase : ViewModel() {
             deletePostUseCase(postId).onEach { res ->
                 when(res) {
                     is Resource.Success -> {
-                        val postDeleted = posts.value?.first?.data?.find { postDto -> postDto.post.id == postId }
+                        val postDeleted = posts.value?.first?.find { post -> post.id == postId }
                             ?: return@onEach
-                        val index = posts.value?.first?.data?.indexOf(postDeleted)
+                        val index = posts.value?.first?.indexOf(postDeleted)
 
-                        posts.value?.first?.data?.removeAt(index!!)
+                        posts.value?.first?.removeAt(index!!)
                         posts.postValue(posts.value?.copy(second = UpdateEvent(UpdateEvent.UpdateType.POST_REMOVED, index)))
                     }
                     is Resource.Loading -> {}

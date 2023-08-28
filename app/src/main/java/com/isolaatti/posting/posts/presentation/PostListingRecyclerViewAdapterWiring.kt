@@ -1,6 +1,7 @@
 package com.isolaatti.posting.posts.presentation
 
 import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
+import com.isolaatti.posting.common.domain.Ownable
 
 abstract class PostListingRecyclerViewAdapterWiring(private val postsViewModelBase: PostListingViewModelBase) : OnUserInteractedWithPostCallback {
 
@@ -16,7 +17,7 @@ abstract class PostListingRecyclerViewAdapterWiring(private val postsViewModelBa
 
     abstract override fun onOpenPost(postId: Long)
 
-    abstract override fun onOptions(postId: Long)
+    abstract override fun onOptions(post: Ownable)
 
     abstract override fun onProfileClick(userId: Int)
 }

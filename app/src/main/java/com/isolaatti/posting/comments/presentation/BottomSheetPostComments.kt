@@ -13,6 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.isolaatti.databinding.BottomSheetPostCommentsBinding
 import com.isolaatti.posting.common.domain.OnUserInteractedCallback
+import com.isolaatti.posting.common.domain.Ownable
 import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
 import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
 import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
@@ -115,8 +116,8 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
     }
 
 
-    override fun onOptions(postId: Long) {
-        optionsViewModel.setOptions(Options.myCommentOptions, CALLER_ID)
+    override fun onOptions(comment: Ownable) {
+        optionsViewModel.setOptions(Options.POST_OPTIONS, CALLER_ID, comment)
         val fragment = BottomSheetPostOptionsFragment()
         fragment.show(parentFragmentManager, BottomSheetPostOptionsFragment.TAG)
     }
