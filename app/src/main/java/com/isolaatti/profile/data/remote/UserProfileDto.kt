@@ -12,6 +12,6 @@ data class UserProfileDto(
     val followingThisUser: Boolean,
     val thisUserIsFollowingMe: Boolean,
     val profileImageId: String?,
-    val descriptionText: String,
+    val descriptionText: String?,
     val descriptionAudioId: String?
 )

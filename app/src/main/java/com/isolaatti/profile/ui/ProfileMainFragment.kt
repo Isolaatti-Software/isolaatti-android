@@ -78,12 +78,18 @@ class ProfileMainFragment : Fragment() {
         title = profile.name
         viewBinding.textViewUsername.text = profile.name
         viewBinding.textViewDescription.text = profile.descriptionText
+        if(profile.descriptionText.isNullOrBlank()) {
+            viewBinding.descriptionCard.visibility = View.GONE
+        }
 
         viewBinding.goToFollowersBtn.text = getString(
             R.string.go_to_followers_btn_text,
             profile.numberOfFollowers.toString(),
             profile.numberOfFollowing.toString()
         )
+
+
+        setupUiForUserType(profile.isUserItself)
     }
 
     private val postsObserver: Observer<Pair<List<Post>?, UpdateEvent>?> = Observer {
@@ -235,6 +241,14 @@ class ProfileMainFragment : Fragment() {
 
         postsAdapter = PostsRecyclerViewAdapter(markwon,postListingRecyclerViewAdapterWiring )
 
+    }
+
+    private fun setupUiForUserType(isOwnProfile: Boolean) {
+        if(isOwnProfile) {
+            viewBinding.followButton.visibility = View.GONE
+        } else {
+            viewBinding.newPost.visibility = View.GONE
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
