@@ -30,6 +30,7 @@ import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
 import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
 import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
+import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.posting.posts.presentation.CreatePostContract
 import com.isolaatti.posting.posts.presentation.EditPostContract
 import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
@@ -80,26 +81,26 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
     // region observers
 
-    val optionsObserver: Observer<OptionClicked?> = Observer { optionClicked ->
+    private val optionsObserver: Observer<OptionClicked?> = Observer { optionClicked ->
         if(optionClicked?.callerId == CALLER_ID) {
             // post id should come as payload
-            val postId = optionClicked.payload as? Long ?: return@Observer
+            val post = optionClicked.payload as? Post ?: return@Observer
             when(optionClicked.optionId) {
                 Options.Option.OPTION_DELETE -> {
                     Dialogs.buildDeletePostDialog(requireContext()) { delete ->
                         optionsViewModel.handle()
                         if(delete) {
-                            viewModel.deletePost(postId)
+                            viewModel.deletePost(post.id)
                         }
                     }.show()
 
                 }
                 Options.Option.OPTION_EDIT -> {
                     optionsViewModel.handle()
-                    editDiscussion.launch(postId)
+                    editDiscussion.launch(post.id)
                 }
                 Options.Option.OPTION_REPORT -> {
-
+                    optionsViewModel.handle()
                 }
             }
         }

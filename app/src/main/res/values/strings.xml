@@ -32,6 +32,7 @@
     <string name="home">Home</string>
     <string name="notifications">Notifications</string>
     <string name="search">Search</string>
+    <string name="comment_options">Comment options</string>
 
     <!-- Audio recorder -->
     <string name="audio_recorder">Record audio</string>
@@ -68,4 +69,6 @@
     <string name="post_will_dropped">This discussion and all related content will be dropped. Continue?</string>
     <string name="yes_continue">Yes, delete</string>
     <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="save_snapshot">Save snapshot</string>
 </resources>

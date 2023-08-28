@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -13,17 +14,21 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
+import com.isolaatti.common.Dialogs
 import com.isolaatti.databinding.FragmentDiscussionsBinding
 import com.isolaatti.followers.domain.FollowingState
 import com.isolaatti.home.FeedFragment
 import com.isolaatti.posting.PostViewerActivity
 import com.isolaatti.posting.comments.presentation.BottomSheetPostComments
 import com.isolaatti.posting.common.domain.Ownable
+import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
 import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
 import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
 import com.isolaatti.posting.posts.data.remote.FeedDto
 import com.isolaatti.posting.posts.domain.entity.Post
+import com.isolaatti.posting.posts.presentation.CreatePostContract
+import com.isolaatti.posting.posts.presentation.EditPostContract
 import com.isolaatti.posting.posts.presentation.PostListingRecyclerViewAdapterWiring
 import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
 import com.isolaatti.posting.posts.presentation.UpdateEvent
@@ -52,6 +57,18 @@ class ProfileMainFragment : Fragment() {
     private var title = ""
     private var scrollRange = -1
     private var isShow = false
+
+    private val createDiscussion = registerForActivityResult(CreatePostContract()) {
+        if(it != null) {
+            Toast.makeText(requireContext(), R.string.posted_successfully, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private val editDiscussion = registerForActivityResult(EditPostContract()) {
+        if(it != null) {
+            viewModel.onPostUpdate(it)
+        }
+    }
 
     private val profileObserver = Observer<UserProfileDto> { profile ->
         Picasso.get()
@@ -98,6 +115,31 @@ class ProfileMainFragment : Fragment() {
                 viewBinding.textViewFollowingState.text = ""
                 viewBinding.followButton.setText(R.string.follow)
                 viewBinding.followButton.isChecked = false
+            }
+        }
+    }
+
+    private val optionsObserver: Observer<OptionClicked?> = Observer { optionClicked ->
+        if(optionClicked?.callerId == FeedFragment.CALLER_ID) {
+            // post id should come as payload
+            val post = optionClicked.payload as? Post ?: return@Observer
+            when(optionClicked.optionId) {
+                Options.Option.OPTION_DELETE -> {
+                    Dialogs.buildDeletePostDialog(requireContext()) { delete ->
+                        optionsViewModel.handle()
+                        if(delete) {
+                            viewModel.deletePost(post.id)
+                        }
+                    }.show()
+
+                }
+                Options.Option.OPTION_EDIT -> {
+                    optionsViewModel.handle()
+                    editDiscussion.launch(post.id)
+                }
+                Options.Option.OPTION_REPORT -> {
+                    optionsViewModel.handle()
+                }
             }
         }
     }
@@ -159,6 +201,7 @@ class ProfileMainFragment : Fragment() {
         viewModel.profile.observe(viewLifecycleOwner, profileObserver)
         viewModel.posts.observe(viewLifecycleOwner, postsObserver)
         viewModel.followingState.observe(viewLifecycleOwner, followingStateObserver)
+        optionsViewModel.optionClicked.observe(viewLifecycleOwner, optionsObserver)
         viewModel.loadingPosts.observe(viewLifecycleOwner) {
             viewBinding.loadingIndicator.visibility = if(it) View.VISIBLE else View.GONE
             if(!it) {

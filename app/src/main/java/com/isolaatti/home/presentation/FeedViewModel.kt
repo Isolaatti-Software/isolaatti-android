@@ -33,11 +33,12 @@ class FeedViewModel @Inject constructor(
             postsRepository.getFeed(getLastId()).onEach { listResource ->
                 when (listResource) {
                     is Resource.Success -> {
+                        val eventType = if((postsList?.size ?: 0) > 0)  UpdateEvent.UpdateType.PAGE_ADDED else UpdateEvent.UpdateType.REFRESH
                         loadingPosts.postValue(false)
                         posts.postValue(Pair(postsList?.apply {
                             addAll(listResource.data ?: listOf())
                         } ?: listResource.data,
-                            UpdateEvent(UpdateEvent.UpdateType.PAGE_ADDED, null)))
+                            UpdateEvent(eventType, null)))
 
                         noMoreContent.postValue(listResource.data?.size == 0)
                     }
@@ -50,6 +51,7 @@ class FeedViewModel @Inject constructor(
                     is Resource.Error -> {
                         //errorLoading.postValue(feedDtoResource.errorType)
                     }
+
                 }
                 isLoadingFromScrolling = false
             }.flowOn(Dispatchers.IO).launchIn(this)

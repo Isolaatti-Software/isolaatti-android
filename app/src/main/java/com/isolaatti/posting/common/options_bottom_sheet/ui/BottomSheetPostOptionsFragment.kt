@@ -55,6 +55,7 @@ class BottomSheetPostOptionsFragment : BottomSheetDialogFragment(), OptionsRecyc
 
 
     private fun renderOptions(options: Options) {
+        viewBinding.title.text = requireContext().getText(options.title)
         viewBinding.recyclerOptions.adapter = OptionsRecyclerAdapter(options.items, this)
         viewBinding.recyclerOptions.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }

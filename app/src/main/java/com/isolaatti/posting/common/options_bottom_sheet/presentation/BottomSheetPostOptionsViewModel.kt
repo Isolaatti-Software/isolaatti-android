@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.isolaatti.posting.common.domain.Ownable
 import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
 import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
+import com.isolaatti.posting.common.options_bottom_sheet.domain.Options.Companion.COMMENT_OPTIONS
 import com.isolaatti.posting.common.options_bottom_sheet.domain.Options.Companion.POST_OPTIONS
 import com.isolaatti.posting.posts.data.remote.FeedDto
 import com.isolaatti.settings.domain.UserIdSetting
@@ -38,27 +39,33 @@ class BottomSheetPostOptionsViewModel @Inject constructor(private val userIdSett
                 when(options) {
                     POST_OPTIONS -> {
                         userIdSetting.getUserId()?.let { userId ->
-                            if(userId == payload?.userId) {
-                                _options.postValue(Options.myPostOptions)
-                            } else {
-                                _options.postValue(Options.postOptions)
-                            }
+                            _options.postValue(Options.getPostsOptions(
+                                userOwned = userId == payload?.userId,
+                                savable = false,
+                                snapshotAble = false)
+                            )
                             _callerId = callerId
                             _payload = payload
                         }
-
+                    }
+                    COMMENT_OPTIONS -> {
+                        userIdSetting.getUserId()?.let { userId ->
+                            _options.postValue(Options.getCommentOptions(
+                                userOwned = userId == payload?.userId,
+                                savable = false,
+                                snapshotAble = false)
+                            )
+                            _callerId = callerId
+                            _payload = payload
+                        }
                     }
                 }
             }
 
         }
-
-
-
     }
 
     fun optionClicked(optionId: Int) {
         _optionClicked.postValue(OptionClicked(optionId, _callerId, _payload))
     }
-
 }

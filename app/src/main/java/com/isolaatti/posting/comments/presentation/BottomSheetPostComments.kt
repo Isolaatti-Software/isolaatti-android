@@ -11,13 +11,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.isolaatti.common.Dialogs
 import com.isolaatti.databinding.BottomSheetPostCommentsBinding
+import com.isolaatti.home.FeedFragment
+import com.isolaatti.posting.comments.domain.model.Comment
 import com.isolaatti.posting.common.domain.OnUserInteractedCallback
 import com.isolaatti.posting.common.domain.Ownable
 import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
 import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
 import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
+import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.profile.ui.ProfileActivity
 import com.isolaatti.utils.PicassoImagesPluginDef
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,9 +40,27 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
 
     val optionsViewModel: BottomSheetPostOptionsViewModel by activityViewModels()
 
-    val optionsObserver: Observer<OptionClicked?> = Observer {
-        if(it?.callerId == CALLER_ID) {
-            optionsViewModel.optionClicked(-1)
+    val optionsObserver: Observer<OptionClicked?> = Observer { optionClicked ->
+        if(optionClicked?.callerId == BottomSheetPostComments.CALLER_ID) {
+            val comment = optionClicked.payload as? Comment ?: return@Observer
+            when(optionClicked.optionId) {
+                Options.Option.OPTION_DELETE -> {
+                    Dialogs.buildDeletePostDialog(requireContext()) { delete ->
+                        optionsViewModel.handle()
+                        if(delete) {
+                            // remove comment
+                        }
+                    }.show()
+
+                }
+                Options.Option.OPTION_EDIT -> {
+                    optionsViewModel.handle()
+                    //editDiscussion.launch(post.id)
+                }
+                Options.Option.OPTION_REPORT -> {
+                    optionsViewModel.handle()
+                }
+            }
         }
 
     }
@@ -95,7 +117,6 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
 
         }
 
-        optionsViewModel.optionClicked(-1)
         optionsViewModel.optionClicked.observe(viewLifecycleOwner, optionsObserver)
 
     }
