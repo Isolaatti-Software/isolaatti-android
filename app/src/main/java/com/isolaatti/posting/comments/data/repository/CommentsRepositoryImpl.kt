@@ -5,6 +5,7 @@ import com.isolaatti.posting.comments.data.remote.CommentToPostDto
 import com.isolaatti.posting.comments.data.remote.CommentsApi
 import com.isolaatti.posting.comments.domain.CommentsRepository
 import com.isolaatti.posting.comments.domain.model.Comment
+import com.isolaatti.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.awaitResponse
@@ -26,8 +27,17 @@ class CommentsRepositoryImpl @Inject constructor(private val commentsApi: Commen
         }
     }
 
-    override fun postComment(commentToPostDto: CommentToPostDto, postId: Long): Flow<Boolean> = flow {
-        val response = commentsApi.postComment(commentToPostDto).awaitResponse()
-        emit(response.isSuccessful)
+    override fun postComment(content: String, audioId: String?, postId: Long): Flow<Resource<Comment>> = flow {
+        emit(Resource.Loading())
+        val commentToPostDto = CommentToPostDto(content, audioId)
+        val response = commentsApi.postComment(postId, commentToPostDto).awaitResponse()
+        if(response.isSuccessful) {
+            val responseBody = response.body()
+            if(responseBody != null) {
+                emit(Resource.Success(Comment.fromCommentDto(responseBody)))
+                return@flow
+            }
+        }
+        emit(Resource.Error())
     }
 }

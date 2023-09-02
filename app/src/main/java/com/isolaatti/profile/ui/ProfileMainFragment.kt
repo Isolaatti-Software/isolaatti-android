@@ -19,13 +19,12 @@ import com.isolaatti.databinding.FragmentDiscussionsBinding
 import com.isolaatti.followers.domain.FollowingState
 import com.isolaatti.home.FeedFragment
 import com.isolaatti.posting.PostViewerActivity
-import com.isolaatti.posting.comments.presentation.BottomSheetPostComments
+import com.isolaatti.posting.comments.ui.BottomSheetPostComments
 import com.isolaatti.posting.common.domain.Ownable
 import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
 import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
 import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
-import com.isolaatti.posting.posts.data.remote.FeedDto
 import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.posting.posts.presentation.CreatePostContract
 import com.isolaatti.posting.posts.presentation.EditPostContract

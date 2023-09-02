@@ -23,7 +23,7 @@ import com.isolaatti.drafts.ui.DraftsActivity
 import com.isolaatti.home.presentation.FeedViewModel
 import com.isolaatti.picture_viewer.ui.PictureViewerActivity
 import com.isolaatti.posting.PostViewerActivity
-import com.isolaatti.posting.comments.presentation.BottomSheetPostComments
+import com.isolaatti.posting.comments.ui.BottomSheetPostComments
 import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
 import com.isolaatti.posting.common.domain.Ownable
 import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked

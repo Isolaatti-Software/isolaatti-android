@@ -26,5 +26,16 @@ data class Comment(
                 )
             }
         }
+
+        fun fromCommentDto(dto: CommentDto): Comment {
+            return Comment(
+                id = dto.comment.id,
+                textContent = dto.comment.textContent,
+                userId = dto.comment.userId,
+                postId = dto.comment.postId,
+                date = dto.comment.date,
+                username = dto.username
+            )
+        }
     }
 }

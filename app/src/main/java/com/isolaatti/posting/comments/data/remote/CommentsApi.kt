@@ -9,7 +9,7 @@ import retrofit2.http.Query
 
 interface CommentsApi {
     @POST("Posting/Post/{postId}/Comment")
-    fun postComment(@Body commentToPost: CommentToPostDto): Call<Nothing>
+    fun postComment(@Path("postId") postId: Long, @Body commentToPost: CommentToPostDto): Call<CommentDto>
 
     @GET("Fetch/Post/{postId}/Comments")
     fun getCommentsOfPosts(@Path("postId") postId: Long, @Query("lastId") lastId: Long, @Query("take") count: Int): Call<FeedCommentsDto>
