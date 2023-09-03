@@ -67,8 +67,11 @@
     <string name="people">People</string>
     <string name="about">About</string>
     <string name="post_will_dropped">This discussion and all related content will be dropped. Continue?</string>
+    <string name="comment_will_be_dropped">This comment will be removed. Continue?</string>
     <string name="yes_continue">Yes, delete</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="save_snapshot">Save snapshot</string>
+    <string name="comment_posted">Comment posted!</string>
+    <string name="comment_failed_to_post">Comment failed to post</string>
 </resources>

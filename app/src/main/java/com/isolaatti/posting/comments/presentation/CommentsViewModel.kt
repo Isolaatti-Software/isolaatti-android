@@ -26,6 +26,8 @@ class CommentsViewModel @Inject constructor(private val getComments: GetComments
     val comments: LiveData<Pair<List<Comment>, UpdateEvent>> get() = _comments
     val commentPosted: MutableLiveData<Boolean?> = MutableLiveData()
     val noMoreContent: MutableLiveData<Boolean?> = MutableLiveData()
+    val commentToEdit: MutableLiveData<Comment> = MutableLiveData()
+    val finishedEditingComment: MutableLiveData<Boolean?> = MutableLiveData()
 
     /**
      * postId to query comments for. First page will be fetched when set.
@@ -91,5 +93,9 @@ class CommentsViewModel @Inject constructor(private val getComments: GetComments
         commentsList.clear()
         commentsList.addAll(newList)
         _comments.postValue(Pair(commentsList, UpdateEvent(UpdateEvent.UpdateType.COMMENT_ADDED_TOP, null)))
+    }
+
+    fun switchToEditMode(comment: Comment) {
+        commentToEdit.postValue(comment)
     }
 }

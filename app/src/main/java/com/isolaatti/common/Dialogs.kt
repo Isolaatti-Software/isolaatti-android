@@ -13,4 +13,13 @@ object Dialogs {
             .setNegativeButton(R.string.cancel) { _, _ -> onContinue(false)}
             .setOnCancelListener { onContinue(false) }
     }
+
+    fun buildDeleteCommentDialog(context: Context, onContinue: (delete: Boolean) -> Unit): MaterialAlertDialogBuilder {
+        return MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.delete)
+            .setMessage(R.string.comment_will_be_dropped)
+            .setPositiveButton(R.string.yes_continue) {_, _ -> onContinue(true)}
+            .setNegativeButton(R.string.cancel) { _, _ -> onContinue(false)}
+            .setOnCancelListener { onContinue(false) }
+    }
 }

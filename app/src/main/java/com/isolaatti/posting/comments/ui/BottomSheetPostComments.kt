@@ -1,18 +1,23 @@
 package com.isolaatti.posting.comments.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.doOnLayout
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.isolaatti.R
 import com.isolaatti.common.Dialogs
 import com.isolaatti.databinding.BottomSheetPostCommentsBinding
 import com.isolaatti.posting.comments.domain.model.Comment
@@ -43,12 +48,12 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
 
     val optionsViewModel: BottomSheetPostOptionsViewModel by activityViewModels()
 
-    val optionsObserver: Observer<OptionClicked?> = Observer { optionClicked ->
+    private val optionsObserver: Observer<OptionClicked?> = Observer { optionClicked ->
         if(optionClicked?.callerId == CALLER_ID) {
             val comment = optionClicked.payload as? Comment ?: return@Observer
             when(optionClicked.optionId) {
                 Options.Option.OPTION_DELETE -> {
-                    Dialogs.buildDeletePostDialog(requireContext()) { delete ->
+                    Dialogs.buildDeleteCommentDialog(requireContext()) { delete ->
                         optionsViewModel.handle()
                         if(delete) {
                             // remove comment
@@ -58,7 +63,7 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
                 }
                 Options.Option.OPTION_EDIT -> {
                     optionsViewModel.handle()
-                    //editDiscussion.launch(post.id)
+                    viewModel.switchToEditMode(comment)
                 }
                 Options.Option.OPTION_REPORT -> {
                     optionsViewModel.handle()
@@ -68,14 +73,14 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
 
     }
 
-    val commentPostedObserver: Observer<Boolean?> = Observer {
+    private val commentPostedObserver: Observer<Boolean?> = Observer {
         when(it) {
             true -> {
                 clearNewCommentUi()
-                Toast.makeText(requireContext(), "comment posted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.comment_posted, Toast.LENGTH_SHORT).show()
             }
             false -> {
-                Toast.makeText(requireContext(), "comment failed to post", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.comment_failed_to_post, Toast.LENGTH_SHORT).show()
             }
             null -> return@Observer
         }
@@ -84,25 +89,44 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
 
     }
 
-    private fun setObservers() {
-        viewModel.comments.observe(viewLifecycleOwner) {
-            val (list, updateEvent) = it
-            adapter.updateList(list, updateEvent)
-            if(updateEvent.updateType == UpdateEvent.UpdateType.COMMENT_ADDED_TOP) {
-                (viewBinding.recyclerComments.layoutManager as LinearLayoutManager).scrollToPosition(0)
-            } else {
-                adapter.newContentRequestFinished()
-            }
+    private val commentsObserver: Observer<Pair<List<Comment>, UpdateEvent>> = Observer {
+        val (list, updateEvent) = it
+        adapter.updateList(list, updateEvent)
+        if(updateEvent.updateType == UpdateEvent.UpdateType.COMMENT_ADDED_TOP) {
+            (viewBinding.recyclerComments.layoutManager as LinearLayoutManager).scrollToPosition(0)
+        } else {
+            adapter.newContentRequestFinished()
         }
-        viewModel.noMoreContent.observe(viewLifecycleOwner) {
-            if(it == true) {
-                adapter.blockInfiniteScroll = true
-                viewModel.noMoreContent.postValue(null)
-            }
+    }
 
+    private val noMoreContentObserver: Observer<Boolean?> = Observer {
+        if(it == true) {
+            adapter.blockInfiniteScroll = true
+            viewModel.noMoreContent.postValue(null)
         }
-        optionsViewModel.optionClicked.observe(viewLifecycleOwner, optionsObserver)
+    }
+
+    private val finishedEditingComment: Observer<Boolean?> = Observer {
+        if(it == true) {
+            switchEditionModeUi(false)
+        }
+
+    }
+
+    private val commentToEditObserver: Observer<Comment> = Observer {
+        switchEditionModeUi(true)
+
+        viewBinding.newCommentTextField.editText?.setText(it.textContent)
+    }
+
+    private fun setObservers() {
+        viewModel.comments.observe(viewLifecycleOwner, commentsObserver)
+        viewModel.noMoreContent.observe(viewLifecycleOwner, noMoreContentObserver)
         viewModel.commentPosted.observe(viewLifecycleOwner, commentPostedObserver)
+        viewModel.commentToEdit.observe(viewLifecycleOwner, commentToEditObserver)
+        viewModel.finishedEditingComment.observe(viewLifecycleOwner, finishedEditingComment)
+
+        optionsViewModel.optionClicked.observe(viewLifecycleOwner, optionsObserver)
     }
 
     private fun setListeners() {
@@ -120,6 +144,15 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
         viewBinding.newCommentTextField.editText?.text?.clear()
     }
 
+    private fun switchEditionModeUi(editionMode: Boolean) {
+        if(editionMode) {
+
+        } else {
+
+        }
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val postId = arguments?.getLong(ARG_POST_ID)
@@ -135,12 +168,17 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
     ): View {
         viewBinding = BottomSheetPostCommentsBinding.inflate(inflater)
 
-        (dialog as BottomSheetDialog).behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
         return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (dialog as BottomSheetDialog).also {
+            it.behavior.state = STATE_EXPANDED
+            it.behavior.skipCollapsed = true
+        }
+
 
         viewBinding.recyclerComments.isNestedScrollingEnabled = true
 
@@ -186,7 +224,7 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
 
 
     override fun onOptions(comment: Ownable) {
-        optionsViewModel.setOptions(Options.POST_OPTIONS, CALLER_ID, comment)
+        optionsViewModel.setOptions(Options.COMMENT_OPTIONS, CALLER_ID, comment)
         val fragment = BottomSheetPostOptionsFragment()
         fragment.show(parentFragmentManager, BottomSheetPostOptionsFragment.TAG)
     }
