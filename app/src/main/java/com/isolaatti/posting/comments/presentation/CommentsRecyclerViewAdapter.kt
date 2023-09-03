@@ -73,7 +73,7 @@ class CommentsRecyclerViewAdapter(private var list: List<Comment>, private val m
             return
         }
 
-        val commentUpdated = updateEvent.affectedPosition?.let { list?.get(it) }
+        val commentUpdated = updateEvent.affectedPosition?.let { list[it] }
         val position = updateEvent.affectedPosition
 
         previousSize = itemCount
@@ -96,6 +96,12 @@ class CommentsRecyclerViewAdapter(private var list: List<Comment>, private val m
             }
             UpdateEvent.UpdateType.REFRESH -> {
                 notifyDataSetChanged()
+            }
+
+            UpdateEvent.UpdateType.COMMENT_UPDATED ->  {
+                if(updateEvent.affectedPosition != null) {
+                    notifyItemChanged(updateEvent.affectedPosition)
+                }
             }
         }
     }

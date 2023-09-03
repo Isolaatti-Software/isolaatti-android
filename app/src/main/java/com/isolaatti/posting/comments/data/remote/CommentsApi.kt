@@ -1,5 +1,6 @@
 package com.isolaatti.posting.comments.data.remote
 
+import com.isolaatti.utils.LongIdentificationWrapper
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -16,4 +17,10 @@ interface CommentsApi {
 
     @GET("Fetch/Comments/{commentId}")
     fun getComment(@Path("commentId") commentId: Long): Call<CommentDto>
+
+    @POST("Comment/{commentId}/Edit")
+    fun editComment(@Path("commentId") commentId: Long, @Body commentDto: CommentToPostDto): Call<CommentDto>
+
+    @POST("Comment/Delete")
+    fun deleteComment(@Body commentId: LongIdentificationWrapper): Call<Void>
 }

@@ -23,4 +23,11 @@
         <item name="android:textSize">30sp</item>
 
     </style>
+
+    <style name="AlertDialogTransparent" parent="@style/Theme.Isolaatti">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowBackground">#D9000000</item>
+    </style>
 </resources>

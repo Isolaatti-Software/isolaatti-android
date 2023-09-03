@@ -56,7 +56,7 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
                     Dialogs.buildDeleteCommentDialog(requireContext()) { delete ->
                         optionsViewModel.handle()
                         if(delete) {
-                            // remove comment
+                            viewModel.deleteComment(comment.id)
                         }
                     }.show()
 
@@ -106,17 +106,9 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
         }
     }
 
-    private val finishedEditingComment: Observer<Boolean?> = Observer {
-        if(it == true) {
-            switchEditionModeUi(false)
-        }
+    private val commentToEditObserver: Observer<Comment?> = Observer {
+        EditCommentDialogFragment().show(childFragmentManager, EditCommentDialogFragment.TAG)
 
-    }
-
-    private val commentToEditObserver: Observer<Comment> = Observer {
-        switchEditionModeUi(true)
-
-        viewBinding.newCommentTextField.editText?.setText(it.textContent)
     }
 
     private fun setObservers() {
@@ -124,7 +116,12 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
         viewModel.noMoreContent.observe(viewLifecycleOwner, noMoreContentObserver)
         viewModel.commentPosted.observe(viewLifecycleOwner, commentPostedObserver)
         viewModel.commentToEdit.observe(viewLifecycleOwner, commentToEditObserver)
-        viewModel.finishedEditingComment.observe(viewLifecycleOwner, finishedEditingComment)
+        viewModel.error.observe(viewLifecycleOwner) {
+            if(it == true) {
+                Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT).show()
+                viewModel.error.postValue(null)
+            }
+        }
 
         optionsViewModel.optionClicked.observe(viewLifecycleOwner, optionsObserver)
     }

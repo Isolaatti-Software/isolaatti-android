@@ -6,6 +6,7 @@ data class UpdateEvent(val updateType: UpdateType, val affectedPosition: Int?) {
         COMMENT_REMOVED,
         COMMENT_ADDED_TOP,
         COMMENT_PAGE_ADDED_BOTTOM,
+        COMMENT_UPDATED,
         REFRESH
     }
 }

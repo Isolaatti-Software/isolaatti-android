@@ -5,6 +5,7 @@ import com.isolaatti.posting.comments.data.remote.CommentToPostDto
 import com.isolaatti.posting.comments.data.remote.CommentsApi
 import com.isolaatti.posting.comments.domain.CommentsRepository
 import com.isolaatti.posting.comments.domain.model.Comment
+import com.isolaatti.utils.LongIdentificationWrapper
 import com.isolaatti.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -37,6 +38,33 @@ class CommentsRepositoryImpl @Inject constructor(private val commentsApi: Commen
                 emit(Resource.Success(Comment.fromCommentDto(responseBody)))
                 return@flow
             }
+        }
+        emit(Resource.Error())
+    }
+
+    override fun editComment(commentId: Long, content: String, audioId: String?): Flow<Resource<Comment>> = flow {
+        emit(Resource.Loading())
+        val commentToPostDto = CommentToPostDto(content, audioId)
+        val response = commentsApi.editComment(commentId, commentToPostDto).awaitResponse()
+
+        if(response.isSuccessful) {
+            val responseBody = response.body()
+            if(responseBody != null) {
+                emit(Resource.Success(Comment.fromCommentDto(responseBody)))
+                return@flow
+            }
+        }
+        emit(Resource.Error())
+
+    }
+
+    override fun deleteComment(commentId: Long): Flow<Resource<Boolean>> = flow {
+        emit(Resource.Loading())
+        val response = commentsApi.deleteComment(LongIdentificationWrapper(commentId)).awaitResponse()
+
+        if(response.isSuccessful) {
+            emit(Resource.Success(true))
+            return@flow
         }
         emit(Resource.Error())
     }

@@ -74,4 +74,5 @@
     <string name="save_snapshot">Save snapshot</string>
     <string name="comment_posted">Comment posted!</string>
     <string name="comment_failed_to_post">Comment failed to post</string>
+    <string name="edit_comment">Edit comment</string>
 </resources>
