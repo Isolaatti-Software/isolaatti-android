@@ -75,4 +75,6 @@
     <string name="comment_posted">Comment posted!</string>
     <string name="comment_failed_to_post">Comment failed to post</string>
     <string name="edit_comment">Edit comment</string>
+    <string name="network_conn_lost">Network connection lost</string>
+    <string name="network_conn_restored">Network connection restored</string>
 </resources>

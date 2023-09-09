@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.common.Dialogs
+import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentDiscussionsBinding
 import com.isolaatti.followers.domain.FollowingState
 import com.isolaatti.home.FeedFragment
@@ -48,6 +49,7 @@ class ProfileMainFragment : Fragment() {
     lateinit var viewBinding: FragmentDiscussionsBinding
     private val viewModel: ProfileViewModel by viewModels()
     val optionsViewModel: BottomSheetPostOptionsViewModel by activityViewModels()
+    val errorViewModel: ErrorMessageViewModel by activityViewModels()
     private var userId: Int? = null
 
     lateinit var postsAdapter: PostsRecyclerViewAdapter
@@ -212,6 +214,9 @@ class ProfileMainFragment : Fragment() {
             if(!it) {
                 viewBinding.swipeToRefresh.isRefreshing = false
             }
+        }
+        viewModel.errorLoading.observe(viewLifecycleOwner) {
+            errorViewModel.error.postValue(it)
         }
     }
 

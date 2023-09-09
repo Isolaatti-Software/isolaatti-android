@@ -1,5 +1,7 @@
 package com.isolaatti.connectivity
 
+import androidx.lifecycle.MutableLiveData
+
 object NetworkStatus {
-    var networkIsAvailable: Boolean = true
+    val networkIsAvailable: MutableLiveData<Boolean> = MutableLiveData()
 }

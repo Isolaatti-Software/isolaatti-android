@@ -1,29 +1,26 @@
 package com.isolaatti
 
-import android.app.Activity
 import android.app.Application
-import android.os.Bundle
-import com.isolaatti.auth.data.AuthRepositoryImpl
-import com.isolaatti.auth.data.local.TokenStorage
-import com.isolaatti.auth.data.remote.AuthApi
-import com.isolaatti.auth.domain.AuthRepository
-import com.isolaatti.connectivity.RetrofitClient
-import dagger.Provides
+import android.net.ConnectivityManager
+import com.isolaatti.connectivity.ConnectivityCallbackImpl
 import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Singleton
 
 @HiltAndroidApp
 class MyApplication : Application() {
 
     private val activityLifecycleCallbacks = ActivityLifecycleCallbacks()
+    lateinit var connectivityCallbackImpl: ConnectivityCallbackImpl
 
     override fun onCreate() {
         super.onCreate()
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
+        connectivityCallbackImpl = ConnectivityCallbackImpl()
+        getSystemService(ConnectivityManager::class.java).registerDefaultNetworkCallback(connectivityCallbackImpl)
     }
 
     override fun onTerminate() {
         super.onTerminate()
         unregisterActivityLifecycleCallbacks(activityLifecycleCallbacks)
+        getSystemService(ConnectivityManager::class.java).unregisterNetworkCallback(connectivityCallbackImpl)
     }
 }
