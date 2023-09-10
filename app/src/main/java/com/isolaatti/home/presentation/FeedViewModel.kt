@@ -25,6 +25,19 @@ class FeedViewModel @Inject constructor(
     private val postsRepository: PostsRepository
 ) : PostListingViewModelBase() {
 
+    private val toRetry: MutableList<Runnable> = mutableListOf()
+
+
+    // runs the lists of "Runnable" one by one and clears list. After this is executed,
+    // caller should report as handled
+    fun retry() {
+        toRetry.forEach {
+            it.run()
+        }
+
+        toRetry.clear()
+    }
+
     override fun getFeed(refresh: Boolean) {
         viewModelScope.launch {
             if (refresh) {
@@ -49,7 +62,10 @@ class FeedViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        //errorLoading.postValue(feedDtoResource.errorType)
+                        errorLoading.postValue(listResource.errorType)
+                        toRetry.add {
+                            getFeed(refresh)
+                        }
                     }
 
                 }
@@ -67,15 +83,24 @@ class FeedViewModel @Inject constructor(
             authRepository.getUserId().onEach { userId ->
                 userId?.let {
                     getProfileUseCase(userId).onEach { profile ->
-                        if (profile is Resource.Success) {
-                            profile.data?.let { _userProfile.postValue(it) }
+
+
+                        when(profile) {
+                            is Resource.Error -> {
+                                errorLoading.postValue(profile.errorType)
+                                toRetry.add {
+                                    getProfile()
+                                }
+                            }
+                            is Resource.Loading -> {}
+                            is Resource.Success ->  {
+                                profile.data?.let { _userProfile.postValue(it) }
+                            }
                         }
                     }.flowOn(Dispatchers.IO).launchIn(this)
                 }
 
             }.flowOn(Dispatchers.IO).launchIn(this)
-
         }
-
     }
 }

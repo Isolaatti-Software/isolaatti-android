@@ -15,10 +15,6 @@ import com.isolaatti.home.presentation.FeedViewModel
 class HomeActivity : IsolaattiBaseActivity() {
     private lateinit var viewBinding: ActivityHomeBinding
     private val feedViewModel: FeedViewModel by viewModels()
-    override fun onRetry() {
-
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

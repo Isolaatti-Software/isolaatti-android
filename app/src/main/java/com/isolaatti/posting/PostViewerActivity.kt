@@ -21,9 +21,6 @@ class PostViewerActivity : IsolaattiBaseActivity() {
     private lateinit var binding: ActivityPostViewerBinding
 
     private var postId: Long? = null
-    override fun onRetry() {
-        TODO("Not yet implemented")
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

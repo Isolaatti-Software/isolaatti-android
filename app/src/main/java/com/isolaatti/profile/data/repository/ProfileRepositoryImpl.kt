@@ -6,24 +6,18 @@ import com.isolaatti.profile.domain.ProfileRepository
 import com.isolaatti.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.await
+import retrofit2.awaitResponse
 import javax.inject.Inject
 
 class ProfileRepositoryImpl @Inject constructor(private val profileApi: ProfileApi) : ProfileRepository {
     override fun getProfile(userId: Int): Flow<Resource<UserProfileDto>> = flow {
         try {
-            val result = profileApi.userProfile(userId).execute()
+            val result = profileApi.userProfile(userId).awaitResponse()
             if(result.isSuccessful) {
                 emit(Resource.Success(result.body()))
                 return@flow
             }
-
-            when(result.code()) {
-                401 -> emit(Resource.Error(Resource.Error.ErrorType.AuthError))
-                404 -> emit(Resource.Error(Resource.Error.ErrorType.NotFoundError))
-                500 -> emit(Resource.Error(Resource.Error.ErrorType.ServerError))
-                else -> emit(Resource.Error(Resource.Error.ErrorType.OtherError))
-            }
+            emit(Resource.Error(Resource.Error.mapErrorCode(result.code())))
         } catch(_: Exception) {
             emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }

@@ -34,7 +34,20 @@ class CommentsViewModel @Inject constructor(
     val noMoreContent: MutableLiveData<Boolean?> = MutableLiveData()
     val commentToEdit: MutableLiveData<Comment?> = MutableLiveData()
     val finishedEditingComment: MutableLiveData<Boolean?> = MutableLiveData()
-    val error: MutableLiveData<Boolean> = MutableLiveData(false)
+    val error: MutableLiveData<Resource.Error.ErrorType?> = MutableLiveData()
+
+    private val toRetry: MutableList<Runnable> = mutableListOf()
+
+
+    // runs the lists of "Runnable" one by one and clears list. After this is executed,
+    // caller should report as handled
+    fun retry() {
+        toRetry.forEach {
+            it.run()
+        }
+
+        toRetry.clear()
+    }
 
     /**
      * postId to query comments for. First page will be fetched when set.
@@ -54,17 +67,30 @@ class CommentsViewModel @Inject constructor(
                 commentsList.clear()
             }
             getComments(postId, lastId).onEach {
-                val eventType =
-                    if ((commentsList.isNotEmpty())) UpdateEvent.UpdateType.COMMENT_PAGE_ADDED_BOTTOM else UpdateEvent.UpdateType.REFRESH
-                commentsList.addAll(it)
-                _comments.postValue(Pair(commentsList, UpdateEvent(eventType, null)))
-                if (it.isEmpty()) {
-                    noMoreContent.postValue(true)
+                when(it) {
+                    is Resource.Error -> {
+                        error.postValue(it.errorType)
+                        toRetry.add {
+                            getContent(refresh)
+                        }
+                    }
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
+                        val eventType =
+                            if ((commentsList.isNotEmpty())) UpdateEvent.UpdateType.COMMENT_PAGE_ADDED_BOTTOM else UpdateEvent.UpdateType.REFRESH
+                        if(it.data == null) {
+                            return@onEach
+                        }
+                        commentsList.addAll(it.data)
+                        _comments.postValue(Pair(commentsList, UpdateEvent(eventType, null)))
+                        if (it.data.isEmpty()) {
+                            noMoreContent.postValue(true)
+                        }
+                        if (it.data.isNotEmpty()) {
+                            lastId = it.data.last().id
+                        }
+                    }
                 }
-                if (it.isNotEmpty()) {
-                    lastId = it.last().id
-                }
-
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }
@@ -84,7 +110,13 @@ class CommentsViewModel @Inject constructor(
 
                     is Resource.Error -> {
                         commentPosted.postValue(false)
-                        error.postValue(true)
+                        error.postValue(it.errorType)
+
+
+                        // this is the original call, put to retry
+                        toRetry.add {
+                            postComment(content)
+                        }
                     }
                 }
             }.flowOn(Dispatchers.IO).launchIn(this)
@@ -111,7 +143,11 @@ class CommentsViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        error.postValue(true)
+                        error.postValue(commentResource.errorType)
+
+                        toRetry.add {
+                            editComment(newContent)
+                        }
                     }
 
                     is Resource.Loading -> {}
@@ -129,7 +165,11 @@ class CommentsViewModel @Inject constructor(
             deleteCommentUseCase(commentId).onEach {
                 when(it) {
                     is Resource.Error -> {
-                        error.postValue(true)
+                        error.postValue(it.errorType)
+
+                        toRetry.add {
+                            deleteComment(commentId)
+                        }
                     }
                     is Resource.Loading -> {}
                     is Resource.Success -> {

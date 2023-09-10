@@ -24,6 +24,7 @@ import com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
+import com.isolaatti.common.IsolaattiBaseActivity
 import com.isolaatti.databinding.ActivityProfileBinding
 import com.isolaatti.posting.common.domain.OnUserInteractedCallback
 import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
@@ -42,7 +43,7 @@ import io.noties.markwon.image.destination.ImageDestinationProcessorRelativeToAb
 import io.noties.markwon.linkify.LinkifyPlugin
 
 @AndroidEntryPoint
-class ProfileActivity : FragmentActivity() {
+class ProfileActivity : IsolaattiBaseActivity() {
 
     lateinit var viewBinding: ActivityProfileBinding
 

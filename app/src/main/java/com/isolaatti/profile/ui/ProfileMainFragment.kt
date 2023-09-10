@@ -9,7 +9,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.isolaatti.BuildConfig
@@ -43,6 +46,7 @@ import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonConfiguration
 import io.noties.markwon.image.destination.ImageDestinationProcessorRelativeToAbsolute
 import io.noties.markwon.linkify.LinkifyPlugin
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ProfileMainFragment : Fragment() {
@@ -306,5 +310,16 @@ class ProfileMainFragment : Fragment() {
         bind()
         setObservers()
         getData()
+
+
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                errorViewModel.retry.collect {
+                    viewModel.retry()
+                    errorViewModel.handleRetry()
+                }
+            }
+        }
     }
 }

@@ -14,47 +14,72 @@ import javax.inject.Inject
 
 class CommentsRepositoryImpl @Inject constructor(private val commentsApi: CommentsApi) :
     CommentsRepository {
-    override fun getComments(postId: Long, lastId: Long): Flow<MutableList<Comment>> = flow {
-        val response = commentsApi.getCommentsOfPosts(postId, lastId, 15).awaitResponse()
-        if(response.isSuccessful){
-            response.body()?.let { emit(Comment.fromCommentsDto(it).toMutableList()) }
+    override fun getComments(postId: Long, lastId: Long): Flow<Resource<MutableList<Comment>>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = commentsApi.getCommentsOfPosts(postId, lastId, 15).awaitResponse()
+            if(response.isSuccessful){
+                response.body()?.let { emit(Resource.Success(Comment.fromCommentsDto(it).toMutableList())) }
+            } else {
+                emit(Resource.Error(Resource.Error.mapErrorCode(response.code())))
+            }
+        } catch(_: Exception) {
+            emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }
     }
 
-    override fun getComment(commentId: Long): Flow<CommentDto> = flow {
-        val response = commentsApi.getComment(commentId).awaitResponse()
-        if(response.isSuccessful) {
-            response.body()?.let { emit(it) }
+    override fun getComment(commentId: Long): Flow<Resource<CommentDto>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = commentsApi.getComment(commentId).awaitResponse()
+            if(response.isSuccessful) {
+                response.body()?.let { emit(Resource.Success(it)) }
+            } else {
+                emit(Resource.Error(Resource.Error.mapErrorCode(response.code())))
+            }
+        } catch(_: Exception) {
+            emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }
     }
 
     override fun postComment(content: String, audioId: String?, postId: Long): Flow<Resource<Comment>> = flow {
-        emit(Resource.Loading())
-        val commentToPostDto = CommentToPostDto(content, audioId)
-        val response = commentsApi.postComment(postId, commentToPostDto).awaitResponse()
-        if(response.isSuccessful) {
-            val responseBody = response.body()
-            if(responseBody != null) {
-                emit(Resource.Success(Comment.fromCommentDto(responseBody)))
-                return@flow
+        try {
+            emit(Resource.Loading())
+            val commentToPostDto = CommentToPostDto(content, audioId)
+            val response = commentsApi.postComment(postId, commentToPostDto).awaitResponse()
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                if(responseBody != null) {
+                    emit(Resource.Success(Comment.fromCommentDto(responseBody)))
+                    return@flow
+                }
+            } else {
+                emit(Resource.Error(Resource.Error.mapErrorCode(response.code())))
             }
+
+        } catch(_: Exception) {
+            emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }
-        emit(Resource.Error())
     }
 
     override fun editComment(commentId: Long, content: String, audioId: String?): Flow<Resource<Comment>> = flow {
-        emit(Resource.Loading())
-        val commentToPostDto = CommentToPostDto(content, audioId)
-        val response = commentsApi.editComment(commentId, commentToPostDto).awaitResponse()
+        try {
+            emit(Resource.Loading())
+            val commentToPostDto = CommentToPostDto(content, audioId)
+            val response = commentsApi.editComment(commentId, commentToPostDto).awaitResponse()
 
-        if(response.isSuccessful) {
-            val responseBody = response.body()
-            if(responseBody != null) {
-                emit(Resource.Success(Comment.fromCommentDto(responseBody)))
-                return@flow
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                if(responseBody != null) {
+                    emit(Resource.Success(Comment.fromCommentDto(responseBody)))
+                    return@flow
+                }
+            } else {
+                emit(Resource.Error(Resource.Error.mapErrorCode(response.code())))
             }
+        } catch(_: Exception) {
+            emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }
-        emit(Resource.Error())
 
     }
 

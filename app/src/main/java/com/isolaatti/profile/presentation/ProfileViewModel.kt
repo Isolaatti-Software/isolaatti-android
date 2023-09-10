@@ -35,21 +35,43 @@ class ProfileViewModel @Inject constructor(private val getProfileUseCase: GetPro
 
     val followingState: MutableLiveData<FollowingState> = MutableLiveData()
 
+    private val toRetry: MutableList<Runnable> = mutableListOf()
+
+
+    // runs the lists of "Runnable" one by one and clears list. After this is executed,
+    // caller should report as handled
+    fun retry() {
+        toRetry.forEach {
+            it.run()
+        }
+
+        toRetry.clear()
+    }
+
     fun getProfile() {
         viewModelScope.launch {
             getProfileUseCase(profileId).onEach {
-                if(it is Resource.Success) {
-                    _profile.postValue(it.data!!)
-                    followingState.postValue(
-                        it.data.let {user->
-                            when {
-                                user.followingThisUser && user.thisUserIsFollowingMe -> FollowingState.MutuallyFollowing
-                                user.followingThisUser -> FollowingState.FollowingThisUser
-                                user.thisUserIsFollowingMe -> FollowingState.ThisUserIsFollowingMe
-                                else -> FollowingState.NotMutuallyFollowing
-                            }
+                when(it) {
+                    is Resource.Error -> {
+                        errorLoading.postValue(it.errorType)
+                        toRetry.add {
+                            getProfile()
                         }
-                    )
+                    }
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
+                        _profile.postValue(it.data!!)
+                        followingState.postValue(
+                            it.data.let {user->
+                                when {
+                                    user.followingThisUser && user.thisUserIsFollowingMe -> FollowingState.MutuallyFollowing
+                                    user.followingThisUser -> FollowingState.FollowingThisUser
+                                    user.thisUserIsFollowingMe -> FollowingState.ThisUserIsFollowingMe
+                                    else -> FollowingState.NotMutuallyFollowing
+                                }
+                            }
+                        )
+                    }
                 }
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
@@ -75,6 +97,9 @@ class ProfileViewModel @Inject constructor(private val getProfileUseCase: GetPro
 
                     is Resource.Error -> {
                         errorLoading.postValue(feedDtoResource.errorType)
+                        toRetry.add {
+                            getFeed(refresh)
+                        }
                     }
                 }
             }.flowOn(Dispatchers.IO).launchIn(this)

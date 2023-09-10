@@ -20,6 +20,9 @@ import com.isolaatti.home.HomeActivity
 import com.isolaatti.login.LogInActivity
 import com.isolaatti.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 abstract class IsolaattiBaseActivity : AppCompatActivity()  {
@@ -27,9 +30,10 @@ abstract class IsolaattiBaseActivity : AppCompatActivity()  {
     val errorViewModel: ErrorMessageViewModel by viewModels()
 
     private var snackbarNetworkStatus: Snackbar? = null
+    private var snackbarError: Snackbar? = null
     private var connectionHasBeenLost: Boolean = false
 
-    private val errorObserver: Observer<Resource.Error.ErrorType> = Observer {
+    private val errorObserver: Observer<Resource.Error.ErrorType?> = Observer {
         when(it) {
             Resource.Error.ErrorType.AuthError -> showReAuthDialog()
             Resource.Error.ErrorType.NetworkError -> showNetworkErrorMessage()
@@ -38,6 +42,7 @@ abstract class IsolaattiBaseActivity : AppCompatActivity()  {
             Resource.Error.ErrorType.OtherError -> showUnknownErrorMessage()
             else -> {}
         }
+        errorViewModel.error.postValue(null)
     }
 
     private val connectivityObserver: Observer<Boolean> = Observer { networkAvailable ->
@@ -52,21 +57,22 @@ abstract class IsolaattiBaseActivity : AppCompatActivity()  {
             snackbarNetworkStatus = Snackbar.make(view, R.string.network_conn_restored, Snackbar.LENGTH_SHORT)
             snackbarNetworkStatus?.show()
             connectionHasBeenLost = false
+
+            CoroutineScope(Dispatchers.Default).launch {
+                errorViewModel.askRetry()
+            }
+
         }
     }
 
     private val signInActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
         if(activityResult.resultCode == Activity.RESULT_OK) {
-            onRetry()
+            CoroutineScope(Dispatchers.Default).launch {
+                errorViewModel.handleRetry()
+            }
         }
     }
 
-    /**
-     * This method is called when a refresh should be performed. For example,
-     * when sign in flow is started completed from here, it is needed to know
-     * when it is complete.
-     */
-    abstract fun onRetry()
 
     private val onAcceptReAuthClick = DialogInterface.OnClickListener { _, _ ->
         signInActivityResult.launch(Intent(this, LogInActivity::class.java))
@@ -78,22 +84,67 @@ abstract class IsolaattiBaseActivity : AppCompatActivity()  {
             .setPositiveButton(R.string.accept, onAcceptReAuthClick)
             .setNegativeButton(R.string.close, null)
             .show()
+        errorViewModel.error.postValue(null)
     }
 
     private fun showNetworkErrorMessage() {
-        Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show()
+        val view: View = window.decorView.findViewById(android.R.id.content) ?: return
+
+
+        snackbarError = Snackbar.make(view, R.string.network_error, Snackbar.LENGTH_INDEFINITE)
+            .setAction(R.string.retry) {
+                CoroutineScope(Dispatchers.Default).launch {
+                    errorViewModel.askRetry()
+                }
+                errorViewModel.error.postValue(null)
+            }
+
+        snackbarError?.show()
     }
 
     private fun showServerErrorMessage() {
+        val view: View = window.decorView.findViewById(android.R.id.content) ?: return
 
+
+        snackbarError = Snackbar.make(view, R.string.server_error, Snackbar.LENGTH_INDEFINITE)
+            .setAction(R.string.retry) {
+                CoroutineScope(Dispatchers.Default).launch {
+                    errorViewModel.askRetry()
+                }
+                errorViewModel.error.postValue(null)
+            }
+
+        snackbarError?.show()
     }
 
     private fun showNotFoundErrorMessage() {
+        val view: View = window.decorView.findViewById(android.R.id.content) ?: return
 
+
+        snackbarError = Snackbar.make(view, R.string.not_found, Snackbar.LENGTH_INDEFINITE)
+            .setAction(R.string.retry) {
+                CoroutineScope(Dispatchers.Default).launch {
+                    errorViewModel.askRetry()
+                }
+                errorViewModel.error.postValue(null)
+            }
+
+        snackbarError?.show()
     }
 
     private fun showUnknownErrorMessage() {
+        val view: View = window.decorView.findViewById(android.R.id.content) ?: return
 
+
+        snackbarError = Snackbar.make(view, R.string.unknown_error, Snackbar.LENGTH_INDEFINITE)
+            .setAction(R.string.retry) {
+                CoroutineScope(Dispatchers.Default).launch {
+                    errorViewModel.askRetry()
+                }
+                errorViewModel.error.postValue(null)
+            }
+
+        snackbarError?.show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -77,4 +77,7 @@
     <string name="edit_comment">Edit comment</string>
     <string name="network_conn_lost">Network connection lost</string>
     <string name="network_conn_restored">Network connection restored</string>
+    <string name="retry">Retry</string>
+    <string name="not_found">The resource you are trying to load could not be found</string>
+    <string name="unknown_error">An unkwnow error occurred</string>
 </resources>

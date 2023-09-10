@@ -10,7 +10,10 @@ import androidx.core.view.doOnLayout
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -19,6 +22,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.isolaatti.R
 import com.isolaatti.common.Dialogs
+import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.BottomSheetPostCommentsBinding
 import com.isolaatti.posting.comments.domain.model.Comment
 import com.isolaatti.posting.comments.presentation.CommentsRecyclerViewAdapter
@@ -38,6 +42,8 @@ import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonConfiguration
 import io.noties.markwon.image.destination.ImageDestinationProcessorRelativeToAbsolute
 import io.noties.markwon.linkify.LinkifyPlugin
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedCallback {
@@ -45,8 +51,8 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
     private lateinit var viewBinding: BottomSheetPostCommentsBinding
     val viewModel: CommentsViewModel by viewModels()
     private lateinit var adapter: CommentsRecyclerViewAdapter
-
-    val optionsViewModel: BottomSheetPostOptionsViewModel by activityViewModels()
+    private val errorViewModel: ErrorMessageViewModel by activityViewModels()
+    private val optionsViewModel: BottomSheetPostOptionsViewModel by activityViewModels()
 
     private val optionsObserver: Observer<OptionClicked?> = Observer { optionClicked ->
         if(optionClicked?.callerId == CALLER_ID) {
@@ -117,10 +123,7 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
         viewModel.commentPosted.observe(viewLifecycleOwner, commentPostedObserver)
         viewModel.commentToEdit.observe(viewLifecycleOwner, commentToEditObserver)
         viewModel.error.observe(viewLifecycleOwner) {
-            if(it == true) {
-                Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT).show()
-                viewModel.error.postValue(null)
-            }
+            errorViewModel.error.postValue(it)
         }
 
         optionsViewModel.optionClicked.observe(viewLifecycleOwner, optionsObserver)
@@ -199,6 +202,18 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
         // ensures send button is enabled when there is content on text field,
         // even if no change event is triggered
         viewBinding.submitCommentButton.isEnabled = !viewBinding.newCommentTextField.editText?.text.isNullOrBlank()
+
+
+
+        // things to retry when user taps "Retry"
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                errorViewModel.retry.collect {
+                    viewModel.retry()
+                    errorViewModel.handleRetry()
+                }
+            }
+        }
 
         setObservers()
         setListeners()

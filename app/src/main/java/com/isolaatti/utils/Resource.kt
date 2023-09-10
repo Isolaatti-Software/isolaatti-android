@@ -7,5 +7,15 @@ sealed class Resource<T> {
         enum class ErrorType {
             NetworkError, AuthError, NotFoundError, ServerError, OtherError
         }
+        companion object {
+            fun mapErrorCode(errorCode: Int): ErrorType {
+                return when(errorCode) {
+                    401 -> ErrorType.AuthError
+                    404 -> ErrorType.NotFoundError
+                    505 -> ErrorType.ServerError
+                    else -> ErrorType.OtherError
+                }
+            }
+        }
     }
 }

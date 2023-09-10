@@ -14,6 +14,7 @@ import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import retrofit2.awaitResponse
 import javax.inject.Inject
 
 class PostsRepositoryImpl @Inject constructor(private val feedsApi: FeedsApi, private val postApi: PostApi) : PostsRepository {
@@ -40,17 +41,12 @@ class PostsRepositoryImpl @Inject constructor(private val feedsApi: FeedsApi, pr
         emit(Resource.Loading())
         try {
             val gson = Gson()
-            val result = feedsApi.postsOfUser(userId, 20, lastId, olderFirst, gson.toJson(filter)).execute()
-            if(result.isSuccessful) {
-                emit(Resource.Success(result.body()?.let { Post.fromFeedDto(it) }))
+            val response = feedsApi.postsOfUser(userId, 20, lastId, olderFirst, gson.toJson(filter)).awaitResponse()
+            if(response.isSuccessful) {
+                emit(Resource.Success(response.body()?.let { Post.fromFeedDto(it) }))
                 return@flow
             }
-            when(result.code()) {
-                401 -> emit(Resource.Error(Resource.Error.ErrorType.AuthError))
-                404 -> emit(Resource.Error(Resource.Error.ErrorType.NotFoundError))
-                500 -> emit(Resource.Error(Resource.Error.ErrorType.ServerError))
-                else -> emit(Resource.Error(Resource.Error.ErrorType.OtherError))
-            }
+            emit(Resource.Error(Resource.Error.mapErrorCode(response.code())))
         } catch(_: Exception) {
             emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }
@@ -59,17 +55,12 @@ class PostsRepositoryImpl @Inject constructor(private val feedsApi: FeedsApi, pr
     override fun makePost(createPostDto: CreatePostDto): Flow<Resource<FeedDto.PostDto>> = flow {
         emit(Resource.Loading())
         try {
-            val result = postApi.makePost(createPostDto).execute()
+            val result = postApi.makePost(createPostDto).awaitResponse()
             if(result.isSuccessful) {
                 emit(Resource.Success(result.body()))
                 return@flow
             }
-            when(result.code()) {
-                401 -> emit(Resource.Error(Resource.Error.ErrorType.AuthError))
-                404 -> emit(Resource.Error(Resource.Error.ErrorType.NotFoundError))
-                500 -> emit(Resource.Error(Resource.Error.ErrorType.ServerError))
-                else -> emit(Resource.Error(Resource.Error.ErrorType.OtherError))
-            }
+            emit(Resource.Error(Resource.Error.mapErrorCode(result.code())))
         } catch(_: Exception) {
             emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }
@@ -78,17 +69,12 @@ class PostsRepositoryImpl @Inject constructor(private val feedsApi: FeedsApi, pr
     override fun editPost(editPostDto: EditPostDto): Flow<Resource<FeedDto.PostDto>> = flow {
         emit(Resource.Loading())
         try {
-            val result = postApi.editPost(editPostDto).execute()
+            val result = postApi.editPost(editPostDto).awaitResponse()
             if(result.isSuccessful) {
                 emit(Resource.Success(result.body()))
                 return@flow
             }
-            when(result.code()) {
-                401 -> emit(Resource.Error(Resource.Error.ErrorType.AuthError))
-                404 -> emit(Resource.Error(Resource.Error.ErrorType.NotFoundError))
-                500 -> emit(Resource.Error(Resource.Error.ErrorType.ServerError))
-                else -> emit(Resource.Error(Resource.Error.ErrorType.OtherError))
-            }
+            emit(Resource.Error(Resource.Error.mapErrorCode(result.code())))
         } catch(_: Exception) {
             emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }
@@ -102,12 +88,7 @@ class PostsRepositoryImpl @Inject constructor(private val feedsApi: FeedsApi, pr
                 emit(Resource.Success(result.body()))
                 return@flow
             }
-            when(result.code()) {
-                401 -> emit(Resource.Error(Resource.Error.ErrorType.AuthError))
-                404 -> emit(Resource.Error(Resource.Error.ErrorType.NotFoundError))
-                500 -> emit(Resource.Error(Resource.Error.ErrorType.ServerError))
-                else -> emit(Resource.Error(Resource.Error.ErrorType.OtherError))
-            }
+            emit(Resource.Error(Resource.Error.mapErrorCode(result.code())))
         } catch(_: Exception) {
             emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }
@@ -121,12 +102,7 @@ class PostsRepositoryImpl @Inject constructor(private val feedsApi: FeedsApi, pr
                 emit(Resource.Success(result.body()))
                 return@flow
             }
-            when(result.code()) {
-                401 -> emit(Resource.Error(Resource.Error.ErrorType.AuthError))
-                404 -> emit(Resource.Error(Resource.Error.ErrorType.NotFoundError))
-                500 -> emit(Resource.Error(Resource.Error.ErrorType.ServerError))
-                else -> emit(Resource.Error(Resource.Error.ErrorType.OtherError))
-            }
+            emit(Resource.Error(Resource.Error.mapErrorCode(result.code())))
         } catch(_: Exception) {
             emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }

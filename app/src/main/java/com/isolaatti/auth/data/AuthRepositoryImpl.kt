@@ -40,12 +40,7 @@ class AuthRepositoryImpl @Inject constructor(
                 return@flow
             }
 
-            when(res.code()){
-                401 -> emit(Resource.Error(Resource.Error.ErrorType.AuthError))
-                404 -> emit(Resource.Error(Resource.Error.ErrorType.NotFoundError))
-                500 -> emit(Resource.Error(Resource.Error.ErrorType.ServerError))
-                else -> emit(Resource.Error(Resource.Error.ErrorType.OtherError))
-            }
+            emit(Resource.Error(Resource.Error.mapErrorCode(res.code())))
         } catch (_: Exception) {
             emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }

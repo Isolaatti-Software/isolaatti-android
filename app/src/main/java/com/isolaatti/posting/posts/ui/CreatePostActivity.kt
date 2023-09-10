@@ -6,11 +6,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.isolaatti.R
 import com.isolaatti.common.IsolaattiBaseActivity
 import com.isolaatti.databinding.ActivityCreatePostBinding
 import com.isolaatti.posting.posts.presentation.CreatePostViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CreatePostActivity : IsolaattiBaseActivity() {
@@ -34,13 +38,6 @@ class CreatePostActivity : IsolaattiBaseActivity() {
     val viewModel: CreatePostViewModel by viewModels()
     var mode: Int = EXTRA_MODE_CREATE
     var postId: Long = 0L
-    override fun onRetry() {
-        if(mode == EXTRA_MODE_EDIT && postId != 0L) {
-            viewModel.editDiscussion(postId, binding.filledTextField.editText?.text.toString())
-        } else {
-            viewModel.postDiscussion(binding.filledTextField.editText?.text.toString())
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +59,23 @@ class CreatePostActivity : IsolaattiBaseActivity() {
         setupUI()
         setListeners()
         setObservers()
-
         setContentView(binding.root)
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                errorViewModel.retry.collect {
+                    if(!it) {
+                        return@collect
+                    }
+
+                    if(mode == EXTRA_MODE_EDIT && postId != 0L) {
+                        viewModel.editDiscussion(postId, binding.filledTextField.editText?.text.toString())
+                    } else {
+                        viewModel.postDiscussion(binding.filledTextField.editText?.text.toString())
+                    }
+                }
+            }
+        }
 
     }
 

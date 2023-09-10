@@ -83,10 +83,7 @@ class EditCommentDialogFragment : DialogFragment() {
         }
 
         viewModel.error.observe(viewLifecycleOwner) {
-            if(it) {
-                Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT).show()
-                viewModel.error.postValue(true)
-            }
+            viewModel.error.postValue(it)
         }
 
         viewModel.finishedEditingComment.observe(viewLifecycleOwner) {

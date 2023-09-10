@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.isolaatti.followers.domain.FollowUserUseCase
 import com.isolaatti.followers.domain.FollowersRepository
 import com.isolaatti.profile.domain.entity.ProfileListItem
+import com.isolaatti.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FollowersViewModel @Inject constructor(private val followersRepository: FollowersRepository, private val followUserUseCase: FollowUserUseCase) : ViewModel() {
+class FollowersViewModel @Inject constructor(private val followersRepository: FollowersRepository) : ViewModel() {
     var userId: Int = 0
 
     private val followersList: MutableList<ProfileListItem> = mutableListOf()
@@ -28,6 +28,19 @@ class FollowersViewModel @Inject constructor(private val followersRepository: Fo
 
     val followers: LiveData<List<ProfileListItem>> get() = _followers
     val followings: LiveData<List<ProfileListItem>> get() = _followings
+
+    private val toRetry: MutableList<Runnable> = mutableListOf()
+
+
+    // runs the lists of "Runnable" one by one and clears list. After this is executed,
+    // caller should report as handled
+    fun retry() {
+        toRetry.forEach {
+            it.run()
+        }
+
+        toRetry.clear()
+    }
 
 
     private fun getFollowersLastId(): Int {
@@ -53,11 +66,23 @@ class FollowersViewModel @Inject constructor(private val followersRepository: Fo
 
         viewModelScope.launch {
             followersRepository.getFollowersOfUser(userId, getFollowersLastId()).onEach {
-                followersList.addAll(it)
-                _followers.postValue(followersList)
+                when(it) {
+                    is Resource.Success -> {
+                        if(it.data != null) {
+                            followersList.addAll(it.data)
+                        }
+
+                        _followers.postValue(followersList)
+                    }
+                    is Resource.Error -> {
+                        toRetry.add {
+                            fetchFollowers()
+                        }
+                    }
+                    is Resource.Loading -> {}
+                }
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
-
     }
 
     fun fetchFollowings() {
@@ -67,8 +92,20 @@ class FollowersViewModel @Inject constructor(private val followersRepository: Fo
 
         viewModelScope.launch {
             followersRepository.getFollowingsOfUser(userId, getFollowingsLastId()).onEach {
-                followingsList.addAll(it)
-                _followings.postValue(followingsList)
+                when(it) {
+                    is Resource.Error ->  {
+                        toRetry.add {
+                            fetchFollowings()
+                        }
+                    }
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
+                        if(it.data != null) {
+                            followingsList.addAll(it.data)
+                            _followings.postValue(followingsList)
+                        }
+                    }
+                }
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }
@@ -96,10 +133,20 @@ class FollowersViewModel @Inject constructor(private val followersRepository: Fo
         replaceOnLists(user)
 
         viewModelScope.launch {
-            followUserUseCase.follow(user.id).onEach {
-                user.following = true
-                user.updatingFollowState = false
-                replaceOnLists(user)
+            followersRepository.followUser(user.id).onEach {
+                when(it) {
+                    is Resource.Error -> {
+                        toRetry.add {
+                            followUser(user)
+                        }
+                    }
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
+                        user.following = true
+                        user.updatingFollowState = false
+                        replaceOnLists(user)
+                    }
+                }
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }
@@ -110,10 +157,21 @@ class FollowersViewModel @Inject constructor(private val followersRepository: Fo
         replaceOnLists(user)
 
         viewModelScope.launch {
-            followUserUseCase.unfollow(user.id).onEach {
-                user.following = false
-                user.updatingFollowState = false
-                replaceOnLists(user)
+            followersRepository.unfollowUser(user.id).onEach {
+                when(it) {
+                    is Resource.Error -> {
+                        toRetry.add {
+                            unfollowUser(user)
+                        }
+                    }
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
+                        user.following = false
+                        user.updatingFollowState = false
+                        replaceOnLists(user)
+                    }
+                }
+
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }

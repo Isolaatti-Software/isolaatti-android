@@ -11,7 +11,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
@@ -45,6 +48,7 @@ import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonConfiguration
 import io.noties.markwon.image.destination.ImageDestinationProcessorRelativeToAbsolute
 import io.noties.markwon.linkify.LinkifyPlugin
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
@@ -57,7 +61,6 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
     private val errorViewModel: ErrorMessageViewModel by activityViewModels()
     private val viewModel: FeedViewModel by activityViewModels()
     val optionsViewModel: BottomSheetPostOptionsViewModel by activityViewModels()
-
     private var currentUserId = 0
 
     private lateinit var viewBinding: FragmentFeedBinding
@@ -220,9 +223,19 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
         viewModel.errorLoading.observe(viewLifecycleOwner) {
             errorViewModel.error.postValue(it)
         }
+
         viewModel.getProfile()
 
         optionsViewModel.optionClicked.observe(viewLifecycleOwner, optionsObserver)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                errorViewModel.retry.collect {
+                    viewModel.retry()
+                    errorViewModel.handleRetry()
+                }
+            }
+        }
     }
 
     override fun onLiked(postId: Long) = viewModel.likePost(postId)
