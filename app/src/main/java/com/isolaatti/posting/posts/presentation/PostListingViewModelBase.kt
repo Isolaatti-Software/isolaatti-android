@@ -43,36 +43,54 @@ abstract class PostListingViewModelBase : ViewModel() {
 
     fun likePost(postId: Long) {
         viewModelScope.launch {
-            likesRepository.likePost(postId).onEach {likeDto ->
-                val likedPost = posts.value?.first?.find { post -> post.id == likeDto.postId }
-                val index = posts.value?.first?.indexOf(likedPost)
-                if(index != null){
-                    val temp = posts.value?.first?.toMutableList()
-                    Log.d("***", temp.toString())
-                    temp?.set(index, likedPost!!.apply {
-                        liked = true
-                        numberOfLikes = likeDto.likesCount
+            likesRepository.likePost(postId).onEach {like ->
 
-                    })
+                when(like) {
+                    is Resource.Error -> {}
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
+                        val likedPost = posts.value?.first?.find { post -> post.id == like.data?.postId }
+                        val index = posts.value?.first?.indexOf(likedPost)
+                        if(index != null){
+                            val temp = posts.value?.first?.toMutableList()
+                            Log.d("***", temp.toString())
+                            temp?.set(index, likedPost!!.apply {
+                                liked = true
+                                numberOfLikes = like.data?.likesCount ?: 0
+
+                            })
+                        }
+                        posts.postValue(posts.value?.copy(second = UpdateEvent(UpdateEvent.UpdateType.POST_LIKED, index)))
+                    }
                 }
-                posts.postValue(posts.value?.copy(second = UpdateEvent(UpdateEvent.UpdateType.POST_LIKED, index)))
+
+
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }
 
     fun unLikePost(postId: Long) {
         viewModelScope.launch {
-            likesRepository.unLikePost(postId).onEach {likeDto ->
-                val likedPost = posts.value?.first?.find { post -> post.id == likeDto.postId }
-                val index = posts.value?.first?.indexOf(likedPost)
-                if(index != null){
-                    val temp = posts.value?.first?.toMutableList()
-                    temp?.set(index, likedPost!!.apply {
-                        liked = false
-                        numberOfLikes = likeDto.likesCount
-                    })
+            likesRepository.unLikePost(postId).onEach {like ->
+
+                when(like) {
+                    is Resource.Error -> TODO()
+                    is Resource.Loading -> TODO()
+                    is Resource.Success -> {
+                        val likedPost = posts.value?.first?.find { post -> post.id == like.data?.postId }
+                        val index = posts.value?.first?.indexOf(likedPost)
+                        if(index != null){
+                            val temp = posts.value?.first?.toMutableList()
+                            temp?.set(index, likedPost!!.apply {
+                                liked = false
+                                numberOfLikes = like.data?.likesCount ?: 0
+                            })
+                        }
+                        posts.postValue(posts.value?.copy(second = UpdateEvent(UpdateEvent.UpdateType.POST_LIKED, index)))
+                    }
                 }
-                posts.postValue(posts.value?.copy(second = UpdateEvent(UpdateEvent.UpdateType.POST_LIKED, index)))
+
+
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }

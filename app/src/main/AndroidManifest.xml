@@ -31,7 +31,7 @@
             android:parentActivityName=".MainActivity"/>
         <activity android:name=".settings.ui.SettingsActivity" android:theme="@style/Theme.Isolaatti"/>
         <activity android:name=".posting.posts.ui.CreatePostActivity" android:theme="@style/Theme.Isolaatti" android:windowSoftInputMode="adjustResize"/>
-        <activity android:name=".posting.PostViewerActivity" android:theme="@style/Theme.Isolaatti"/>
+        <activity android:name=".posting.posts.viewer.ui.PostViewerActivity" android:theme="@style/Theme.Isolaatti"/>
         <activity android:name=".drafts.ui.DraftsActivity" android:theme="@style/Theme.Isolaatti"/>
         <activity android:name=".about.AboutActivity" android:theme="@style/Theme.Isolaatti"/>
         <activity android:name=".picture_viewer.ui.PictureViewerActivity"  android:theme="@style/Theme.Isolaatti"/>

@@ -22,7 +22,7 @@ import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentDiscussionsBinding
 import com.isolaatti.followers.domain.FollowingState
 import com.isolaatti.home.FeedFragment
-import com.isolaatti.posting.PostViewerActivity
+import com.isolaatti.posting.posts.viewer.ui.PostViewerActivity
 import com.isolaatti.posting.comments.ui.BottomSheetPostComments
 import com.isolaatti.posting.common.domain.Ownable
 import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked

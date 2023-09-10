@@ -80,4 +80,8 @@
     <string name="retry">Retry</string>
     <string name="not_found">The resource you are trying to load could not be found</string>
     <string name="unknown_error">An unkwnow error occurred</string>
+    <string name="clap">Clap</string>
+    <string name="comments">Comments</string>
+    <string name="likes_info">Claps: %d</string>
+    <string name="comments_info">Comments: %d</string>
 </resources>

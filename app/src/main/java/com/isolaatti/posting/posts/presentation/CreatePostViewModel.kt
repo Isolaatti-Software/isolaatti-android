@@ -72,7 +72,7 @@ class CreatePostViewModel @Inject constructor(private val makePost: MakePost, pr
             loadPost(postId).onEach { postRes ->
                 if(postRes is Resource.Success) {
                     postRes.data?.let {
-                        postToEdit.postValue(EditPostDto(PRIVACY_ISOLAATTI, content = it.post.textContent, postId = it.post.id))
+                        postToEdit.postValue(EditPostDto(PRIVACY_ISOLAATTI, content = it.textContent, postId = it.id))
                     }
                 }
             }.flowOn(Dispatchers.IO).launchIn(this)

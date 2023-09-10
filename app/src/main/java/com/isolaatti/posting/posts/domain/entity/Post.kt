@@ -36,5 +36,22 @@ data class Post(
                 )
             }.toMutableList()
         }
+
+        fun fromPostDto(postDto: FeedDto.PostDto): Post {
+            return Post(
+                id = postDto.post.id,
+                userId = postDto.post.userId,
+                textContent = postDto.post.textContent,
+                privacy = postDto.post.privacy,
+                date = postDto.post.date,
+                audioId = postDto.post.audioId,
+                squadId = postDto.post.squadId,
+                numberOfComments = postDto.numberOfComments,
+                numberOfLikes = postDto.numberOfLikes,
+                userName = postDto.userName,
+                squadName = postDto.squadName,
+                liked = postDto.liked
+            )
+        }
     }
 }

@@ -94,13 +94,16 @@ class PostsRepositoryImpl @Inject constructor(private val feedsApi: FeedsApi, pr
         }
     }
 
-    override fun loadPost(postId: Long): Flow<Resource<FeedDto.PostDto>> = flow {
+    override fun loadPost(postId: Long): Flow<Resource<Post>> = flow {
         emit(Resource.Loading())
         try {
             val result = postApi.getPost(postId).execute()
             if(result.isSuccessful) {
-                emit(Resource.Success(result.body()))
-                return@flow
+                val dto = result.body()
+                if(dto != null) {
+                    emit(Resource.Success(Post.fromPostDto(dto)))
+                    return@flow
+                }
             }
             emit(Resource.Error(Resource.Error.mapErrorCode(result.code())))
         } catch(_: Exception) {
