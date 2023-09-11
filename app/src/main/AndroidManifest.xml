@@ -34,7 +34,7 @@
         <activity android:name=".posting.posts.viewer.ui.PostViewerActivity" android:theme="@style/Theme.Isolaatti"/>
         <activity android:name=".drafts.ui.DraftsActivity" android:theme="@style/Theme.Isolaatti"/>
         <activity android:name=".about.AboutActivity" android:theme="@style/Theme.Isolaatti"/>
-        <activity android:name=".picture_viewer.ui.PictureViewerActivity"  android:theme="@style/Theme.Isolaatti"/>
+        <activity android:name=".images.picture_viewer.ui.PictureViewerActivity"  android:theme="@style/Theme.Isolaatti"/>
     </application>
 <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

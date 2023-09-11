@@ -1,4 +1,4 @@
-package com.isolaatti.profile.ui
+package com.isolaatti.images.image_list.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater

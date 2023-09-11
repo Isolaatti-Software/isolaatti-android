@@ -35,7 +35,7 @@
         android:label="AudiosFragment" />
     <fragment
         android:id="@+id/imagesFragment"
-        android:name="com.isolaatti.profile.ui.ImagesFragment"
+        android:name="com.isolaatti.images.image_list.ui.ImagesFragment"
         android:label="ImagesFragment" />
     <fragment
         android:id="@+id/blockProfileFragment"

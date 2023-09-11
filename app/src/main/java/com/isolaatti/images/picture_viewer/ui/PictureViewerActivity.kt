@@ -1,11 +1,11 @@
-package com.isolaatti.picture_viewer.ui
+package com.isolaatti.images.picture_viewer.ui
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.isolaatti.databinding.ActivityPictureViewerBinding
-import com.isolaatti.picture_viewer.presentation.PictureViewerViewPagerAdapter
+import com.isolaatti.images.picture_viewer.presentation.PictureViewerViewPagerAdapter
 
 class PictureViewerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPictureViewerBinding

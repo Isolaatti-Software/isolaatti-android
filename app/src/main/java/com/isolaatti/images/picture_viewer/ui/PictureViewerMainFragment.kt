@@ -1,4 +1,4 @@
-package com.isolaatti.picture_viewer.ui
+package com.isolaatti.images.picture_viewer.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.isolaatti.databinding.FragmentMainPictureViewerBinding
-import com.isolaatti.picture_viewer.presentation.PictureViewerViewPagerAdapter
+import com.isolaatti.images.picture_viewer.presentation.PictureViewerViewPagerAdapter
 
 class PictureViewerMainFragment : Fragment() {
 

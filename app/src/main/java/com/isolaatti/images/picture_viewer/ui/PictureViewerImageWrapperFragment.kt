@@ -1,4 +1,4 @@
-package com.isolaatti.picture_viewer.ui
+package com.isolaatti.images.picture_viewer.ui
 
 import android.os.Bundle
 import android.util.Log

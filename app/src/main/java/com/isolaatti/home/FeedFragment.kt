@@ -24,7 +24,7 @@ import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentFeedBinding
 import com.isolaatti.drafts.ui.DraftsActivity
 import com.isolaatti.home.presentation.FeedViewModel
-import com.isolaatti.picture_viewer.ui.PictureViewerActivity
+import com.isolaatti.images.picture_viewer.ui.PictureViewerActivity
 import com.isolaatti.posting.posts.viewer.ui.PostViewerActivity
 import com.isolaatti.posting.comments.ui.BottomSheetPostComments
 import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback

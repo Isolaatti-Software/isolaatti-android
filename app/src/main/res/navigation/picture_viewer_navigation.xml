@@ -6,6 +6,6 @@
 
     <fragment
         android:id="@+id/pictureViewerMainFragment"
-        android:name="com.isolaatti.picture_viewer.ui.PictureViewerMainFragment"
+        android:name="com.isolaatti.images.picture_viewer.ui.PictureViewerMainFragment"
         android:label="PictureViewerMainFragment" />
 </navigation>
