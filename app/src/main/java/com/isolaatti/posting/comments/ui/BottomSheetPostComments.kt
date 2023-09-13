@@ -1,12 +1,10 @@
 package com.isolaatti.posting.comments.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.doOnLayout
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -15,9 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.isolaatti.R
@@ -28,12 +24,12 @@ import com.isolaatti.posting.comments.domain.model.Comment
 import com.isolaatti.posting.comments.presentation.CommentsRecyclerViewAdapter
 import com.isolaatti.posting.comments.presentation.CommentsViewModel
 import com.isolaatti.posting.comments.presentation.UpdateEvent
-import com.isolaatti.posting.common.domain.OnUserInteractedCallback
-import com.isolaatti.posting.common.domain.Ownable
-import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
-import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
-import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
-import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
+import com.isolaatti.common.OnUserInteractedCallback
+import com.isolaatti.common.Ownable
+import com.isolaatti.common.options_bottom_sheet.domain.OptionClicked
+import com.isolaatti.common.options_bottom_sheet.domain.Options
+import com.isolaatti.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
+import com.isolaatti.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
 import com.isolaatti.profile.ui.ProfileActivity
 import com.isolaatti.utils.PicassoImagesPluginDef
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,7 +38,6 @@ import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonConfiguration
 import io.noties.markwon.image.destination.ImageDestinationProcessorRelativeToAbsolute
 import io.noties.markwon.linkify.LinkifyPlugin
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint

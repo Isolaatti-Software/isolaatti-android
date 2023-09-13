@@ -3,7 +3,7 @@ package com.isolaatti.profile.data.remote
 data class UserProfileDto(
     val id: Int,
     val name: String,
-    val email: String,
+    val email: String?,
     val numberOfFollowers: Int,
     val numberOfFollowing: Int,
     val numberOfLikes: Int,

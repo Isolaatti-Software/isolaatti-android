@@ -102,6 +102,11 @@ class PostViewerActivity : IsolaattiBaseActivity() {
         binding.commentsInfo.setOnClickListener {
             openComments()
         }
+
+        binding.toolbar.setNavigationOnClickListener {
+            finish()
+        }
+
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

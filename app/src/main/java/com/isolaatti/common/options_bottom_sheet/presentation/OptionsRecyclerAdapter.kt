@@ -1,4 +1,4 @@
-package com.isolaatti.posting.common.options_bottom_sheet.presentation
+package com.isolaatti.common.options_bottom_sheet.presentation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,14 +6,14 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.isolaatti.databinding.OptionItemBinding
-import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
+import com.isolaatti.common.options_bottom_sheet.domain.Options
 
-class OptionsRecyclerAdapter(val options: List<Options.Option>, private val optionCallback: OptionsCallback) : RecyclerView.Adapter<OptionsRecyclerAdapter.OptionViewHolder>() {
+class OptionsRecyclerAdapter(val optionsId: Int, val options: List<Options.Option>, private val optionCallback: OptionsCallback) : RecyclerView.Adapter<OptionsRecyclerAdapter.OptionViewHolder>() {
 
     inner class OptionViewHolder(val viewBinding: OptionItemBinding) : RecyclerView.ViewHolder(viewBinding.root)
 
     fun interface OptionsCallback {
-        fun optionClicked(optionId: Int)
+        fun optionClicked(optionsId:Int, optionId: Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OptionViewHolder {
@@ -34,7 +34,7 @@ class OptionsRecyclerAdapter(val options: List<Options.Option>, private val opti
             text = context.getText(options[position].stringRes)
             icon = AppCompatResources.getDrawable(context, options[position].icon)
             setOnClickListener {
-                optionCallback.optionClicked(options[position].optionId)
+                optionCallback.optionClicked(optionsId, options[position].optionId)
             }
         }
     }

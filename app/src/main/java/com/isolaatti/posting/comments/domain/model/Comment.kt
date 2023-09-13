@@ -2,8 +2,7 @@ package com.isolaatti.posting.comments.domain.model
 
 import com.isolaatti.posting.comments.data.remote.CommentDto
 import com.isolaatti.posting.comments.data.remote.FeedCommentsDto
-import com.isolaatti.posting.common.domain.Ownable
-import com.isolaatti.posting.posts.data.remote.FeedDto
+import com.isolaatti.common.Ownable
 
 data class Comment(
     val id: Long,

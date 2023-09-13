@@ -1,4 +1,4 @@
-package com.isolaatti.posting.common.options_bottom_sheet.ui
+package com.isolaatti.common.options_bottom_sheet.ui
 
 import android.os.Bundle
 import android.util.Log
@@ -15,9 +15,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.isolaatti.R
 import com.isolaatti.databinding.BottomSheetPostOptionsBinding
-import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
-import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
-import com.isolaatti.posting.common.options_bottom_sheet.presentation.OptionsRecyclerAdapter
+import com.isolaatti.common.options_bottom_sheet.domain.Options
+import com.isolaatti.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
+import com.isolaatti.common.options_bottom_sheet.presentation.OptionsRecyclerAdapter
 
 class BottomSheetPostOptionsFragment : BottomSheetDialogFragment(), OptionsRecyclerAdapter.OptionsCallback {
     private lateinit var viewBinding: BottomSheetPostOptionsBinding
@@ -56,7 +56,7 @@ class BottomSheetPostOptionsFragment : BottomSheetDialogFragment(), OptionsRecyc
 
     private fun renderOptions(options: Options) {
         viewBinding.title.text = requireContext().getText(options.title)
-        viewBinding.recyclerOptions.adapter = OptionsRecyclerAdapter(options.items, this)
+        viewBinding.recyclerOptions.adapter = OptionsRecyclerAdapter(options.id, options.items, this)
         viewBinding.recyclerOptions.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
 
@@ -66,7 +66,7 @@ class BottomSheetPostOptionsFragment : BottomSheetDialogFragment(), OptionsRecyc
 
     }
 
-    override fun optionClicked(optionId: Int) {
-        viewModel.optionClicked(optionId)
+    override fun optionClicked(optionsId:Int, optionId: Int) {
+        viewModel.optionClicked(optionsId, optionId)
     }
 }

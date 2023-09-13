@@ -1,6 +1,6 @@
 package com.isolaatti.posting.posts.domain.entity
 
-import com.isolaatti.posting.common.domain.Ownable
+import com.isolaatti.common.Ownable
 import com.isolaatti.posting.posts.data.remote.FeedDto
 
 data class Post(

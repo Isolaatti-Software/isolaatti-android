@@ -1,4 +1,4 @@
-package com.isolaatti.posting.common.domain
+package com.isolaatti.common
 
 interface OnUserInteractedCallback {
     fun onOptions(postId: Ownable)

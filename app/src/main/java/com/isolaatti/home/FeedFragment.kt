@@ -27,12 +27,12 @@ import com.isolaatti.home.presentation.FeedViewModel
 import com.isolaatti.images.picture_viewer.ui.PictureViewerActivity
 import com.isolaatti.posting.posts.viewer.ui.PostViewerActivity
 import com.isolaatti.posting.comments.ui.BottomSheetPostComments
-import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
-import com.isolaatti.posting.common.domain.Ownable
-import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
-import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
-import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
-import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
+import com.isolaatti.common.OnUserInteractedWithPostCallback
+import com.isolaatti.common.Ownable
+import com.isolaatti.common.options_bottom_sheet.domain.OptionClicked
+import com.isolaatti.common.options_bottom_sheet.domain.Options
+import com.isolaatti.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
+import com.isolaatti.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
 import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.posting.posts.presentation.CreatePostContract
 import com.isolaatti.posting.posts.presentation.EditPostContract
@@ -194,14 +194,14 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
             val textViewName: TextView? = header?.findViewById(R.id.textViewName)
             val textViewEmail: TextView? = header?.findViewById(R.id.textViewEmail)
 
-            Picasso.get().load(UrlGen.userProfileImage(it.id)).into(image)
+            Picasso.get().load(UrlGen.userProfileImage(it.userId)).into(image)
             image?.setOnClickListener {_ ->
-                PictureViewerActivity.startActivityWithUrls(requireContext(), arrayOf(UrlGen.userProfileImageFullQuality(it.id)))
+                PictureViewerActivity.startActivityWithUrls(requireContext(), arrayOf(UrlGen.userProfileImageFullQuality(it.userId)))
             }
 
             textViewName?.text = it.name
             textViewEmail?.text = it.email
-            currentUserId = it.id
+            currentUserId = it.userId
         }
 
 

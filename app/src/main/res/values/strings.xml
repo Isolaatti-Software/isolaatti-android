@@ -84,4 +84,8 @@
     <string name="comments">Comments</string>
     <string name="likes_info">Claps: %d</string>
     <string name="comments_info">Comments: %d</string>
+    <string name="view_photo">View photo</string>
+    <string name="change_profile_photo">Change profile photo</string>
+    <string name="profile_photo">Profile photo</string>
+    <string name="remove_photo">Remove photo</string>
 </resources>

@@ -5,10 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.isolaatti.databinding.CommentLayoutBinding
-import com.isolaatti.posting.comments.data.remote.CommentDto
 import com.isolaatti.posting.comments.domain.model.Comment
-import com.isolaatti.posting.common.domain.OnUserInteractedCallback
-import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
+import com.isolaatti.common.OnUserInteractedCallback
 import com.isolaatti.utils.UrlGen
 import com.squareup.picasso.Picasso
 import io.noties.markwon.Markwon

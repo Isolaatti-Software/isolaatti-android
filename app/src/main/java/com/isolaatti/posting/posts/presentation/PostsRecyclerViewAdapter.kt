@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.isolaatti.R
-import com.isolaatti.posting.common.domain.OnUserInteractedWithPostCallback
+import com.isolaatti.common.OnUserInteractedWithPostCallback
 import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.utils.UrlGen.userProfileImage
 import com.squareup.picasso.Picasso

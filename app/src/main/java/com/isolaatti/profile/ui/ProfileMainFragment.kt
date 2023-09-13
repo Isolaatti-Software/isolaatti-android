@@ -2,6 +2,7 @@ package com.isolaatti.profile.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,11 +25,12 @@ import com.isolaatti.followers.domain.FollowingState
 import com.isolaatti.home.FeedFragment
 import com.isolaatti.posting.posts.viewer.ui.PostViewerActivity
 import com.isolaatti.posting.comments.ui.BottomSheetPostComments
-import com.isolaatti.posting.common.domain.Ownable
-import com.isolaatti.posting.common.options_bottom_sheet.domain.OptionClicked
-import com.isolaatti.posting.common.options_bottom_sheet.domain.Options
-import com.isolaatti.posting.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
-import com.isolaatti.posting.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
+import com.isolaatti.common.Ownable
+import com.isolaatti.common.options_bottom_sheet.domain.OptionClicked
+import com.isolaatti.common.options_bottom_sheet.domain.Options
+import com.isolaatti.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
+import com.isolaatti.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
+import com.isolaatti.images.picture_viewer.ui.PictureViewerActivity
 import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.posting.posts.presentation.CreatePostContract
 import com.isolaatti.posting.posts.presentation.EditPostContract
@@ -36,6 +38,7 @@ import com.isolaatti.posting.posts.presentation.PostListingRecyclerViewAdapterWi
 import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
 import com.isolaatti.posting.posts.presentation.UpdateEvent
 import com.isolaatti.profile.data.remote.UserProfileDto
+import com.isolaatti.profile.domain.entity.UserProfile
 import com.isolaatti.profile.presentation.ProfileViewModel
 import com.isolaatti.utils.PicassoImagesPluginDef
 import com.isolaatti.utils.UrlGen
@@ -75,9 +78,9 @@ class ProfileMainFragment : Fragment() {
         }
     }
 
-    private val profileObserver = Observer<UserProfileDto> { profile ->
+    private val profileObserver = Observer<UserProfile> { profile ->
         Picasso.get()
-            .load(UrlGen.userProfileImage(profile.id))
+            .load(UrlGen.userProfileImage(profile.userId))
             .into(viewBinding.profileImageView)
 
         title = profile.name
@@ -93,6 +96,12 @@ class ProfileMainFragment : Fragment() {
             profile.numberOfFollowing.toString()
         )
 
+
+        viewBinding.profileImageView.setOnClickListener {
+            optionsViewModel.setOptions(Options.PROFILE_PHOTO_OPTIONS, CALLER_ID, profile)
+            val fragment = BottomSheetPostOptionsFragment()
+            fragment.show(parentFragmentManager, BottomSheetPostOptionsFragment.TAG)
+        }
 
         setupUiForUserType(profile.isUserItself)
     }
@@ -131,27 +140,49 @@ class ProfileMainFragment : Fragment() {
     }
 
     private val optionsObserver: Observer<OptionClicked?> = Observer { optionClicked ->
-        if(optionClicked?.callerId == FeedFragment.CALLER_ID) {
-            // post id should come as payload
-            val post = optionClicked.payload as? Post ?: return@Observer
-            when(optionClicked.optionId) {
-                Options.Option.OPTION_DELETE -> {
-                    Dialogs.buildDeletePostDialog(requireContext()) { delete ->
-                        optionsViewModel.handle()
-                        if(delete) {
-                            viewModel.deletePost(post.id)
-                        }
-                    }.show()
+        if(optionClicked?.callerId == CALLER_ID) {
+            Log.d("ProfileMainFragment", optionClicked.toString())
 
-                }
-                Options.Option.OPTION_EDIT -> {
+            when(optionClicked.optionsId) {
+                Options.PROFILE_PHOTO_OPTIONS -> {
+                    val profile = optionClicked.payload as? UserProfile
+                    when(optionClicked.optionId) {
+                        Options.Option.OPTION_PROFILE_PHOTO_CHANGE_PHOTO -> {}
+                        Options.Option.OPTION_PROFILE_PHOTO_REMOVE_PHOTO -> {}
+                        Options.Option.OPTION_PROFILE_PHOTO_VIEW_PHOTO -> {
+                            val profilePictureUrl = profile?.profilePictureUrl
+                            if(profilePictureUrl != null) {
+                                PictureViewerActivity.startActivityWithUrls(requireContext(), arrayOf(profilePictureUrl))
+                            }
+                        }
+                    }
                     optionsViewModel.handle()
-                    editDiscussion.launch(post.id)
                 }
-                Options.Option.OPTION_REPORT -> {
-                    optionsViewModel.handle()
+                Options.POST_OPTIONS -> {
+                    // post id should come as payload
+                    val post = optionClicked.payload as? Post ?: return@Observer
+                    when(optionClicked.optionId) {
+                        Options.Option.OPTION_DELETE -> {
+                            Dialogs.buildDeletePostDialog(requireContext()) { delete ->
+                                optionsViewModel.handle()
+                                if(delete) {
+                                    viewModel.deletePost(post.id)
+                                }
+                            }.show()
+
+                        }
+                        Options.Option.OPTION_EDIT -> {
+                            optionsViewModel.handle()
+                            editDiscussion.launch(post.id)
+                        }
+                        Options.Option.OPTION_REPORT -> {
+                            optionsViewModel.handle()
+                        }
+                    }
                 }
             }
+
+
         }
     }
 
@@ -163,7 +194,7 @@ class ProfileMainFragment : Fragment() {
         viewBinding.topAppBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             if (scrollRange == -1) scrollRange = appBarLayout.totalScrollRange
             if (scrollRange + verticalOffset == 0) {
-                viewBinding.collapsingToolbarLayout.title = title
+                viewBinding.collapsingToolbarLayout.title = viewModel.profile.value?.name
                 isShow = true
             } else if (isShow) {
                 viewBinding.collapsingToolbarLayout.title = " "
@@ -278,7 +309,7 @@ class ProfileMainFragment : Fragment() {
             }
 
             override fun onOptions(post: Ownable) {
-                optionsViewModel.setOptions(Options.POST_OPTIONS, FeedFragment.CALLER_ID, post)
+                optionsViewModel.setOptions(Options.POST_OPTIONS, CALLER_ID, post)
                 val modalBottomSheet = BottomSheetPostOptionsFragment()
                 modalBottomSheet.show(requireActivity().supportFragmentManager, BottomSheetPostOptionsFragment.TAG)
             }
@@ -305,11 +336,12 @@ class ProfileMainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupCollapsingBar()
+
         setupPostsAdapter()
         bind()
         setObservers()
         getData()
+        setupCollapsingBar()
 
 
 
@@ -321,5 +353,9 @@ class ProfileMainFragment : Fragment() {
                 }
             }
         }
+    }
+
+    companion object {
+        const val CALLER_ID = 30
     }
 }

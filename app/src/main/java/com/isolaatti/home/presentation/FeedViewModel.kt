@@ -8,6 +8,7 @@ import com.isolaatti.posting.posts.domain.PostsRepository
 import com.isolaatti.posting.posts.presentation.PostListingViewModelBase
 import com.isolaatti.posting.posts.presentation.UpdateEvent
 import com.isolaatti.profile.data.remote.UserProfileDto
+import com.isolaatti.profile.domain.entity.UserProfile
 import com.isolaatti.profile.domain.use_case.GetProfile
 import com.isolaatti.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -75,8 +76,8 @@ class FeedViewModel @Inject constructor(
     }
 
     // User profile
-    private val _userProfile: MutableLiveData<UserProfileDto> = MutableLiveData()
-    val userProfile: LiveData<UserProfileDto> get() = _userProfile
+    private val _userProfile: MutableLiveData<UserProfile> = MutableLiveData()
+    val userProfile: LiveData<UserProfile> get() = _userProfile
 
     fun getProfile() {
         viewModelScope.launch {

@@ -1,4 +1,4 @@
-package com.isolaatti.posting.common.options_bottom_sheet.domain
+package com.isolaatti.common.options_bottom_sheet.domain
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -6,6 +6,7 @@ import com.isolaatti.R
 
 data class Options(
     @StringRes val title: Int,
+    val id: Int,
     val items: List<Option>
 ) {
     data class Option(
@@ -19,14 +20,18 @@ data class Options(
             const val OPTION_REPORT = 3
             const val OPTION_SAVE = 4
             const val OPTION_SNAPSHOT = 5
+            const val OPTION_PROFILE_PHOTO_VIEW_PHOTO = 6
+            const val OPTION_PROFILE_PHOTO_CHANGE_PHOTO = 7
+            const val OPTION_PROFILE_PHOTO_REMOVE_PHOTO = 8
         }
     }
 
     companion object {
         const val POST_OPTIONS = 1
         const val COMMENT_OPTIONS = 2
+        const val PROFILE_PHOTO_OPTIONS = 3
 
-        val noOptions = Options(0, listOf())
+        val noOptions = Options(0, 0, listOf())
 
         fun getPostsOptions(userOwned: Boolean, savable: Boolean, snapshotAble: Boolean): Options {
             val list = mutableListOf(
@@ -36,7 +41,8 @@ data class Options(
             if(userOwned) {
                 list.addAll(listOf(
                     Option(R.string.delete, R.drawable.baseline_delete_24, Option.OPTION_DELETE),
-                    Option(R.string.edit, R.drawable.baseline_edit_24, Option.OPTION_EDIT))
+                    Option(R.string.edit, R.drawable.baseline_edit_24, Option.OPTION_EDIT)
+                )
                 )
             }
 
@@ -48,7 +54,7 @@ data class Options(
                 list.add(Option(R.string.save_snapshot, R.drawable.baseline_download_24, Option.OPTION_SNAPSHOT))
             }
 
-            return Options(R.string.post_options_title, list)
+            return Options(R.string.post_options_title, POST_OPTIONS, list)
         }
 
         fun getCommentOptions(userOwned: Boolean, savable: Boolean, snapshotAble: Boolean): Options {
@@ -59,7 +65,8 @@ data class Options(
             if(userOwned) {
                 list.addAll(listOf(
                     Option(R.string.delete, R.drawable.baseline_delete_24, Option.OPTION_DELETE),
-                    Option(R.string.edit, R.drawable.baseline_edit_24, Option.OPTION_EDIT))
+                    Option(R.string.edit, R.drawable.baseline_edit_24, Option.OPTION_EDIT)
+                )
                 )
             }
 
@@ -71,7 +78,20 @@ data class Options(
                 list.add(Option(R.string.save_snapshot, R.drawable.baseline_download_24, Option.OPTION_SNAPSHOT))
             }
 
-            return Options(R.string.comment_options, list)
+            return Options(R.string.comment_options, COMMENT_OPTIONS, list)
+        }
+
+        fun getProfilePhotoOptions(userOwned: Boolean): Options {
+            val list = mutableListOf(Option(R.string.view_photo, R.drawable.baseline_image_24, Option.OPTION_PROFILE_PHOTO_VIEW_PHOTO))
+
+            if(userOwned) {
+                list.addAll(listOf(
+                    Option(R.string.change_profile_photo, R.drawable.baseline_edit_24, Option.OPTION_PROFILE_PHOTO_CHANGE_PHOTO),
+                    Option(R.string.remove_photo, R.drawable.baseline_remove_circle_24, Option.OPTION_PROFILE_PHOTO_REMOVE_PHOTO)
+                ))
+            }
+
+            return Options(R.string.profile_photo,PROFILE_PHOTO_OPTIONS, list)
         }
     }
 }

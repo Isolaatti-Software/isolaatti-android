@@ -11,6 +11,7 @@ import com.isolaatti.posting.posts.presentation.PostListingViewModelBase
 import com.isolaatti.posting.posts.presentation.UpdateEvent
 import com.isolaatti.profile.data.remote.UserProfileDto
 import com.isolaatti.profile.domain.ProfileRepository
+import com.isolaatti.profile.domain.entity.UserProfile
 import com.isolaatti.profile.domain.use_case.GetProfile
 import com.isolaatti.profile.domain.use_case.GetProfilePosts
 import com.isolaatti.utils.Resource
@@ -28,8 +29,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(private val getProfileUseCase: GetProfile, private val getProfilePostsUseCase: GetProfilePosts) : PostListingViewModelBase() {
-    private val _profile = MutableLiveData<UserProfileDto>()
-    val profile: LiveData<UserProfileDto> get() = _profile
+    private val _profile = MutableLiveData<UserProfile>()
+    val profile: LiveData<UserProfile> get() = _profile
 
     var profileId: Int  = 0
 
