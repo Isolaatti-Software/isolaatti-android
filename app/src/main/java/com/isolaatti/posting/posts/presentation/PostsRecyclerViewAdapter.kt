@@ -137,7 +137,13 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
             notifyDataSetChanged()
             return
         }
-        val postUpdated = updateEvent.affectedPosition?.let { postList?.get(it) }
+        val postUpdated = updateEvent.affectedPosition?.let {
+            if(updateEvent.updateType == UpdateEvent.UpdateType.POST_REMOVED) {
+                null
+            } else {
+                postList?.get(it)
+            }
+        }
         val position = updateEvent.affectedPosition
 
         previousSize = itemCount
@@ -153,7 +159,7 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
                     notifyItemChanged(position, CommentsCountUpdatePayload(postUpdated.numberOfComments))
             }
             UpdateEvent.UpdateType.POST_REMOVED -> {
-                if(postUpdated != null && position != null)
+                if(position != null)
                     notifyItemRemoved(position)
             }
             UpdateEvent.UpdateType.POST_ADDED -> {

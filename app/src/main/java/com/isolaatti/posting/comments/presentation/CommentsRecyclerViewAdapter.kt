@@ -71,18 +71,15 @@ class CommentsRecyclerViewAdapter(private var list: List<Comment>, private val m
             return
         }
 
-        val commentUpdated = updateEvent.affectedPosition?.let { list[it] }
-        val position = updateEvent.affectedPosition
 
+        val position = updateEvent.affectedPosition
         previousSize = itemCount
         list = updatedList
-
-
 
         when(updateEvent.updateType) {
 
             UpdateEvent.UpdateType.COMMENT_REMOVED -> {
-                if(commentUpdated != null && position != null)
+                if(position != null)
                     notifyItemRemoved(position)
             }
             UpdateEvent.UpdateType.COMMENT_ADDED_TOP -> {
