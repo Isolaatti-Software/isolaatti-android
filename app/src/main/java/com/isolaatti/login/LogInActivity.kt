@@ -17,6 +17,7 @@ import com.isolaatti.R
 import com.isolaatti.common.IsolaattiBaseActivity
 import com.isolaatti.databinding.ActivityLoginBinding
 import com.isolaatti.home.HomeActivity
+import com.isolaatti.sign_up.ui.SignUpActivity
 import com.isolaatti.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -85,6 +86,10 @@ class LogInActivity: AppCompatActivity() {
 
         viewBinding.forgotPasswordBtn.setOnClickListener {
             openForgotPassword()
+        }
+
+        viewBinding.signUpBtn.setOnClickListener {
+            SignUpActivity.startActivity(this)
         }
 
     }

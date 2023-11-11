@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sign_up_navigation"
+    app:startDestination="@id/getCodeFragment">
+
+    <fragment
+        android:id="@+id/makeAccountFragment"
+        android:name="com.isolaatti.sign_up.ui.MakeAccountFragment"
+        android:label="MakeAccountFragment" />
+    <fragment
+        android:id="@+id/getCodeFragment"
+        android:name="com.isolaatti.sign_up.ui.GetCodeFragment"
+        android:label="GetCodeFragment" >
+        <action
+            android:id="@+id/action_getCodeFragment_to_validateCodeFragment"
+            app:destination="@id/validateCodeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/validateCodeFragment"
+        android:name="com.isolaatti.sign_up.ui.ValidateCodeFragment"
+        android:label="ValidateCodeFragment" >
+        <action
+            android:id="@+id/action_validateCodeFragment_to_makeAccountFragment"
+            app:destination="@id/makeAccountFragment" />
+    </fragment>
+    <action android:id="@+id/action_global_validateCodeFragment" app:destination="@id/validateCodeFragment"/>
+</navigation>

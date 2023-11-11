@@ -88,4 +88,7 @@
     <string name="change_profile_photo">Change profile photo</string>
     <string name="profile_photo">Profile photo</string>
     <string name="remove_photo">Remove photo</string>
+    <string name="get_code_info">The first step to create an account is to provide your email address. We will send a code that you will need to enter in the next step.</string>
+    <string name="send">Send</string>
+    <string name="already_have_a_code">Already have a code?</string>
 </resources>

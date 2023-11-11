@@ -13,7 +13,10 @@ class RetrofitClient @Inject constructor(private val authenticationInterceptor: 
     companion object {
         // These urls don't need auth header
         val excludedUrlsFromAuthentication = listOf(
-            "/api/LogIn"
+            "/api/LogIn",
+            "/api/signUp/get_code",
+            "/api/signUp/validate_code",
+            "/api/signUp/sign_up_with_code"
         )
         const val BASE_URL = "${BuildConfig.backend}/api/"
     }
