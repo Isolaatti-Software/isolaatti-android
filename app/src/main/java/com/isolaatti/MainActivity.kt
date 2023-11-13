@@ -35,8 +35,9 @@ class MainActivity : ComponentActivity() {
         val currentToken = authRepository.getCurrentToken()
 
         if(currentToken == null) {
-
-            signInActivityResult.launch(Intent(this@MainActivity, LogInActivity::class.java))
+            val loginIntent = Intent(this@MainActivity, LogInActivity::class.java)
+            loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            signInActivityResult.launch(loginIntent)
         } else {
             val homeActivityIntent = Intent(this@MainActivity, HomeActivity::class.java)
             homeActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)

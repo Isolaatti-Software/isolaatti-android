@@ -58,12 +58,4 @@ class LogInViewModel @Inject constructor(private val authRepository: AuthReposit
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }
-
-    fun signUp() {
-
-    }
-
-    fun forgotPassword() {
-
-    }
 }

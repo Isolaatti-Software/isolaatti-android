@@ -1,6 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/brand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textAlignment="center"
+            android:layout_marginTop="30dp"
+            style="@style/toolbar_text"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:textSize="28sp"
+                android:lines="2"
+                android:gravity="center_vertical"
+                android:text="@string/let_s_make_your_account"/>
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?attr/textInputOutlinedStyle"
+            android:layout_marginTop="4dp"
+            android:layout_marginHorizontal="16dp"
+            android:hint="@string/unique_username">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textDisplayName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?attr/textInputOutlinedStyle"
+            android:layout_marginTop="4dp"
+            android:layout_marginHorizontal="16dp"
+            android:hint="@string/display_name">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/create_a_password"
+            android:layout_marginTop="16dp"
+            android:textSize="18sp"
+            android:layout_marginHorizontal="16dp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?attr/textInputOutlinedStyle"
+            android:layout_marginTop="4dp"
+            android:layout_marginHorizontal="16dp"
+            android:hint="@string/password">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/before_making_your_account_please_read_these_legal_terms"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="16dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/readTermsAndConditions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/terms_and_conditions"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            style="@style/Widget.Material3.Button.TextButton"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/privacy_policy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/privacy_policy"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="2dp"
+            style="@style/Widget.Material3.Button.TextButton"/>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:text="Go"/>
+
+    </LinearLayout>
+
+
+</ScrollView>
