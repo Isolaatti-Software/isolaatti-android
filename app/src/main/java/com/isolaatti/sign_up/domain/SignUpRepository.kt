@@ -9,4 +9,5 @@ interface SignUpRepository {
     fun getCode(email: String): Flow<Resource<GetCodeResult>>
     fun validateCode(code: String): Flow<Resource<Boolean>>
     fun signUpWithCode(username: String, displayName: String, password: String, code: String): Flow<Resource<SignUpResult>>
+    fun checkUsernameAvailability(username: String): Flow<Resource<Boolean>>
 }

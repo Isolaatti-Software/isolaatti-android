@@ -57,7 +57,23 @@ class SignUpRepositoryImpl @Inject constructor(private val signUpApi: SignUpApi)
                 SignUpWithCodeDto(username, password, displayName, code)
             ).awaitResponse()
             if(response.isSuccessful){
-                response.body()?.let { GetCodeResult.valueOf(it.result)}
+                response.body()?.let { emit(Resource.Success(SignUpResult.valueOf(it.result)))}
+            } else {
+                emit(Resource.Error(Resource.Error.mapErrorCode(response.code())))
+            }
+        } catch (e: IllegalArgumentException) {
+            emit(Resource.Error(Resource.Error.ErrorType.OtherError, "Could not map response. $e"))
+        } catch(_: Exception) {
+            emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
+        }
+    }
+
+    override fun checkUsernameAvailability(username: String): Flow<Resource<Boolean>> = flow {
+        emit(Resource.Loading())
+        try {
+            val response = signUpApi.checkNameAvailability(username).awaitResponse()
+            if(response.isSuccessful){
+                response.body()?.let { emit(Resource.Success(it.available))}
             } else {
                 emit(Resource.Error(Resource.Error.mapErrorCode(response.code())))
             }

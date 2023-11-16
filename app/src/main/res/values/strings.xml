@@ -105,9 +105,12 @@
     <string name="loading">Loading...</string>
     <string name="unique_username">Unique username</string>
     <string name="display_name">Display name</string>
-    <string name="create_a_password">Create a fairly password</string>
+    <string name="create_a_password">Create a fairly strong password</string>
     <string name="let_s_make_your_account">Let\'s make your account</string>
-    <string name="before_making_your_account_please_read_these_legal_terms">Before making your account, please read and accept these legal terms.</string>
+    <string name="before_making_your_account_please_read_these_legal_terms">Before making your account, please read and accept these legal terms. By continuing you are stating that you have read and accepted both.</string>
     <string name="terms_and_conditions">Terms and conditions</string>
     <string name="privacy_policy">Privacy policy</string>
+    <string name="username_invalid_feedback">Username is not available or is invalid</string>
+    <string name="password_invalid_feedback">Password must be at least 8 characters long</string>
+    <string name="display_name_invalid_feedback">Please provide a name. This does not have to be unique and can be your real name or not.</string>
 </resources>

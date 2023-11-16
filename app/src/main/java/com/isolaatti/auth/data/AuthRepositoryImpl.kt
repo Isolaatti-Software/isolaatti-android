@@ -1,5 +1,6 @@
 package com.isolaatti.auth.data
 
+import com.isolaatti.BuildConfig
 import com.isolaatti.settings.data.KeyValueDao
 import com.isolaatti.settings.data.KeyValueEntity
 import com.isolaatti.auth.data.remote.AuthTokenDto
@@ -26,7 +27,7 @@ class AuthRepositoryImpl @Inject constructor(
     ): Flow<Resource<Boolean>> = flow {
         try {
             val res =
-                authApi.signInWithEmailAndPassword(Credential(email, password)).awaitResponse()
+                authApi.signInWithEmailAndPassword(BuildConfig.clientId, BuildConfig.secret, Credential(email, password)).awaitResponse()
 
             if(res.isSuccessful) {
                 val dto = res.body()
