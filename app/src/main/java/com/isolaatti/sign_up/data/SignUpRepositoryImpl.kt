@@ -6,6 +6,7 @@ import com.isolaatti.sign_up.data.dto.SignUpWithCodeDto
 import com.isolaatti.sign_up.domain.SignUpRepository
 import com.isolaatti.sign_up.domain.entity.GetCodeResult
 import com.isolaatti.sign_up.domain.entity.SignUpResult
+import com.isolaatti.sign_up.domain.entity.SignUpResultCode
 import com.isolaatti.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -57,7 +58,7 @@ class SignUpRepositoryImpl @Inject constructor(private val signUpApi: SignUpApi)
                 SignUpWithCodeDto(username, password, displayName, code)
             ).awaitResponse()
             if(response.isSuccessful){
-                response.body()?.let { emit(Resource.Success(SignUpResult.valueOf(it.result)))}
+                response.body()?.let { emit(Resource.Success(SignUpResult(SignUpResultCode.valueOf(it.accountMakingResult), it.session)))}
             } else {
                 emit(Resource.Error(Resource.Error.mapErrorCode(response.code())))
             }

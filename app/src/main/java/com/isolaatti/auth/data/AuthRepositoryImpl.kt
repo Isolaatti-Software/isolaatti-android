@@ -63,4 +63,9 @@ class AuthRepositoryImpl @Inject constructor(
         emit(userIdSetting.getUserId())
     }
 
+    override suspend fun setToken(sessionDto: AuthTokenDto) {
+        tokenStorage.storeToken(sessionDto)
+        userIdSetting.setUserId(sessionDto.userId)
+    }
+
 }

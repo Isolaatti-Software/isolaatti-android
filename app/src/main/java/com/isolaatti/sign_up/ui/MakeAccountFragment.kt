@@ -1,7 +1,9 @@
 package com.isolaatti.sign_up.ui
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,8 @@ import androidx.lifecycle.lifecycleScope
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.databinding.FragmentMakeAccountBinding
+import com.isolaatti.home.HomeActivity
+import com.isolaatti.sign_up.domain.entity.SignUpResultCode
 import com.isolaatti.sign_up.presentation.MakeAccountViewModel
 import com.isolaatti.sign_up.presentation.SignUpViewModel
 import com.isolaatti.utils.Resource
@@ -101,19 +105,54 @@ class MakeAccountFragment : Fragment() {
             }
         }
 
-        viewModel.signUpResult.observe(viewLifecycleOwner) {
+        viewModel.signUpResult.observe(viewLifecycleOwner) { resource ->
 
-            when(it) {
+            when(resource) {
                 is Resource.Error -> {}
                 is Resource.Loading -> {}
                 is Resource.Success -> {
-
-
+                    when(resource.data?.resultCode) {
+                        SignUpResultCode.EmailNotAvailable -> {
+                            showNotAvailableEmailMessage()
+                            viewModel.signUpResult.value = null
+                        }
+                        SignUpResultCode.ValidationProblems -> {
+                            showValidationProblemsMessage()
+                            viewModel.signUpResult.value = null
+                        }
+                        SignUpResultCode.UsernameUnavailable -> {
+                            showUnavailableMessage()
+                            viewModel.signUpResult.value = null
+                        }
+                        SignUpResultCode.Ok -> {
+                            resource.data.session?.let { viewModel.saveSession(it) }
+                            viewModel.signUpResult.value = null
+                        }
+                        else -> showErrorMessage()
+                    }
                 }
                 null -> {}
             }
-
-            viewModel.signUpResult.value = null
         }
+
+        viewModel.sessionSaved.observe(viewLifecycleOwner) {
+            Log.d("***", "sessionSaved")
+            if(it == true) {
+                goToHome()
+
+                viewModel.sessionSaved.value = null
+            }
+        }
+    }
+
+    private fun showNotAvailableEmailMessage() {}
+    private fun showValidationProblemsMessage() {}
+    private fun showErrorMessage() {}
+    private fun showUnavailableMessage() {}
+
+    private fun goToHome() {
+        val intent = Intent(requireContext(), HomeActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 }

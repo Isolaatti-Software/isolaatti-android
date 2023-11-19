@@ -5,6 +5,7 @@ import com.isolaatti.sign_up.data.dto.DataDto
 import com.isolaatti.sign_up.data.dto.NameAvailabilityDto
 import com.isolaatti.sign_up.data.dto.ResultDto
 import com.isolaatti.sign_up.data.dto.SignUpWithCodeDto
+import com.isolaatti.sign_up.data.dto.SignUpWithCodeResultDto
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -33,7 +34,7 @@ interface SignUpApi {
         @Header("clientId") apiClientId: String,
         @Header("clientSecret") apiSecret: String,
         @Body dto: SignUpWithCodeDto
-    ): Call<ResultDto>
+    ): Call<SignUpWithCodeResultDto>
 
     @GET("usernames/check")
     fun checkNameAvailability(

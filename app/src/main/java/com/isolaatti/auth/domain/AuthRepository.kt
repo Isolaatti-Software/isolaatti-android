@@ -9,5 +9,6 @@ interface AuthRepository {
     fun logout(): Flow<Boolean>
     fun getCurrentToken(): AuthTokenDto?
     fun getUserId(): Flow<Int?>
+    suspend fun setToken(sessionDto: AuthTokenDto)
 
 }

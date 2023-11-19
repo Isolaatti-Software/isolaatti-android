@@ -3,7 +3,8 @@ package com.isolaatti.sign_up.presentation
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.isolaatti.sign_up.data.SignUpApi
+import com.isolaatti.auth.data.remote.AuthTokenDto
+import com.isolaatti.auth.domain.AuthRepository
 import com.isolaatti.sign_up.domain.SignUpRepository
 import com.isolaatti.sign_up.domain.entity.SignUpResult
 import com.isolaatti.utils.Resource
@@ -13,16 +14,21 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class MakeAccountViewModel @Inject constructor(private val signUpRepository: SignUpRepository) : ViewModel() {
+class MakeAccountViewModel @Inject constructor(
+    private val signUpRepository: SignUpRepository,
+    private val authRepository: AuthRepository
+) : ViewModel() {
 
     val formIsValid: MutableLiveData<Boolean> = MutableLiveData(false)
     val passwordIsValid: MutableLiveData<Boolean> = MutableLiveData()
     var usernameIsValid: MutableLiveData<Boolean> = MutableLiveData()
     val displayNameIsValid: MutableLiveData<Boolean> = MutableLiveData()
     val signUpResult: MutableLiveData<Resource<SignUpResult>?> = MutableLiveData()
+    val sessionSaved: MutableLiveData<Boolean?> = MutableLiveData()
     var code: String? = null
 
     private fun validateForm() {
@@ -76,6 +82,15 @@ class MakeAccountViewModel @Inject constructor(private val signUpRepository: Sig
             signUpRepository.signUpWithCode(username, displayName, password, code!!).onEach {
                 signUpResult.postValue(it)
             }.flowOn(Dispatchers.IO).launchIn(this)
+        }
+    }
+
+    fun saveSession(sessionDto: AuthTokenDto) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                authRepository.setToken(sessionDto)
+                sessionSaved.postValue(true)
+            }
         }
     }
 }
