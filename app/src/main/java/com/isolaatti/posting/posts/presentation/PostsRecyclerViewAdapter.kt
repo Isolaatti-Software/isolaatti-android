@@ -9,13 +9,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import coil.load
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.isolaatti.R
+import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.common.OnUserInteractedWithPostCallback
 import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.utils.UrlGen.userProfileImage
-import com.squareup.picasso.Picasso
 import io.noties.markwon.Markwon
 
 class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callback: OnUserInteractedWithPostCallback) : RecyclerView.Adapter<PostsRecyclerViewAdapter.FeedViewHolder>(){
@@ -64,7 +65,7 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
                 }
 
                 val profileImageView: ImageView = itemView.findViewById(R.id.avatar_picture)
-                Picasso.get().load(userProfileImage(postDto.userId)).into(profileImageView)
+                profileImageView.load(userProfileImage(postDto.userId), imageLoader)
 
                 val dateTextView: TextView = itemView.findViewById(R.id.text_view_date)
                 dateTextView.text = postDto.date

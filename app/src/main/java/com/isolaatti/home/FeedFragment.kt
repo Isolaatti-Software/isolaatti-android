@@ -16,9 +16,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.about.AboutActivity
+import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.common.Dialogs
 import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentFeedBinding
@@ -39,13 +41,12 @@ import com.isolaatti.posting.posts.presentation.EditPostContract
 import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
 import com.isolaatti.profile.ui.ProfileActivity
 import com.isolaatti.settings.ui.SettingsActivity
-import com.isolaatti.utils.PicassoImagesPluginDef
 import com.isolaatti.utils.UrlGen
-import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonConfiguration
+import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.image.destination.ImageDestinationProcessorRelativeToAbsolute
 import io.noties.markwon.linkify.LinkifyPlugin
 import kotlinx.coroutines.launch
@@ -162,7 +163,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
                             .create(BuildConfig.backend))
                 }
             })
-            .usePlugin(PicassoImagesPluginDef.picassoImagePlugin)
+            .usePlugin(CoilImagesPlugin.create(requireContext(), imageLoader))
             .usePlugin(LinkifyPlugin.create())
             .build()
         adapter = PostsRecyclerViewAdapter(markwon, this)
@@ -194,7 +195,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
             val textViewName: TextView? = header?.findViewById(R.id.textViewName)
             val textViewEmail: TextView? = header?.findViewById(R.id.textViewEmail)
 
-            Picasso.get().load(UrlGen.userProfileImage(it.userId)).into(image)
+            image?.load(UrlGen.userProfileImage(it.userId), imageLoader)
             image?.setOnClickListener {_ ->
                 PictureViewerActivity.startActivityWithUrls(requireContext(), arrayOf(UrlGen.userProfileImageFullQuality(it.userId)))
             }

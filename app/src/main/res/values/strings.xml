@@ -113,4 +113,6 @@
     <string name="username_invalid_feedback">Username is not available or is invalid</string>
     <string name="password_invalid_feedback">Password must be at least 8 characters long</string>
     <string name="display_name_invalid_feedback">Please provide a name. This does not have to be unique and can be your real name or not.</string>
+    <string name="validation_error">Validation error</string>
+    <string name="email_used">Email is in use already</string>
 </resources>

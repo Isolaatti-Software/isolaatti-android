@@ -36,7 +36,6 @@ class MainActivity : ComponentActivity() {
 
         if(currentToken == null) {
             val loginIntent = Intent(this@MainActivity, LogInActivity::class.java)
-            loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             signInActivityResult.launch(loginIntent)
         } else {
             val homeActivityIntent = Intent(this@MainActivity, HomeActivity::class.java)

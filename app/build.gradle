@@ -11,7 +11,7 @@ plugins {
 
 android {
     namespace 'com.isolaatti'
-    compileSdk 33
+    compileSdk 34
     viewBinding {
         enabled = true
     }
@@ -90,10 +90,14 @@ dependencies {
     // Customtabs
     implementation 'androidx.browser:browser:1.5.0'
 
+    implementation 'io.coil-kt:coil:2.5.0'
+    implementation 'io.coil-kt:coil-svg:2.5.0'
+
+
     implementation "io.noties.markwon:core:$markwon_version"
     implementation "io.noties.markwon:editor:$markwon_version"
-    implementation "io.noties.markwon:image-picasso:$markwon_version"
     implementation "io.noties.markwon:linkify:$markwon_version"
+    implementation "io.noties.markwon:image-coil:$markwon_version"
 
 
 
@@ -112,4 +116,5 @@ dependencies {
     implementation "androidx.preference:preference-ktx:1.2.1"
 
     implementation 'com.github.MikeOrtiz:TouchImageView:3.5'
+
 }

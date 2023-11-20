@@ -4,11 +4,12 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.databinding.CommentLayoutBinding
 import com.isolaatti.posting.comments.domain.model.Comment
 import com.isolaatti.common.OnUserInteractedCallback
 import com.isolaatti.utils.UrlGen
-import com.squareup.picasso.Picasso
 import io.noties.markwon.Markwon
 
 class CommentsRecyclerViewAdapter(private var list: List<Comment>, private val markwon: Markwon, private val callback: OnUserInteractedCallback) : RecyclerView.Adapter<CommentsRecyclerViewAdapter.CommentViewHolder>() {
@@ -45,9 +46,8 @@ class CommentsRecyclerViewAdapter(private var list: List<Comment>, private val m
         holder.viewBinding.moreButton.setOnClickListener {
             callback.onOptions(comment)
         }
-        Picasso.get()
-            .load(UrlGen.userProfileImage(comment.userId))
-            .into(holder.viewBinding.avatarPicture)
+
+        holder.viewBinding.avatarPicture.load(UrlGen.userProfileImage(comment.userId), imageLoader)
 
         val totalItems = list.size
         if(totalItems > 0 && !requestedNewContent) {

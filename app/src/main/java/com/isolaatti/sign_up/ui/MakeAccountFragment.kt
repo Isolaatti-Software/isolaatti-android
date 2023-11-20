@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.databinding.FragmentMakeAccountBinding
@@ -145,10 +146,26 @@ class MakeAccountFragment : Fragment() {
         }
     }
 
-    private fun showNotAvailableEmailMessage() {}
-    private fun showValidationProblemsMessage() {}
-    private fun showErrorMessage() {}
-    private fun showUnavailableMessage() {}
+    private fun showNotAvailableEmailMessage() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(R.string.email_used)
+            .show()
+    }
+    private fun showValidationProblemsMessage() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(R.string.validation_error)
+            .show()
+    }
+    private fun showErrorMessage() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(R.string.unknown_error)
+            .show()
+    }
+    private fun showUnavailableMessage() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(R.string.username_invalid_feedback)
+            .show()
+    }
 
     private fun goToHome() {
         val intent = Intent(requireContext(), HomeActivity::class.java)

@@ -1,15 +1,15 @@
 package com.isolaatti.images.picture_viewer.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import coil.load
+import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.databinding.FragmentTouchImageViewWrapperBinding
 import com.ortiz.touchview.OnTouchImageViewListener
-import com.squareup.picasso.Picasso
-import java.lang.NullPointerException
+
 
 class PictureViewerImageWrapperFragment : Fragment() {
 
@@ -43,7 +43,7 @@ class PictureViewerImageWrapperFragment : Fragment() {
 
 
         url?.let {
-            Picasso.get().load(it).into(binding.touchImageView)
+            binding.touchImageView.load(it, imageLoader)
         }
     }
 

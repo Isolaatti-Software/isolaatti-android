@@ -1,24 +1,22 @@
 package com.isolaatti.posting.comments.ui
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import coil.load
 import com.isolaatti.R
+import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.databinding.FragmentEditCommentBinding
 import com.isolaatti.posting.comments.presentation.CommentsViewModel
-import com.isolaatti.utils.PicassoImagesPluginDef
 import com.isolaatti.utils.UrlGen
-import com.squareup.picasso.Picasso
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonConfiguration
+import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.image.destination.ImageDestinationProcessorRelativeToAbsolute
 import io.noties.markwon.linkify.LinkifyPlugin
 
@@ -53,7 +51,7 @@ class EditCommentDialogFragment : DialogFragment() {
                                 .create("https://isolaatti.com/"))
                 }
             })
-            .usePlugin(PicassoImagesPluginDef.picassoImagePlugin)
+            .usePlugin(CoilImagesPlugin.create(requireContext(), imageLoader))
             .usePlugin(LinkifyPlugin.create())
             .build()
 
@@ -77,7 +75,7 @@ class EditCommentDialogFragment : DialogFragment() {
             binding.comment.also {
                 it.textViewUsername.text = comment.username
                 markwon.setMarkdown(it.postContent, comment.textContent)
-                Picasso.get().load(UrlGen.userProfileImage(comment.userId)).into(it.avatarPicture)
+                it.avatarPicture.load(UrlGen.userProfileImage(comment.userId), imageLoader)
             }
             binding.newCommentTextField.editText?.setText(comment.textContent)
         }

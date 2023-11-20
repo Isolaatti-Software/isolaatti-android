@@ -6,8 +6,8 @@ import okhttp3.Response
 class AuthenticationInterceptor(private val authRepository: dagger.Lazy<AuthRepository>) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val url = chain.request().url()
-        val path = url.url().path
+        val url = chain.request().url
+        val path = url.toUrl().path
         if(RetrofitClient.excludedUrlsFromAuthentication.contains(path)){
             return chain.proceed(chain.request())
         }

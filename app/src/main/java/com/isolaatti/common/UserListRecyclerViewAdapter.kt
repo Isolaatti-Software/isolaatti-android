@@ -6,11 +6,12 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import coil.load
 import com.isolaatti.R
+import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.databinding.ItemUserListBinding
 import com.isolaatti.profile.domain.entity.ProfileListItem
 import com.isolaatti.utils.UrlGen
-import com.squareup.picasso.Picasso
 
 class UserListRecyclerViewAdapter(private val callback: UserItemCallback) : ListAdapter<ProfileListItem, UserListRecyclerViewAdapter.UserListViewHolder>(diffCallback) {
 
@@ -28,7 +29,7 @@ class UserListRecyclerViewAdapter(private val callback: UserItemCallback) : List
                 callback.itemClick(user.id)
             }
             holder.item.name.text = user.name
-            Picasso.get().load(UrlGen.userProfileImage(user.id)).into(holder.item.image)
+            holder.item.image.load(UrlGen.userProfileImage(user.id), imageLoader)
             if(user.following == true) {
                 holder.item.followButton.text = context.getText(R.string.unfollow)
                 holder.item.followButton.setTextColor(ResourcesCompat.getColor(context.resources, R.color.danger, null))

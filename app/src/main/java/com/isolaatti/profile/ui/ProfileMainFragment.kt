@@ -16,13 +16,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
+import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.common.Dialogs
 import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentDiscussionsBinding
 import com.isolaatti.followers.domain.FollowingState
-import com.isolaatti.home.FeedFragment
 import com.isolaatti.posting.posts.viewer.ui.PostViewerActivity
 import com.isolaatti.posting.comments.ui.BottomSheetPostComments
 import com.isolaatti.common.Ownable
@@ -37,16 +38,14 @@ import com.isolaatti.posting.posts.presentation.EditPostContract
 import com.isolaatti.posting.posts.presentation.PostListingRecyclerViewAdapterWiring
 import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
 import com.isolaatti.posting.posts.presentation.UpdateEvent
-import com.isolaatti.profile.data.remote.UserProfileDto
 import com.isolaatti.profile.domain.entity.UserProfile
 import com.isolaatti.profile.presentation.ProfileViewModel
-import com.isolaatti.utils.PicassoImagesPluginDef
 import com.isolaatti.utils.UrlGen
-import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonConfiguration
+import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.image.destination.ImageDestinationProcessorRelativeToAbsolute
 import io.noties.markwon.linkify.LinkifyPlugin
 import kotlinx.coroutines.launch
@@ -79,9 +78,7 @@ class ProfileMainFragment : Fragment() {
     }
 
     private val profileObserver = Observer<UserProfile> { profile ->
-        Picasso.get()
-            .load(UrlGen.userProfileImage(profile.userId))
-            .into(viewBinding.profileImageView)
+        viewBinding.profileImageView.load(UrlGen.userProfileImage(profile.userId), imageLoader)
 
         title = profile.name
         viewBinding.textViewUsername.text = profile.name
@@ -274,7 +271,7 @@ class ProfileMainFragment : Fragment() {
                             .create(BuildConfig.backend))
                 }
             })
-            .usePlugin(PicassoImagesPluginDef.picassoImagePlugin)
+            .usePlugin(CoilImagesPlugin.create(requireContext(), imageLoader))
             .usePlugin(LinkifyPlugin.create())
             .build()
 

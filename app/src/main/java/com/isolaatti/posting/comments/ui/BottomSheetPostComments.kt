@@ -17,6 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDE
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.isolaatti.R
+import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.common.Dialogs
 import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.BottomSheetPostCommentsBinding
@@ -31,11 +32,11 @@ import com.isolaatti.common.options_bottom_sheet.domain.Options
 import com.isolaatti.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
 import com.isolaatti.profile.ui.ProfileActivity
-import com.isolaatti.utils.PicassoImagesPluginDef
 import dagger.hilt.android.AndroidEntryPoint
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonConfiguration
+import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.image.destination.ImageDestinationProcessorRelativeToAbsolute
 import io.noties.markwon.linkify.LinkifyPlugin
 import kotlinx.coroutines.launch
@@ -186,7 +187,7 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
                             .create("https://isolaatti.com/"))
                 }
             })
-            .usePlugin(PicassoImagesPluginDef.picassoImagePlugin)
+            .usePlugin(CoilImagesPlugin.create(requireContext(), imageLoader))
             .usePlugin(LinkifyPlugin.create())
             .build()
 
