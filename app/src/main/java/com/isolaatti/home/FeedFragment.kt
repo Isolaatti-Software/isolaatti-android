@@ -197,7 +197,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
             image?.load(UrlGen.userProfileImage(it.userId), imageLoader)
             image?.setOnClickListener {_ ->
-                PictureViewerActivity.startActivityWithUrls(requireContext(), arrayOf(UrlGen.userProfileImageFullQuality(it.userId)))
+                //PictureViewerActivity.startActivityWithImages(requireContext(), arrayOf(UrlGen.userProfileImageFullQuality(it.userId)))
             }
 
             textViewName?.text = it.name

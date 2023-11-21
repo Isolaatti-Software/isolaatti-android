@@ -36,7 +36,14 @@
     <fragment
         android:id="@+id/imagesFragment"
         android:name="com.isolaatti.images.image_list.ui.ImagesFragment"
-        android:label="ImagesFragment" />
+        android:label="ImagesFragment" >
+        <argument
+            android:name="source"
+            app:argType="string" />
+        <argument
+            android:name="sourceId"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/blockProfileFragment"
         android:name="com.isolaatti.profile.ui.BlockProfileFragment"

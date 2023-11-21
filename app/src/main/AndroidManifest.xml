@@ -36,6 +36,14 @@
         <activity android:name=".about.AboutActivity" android:theme="@style/Theme.Isolaatti"/>
         <activity android:name=".images.picture_viewer.ui.PictureViewerActivity"  android:theme="@style/Theme.Isolaatti"/>
         <activity android:name=".sign_up.ui.SignUpActivity" android:theme="@style/Theme.Isolaatti"/>
+        <provider
+            android:authorities="com.isolaatti.provider"
+            android:name="androidx.core.content.FileProvider"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
     </application>
 <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

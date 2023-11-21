@@ -5,5 +5,6 @@ data class ImageDto(
     val userId: Int,
     val name: String,
     val squadId: String?,
+    val username: String,
     val idOnFirebase: String
 )

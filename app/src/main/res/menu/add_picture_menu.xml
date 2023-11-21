@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/take_a_photo_menu_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="@string/take_a_photo" />
+    <item
+        android:id="@+id/upload_a_picture_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="@string/upload_a_picture" />
+</menu>

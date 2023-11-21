@@ -31,6 +31,7 @@ import com.isolaatti.common.options_bottom_sheet.domain.OptionClicked
 import com.isolaatti.common.options_bottom_sheet.domain.Options
 import com.isolaatti.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
+import com.isolaatti.images.image_list.ui.ImagesFragment
 import com.isolaatti.images.picture_viewer.ui.PictureViewerActivity
 import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.posting.posts.presentation.CreatePostContract
@@ -149,7 +150,7 @@ class ProfileMainFragment : Fragment() {
                         Options.Option.OPTION_PROFILE_PHOTO_VIEW_PHOTO -> {
                             val profilePictureUrl = profile?.profilePictureUrl
                             if(profilePictureUrl != null) {
-                                PictureViewerActivity.startActivityWithUrls(requireContext(), arrayOf(profilePictureUrl))
+                                //PictureViewerActivity.startActivityWithUrls(requireContext(), arrayOf(profilePictureUrl))
                             }
                         }
                     }
@@ -217,8 +218,14 @@ class ProfileMainFragment : Fragment() {
                     true
                 }
                 R.id.images_menu_item -> {
-                    findNavController().navigate(ProfileMainFragmentDirections.actionDiscussionsFragmentToImagesFragment())
-                    true
+                    if(userId != null) {
+                        findNavController().navigate(
+                            ProfileMainFragmentDirections.actionDiscussionsFragmentToImagesFragment(ImagesFragment.SOURCE_PROFILE, userId.toString())
+                        )
+                        true
+                    } else {
+                        false
+                    }
                 }
                 else -> { false }
             }

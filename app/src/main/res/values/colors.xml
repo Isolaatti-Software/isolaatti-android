@@ -6,4 +6,5 @@
     <color name="on_surface">#000000</color>
     <color name="danger">#BA0606</color>
     <color name="black">#000000</color>
+    <color name="translucent_black">#9A000000</color>
 </resources>

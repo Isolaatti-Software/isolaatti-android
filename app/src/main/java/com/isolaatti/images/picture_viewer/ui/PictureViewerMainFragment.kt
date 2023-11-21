@@ -5,12 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import com.isolaatti.databinding.FragmentMainPictureViewerBinding
+import com.isolaatti.images.image_list.domain.entity.Image
 import com.isolaatti.images.picture_viewer.presentation.PictureViewerViewPagerAdapter
 
 class PictureViewerMainFragment : Fragment() {
 
     private lateinit var binding: FragmentMainPictureViewerBinding
+
+    lateinit var images: Array<Image>
+
+    private val onPageChangeCallback = object: ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            binding.imageAuthor.text = images[position].username
+            binding.imageDescription.text = images[position].name
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -24,12 +37,19 @@ class PictureViewerMainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val url = requireActivity().intent.extras?.getStringArray(PictureViewerActivity.EXTRA_URLS)
+        images = requireActivity().intent.extras?.getSerializable(PictureViewerActivity.EXTRA_IMAGES) as Array<Image>
+        val position = requireActivity().intent.extras?.getInt(PictureViewerActivity.EXTRA_IMAGE_POSITiON) ?: 0
+        val adapter = PictureViewerViewPagerAdapter(this, images)
+        binding.viewpager.adapter = adapter
+        binding.viewpager.setCurrentItem(position, false)
+        binding.viewpager.registerOnPageChangeCallback(onPageChangeCallback)
+        binding.imageDescription.text = images[position].name
+        binding.imageAuthor.text = images[position].username
+    }
 
-        url?.let {
-            val adapter = PictureViewerViewPagerAdapter(this, it)
-            binding.viewpager.adapter = adapter
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.viewpager.unregisterOnPageChangeCallback(onPageChangeCallback)
     }
 
     fun enableViewPagerUserInput(enabled: Boolean) {

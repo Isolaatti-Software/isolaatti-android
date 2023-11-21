@@ -13,9 +13,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ImagesApi {
-    @POST("images/of_user/{userId}")
+    @GET("images/of_user/{userId}")
     fun getImagesOfUser(@Path("userId") userId: Int,
-                        @Query("lastId") lastId: String?): Call<List<ImageDto>>
+                        @Query("lastId") lastId: String?): Call<ImagesDto>
 
     @POST("images/create")
     @Multipart

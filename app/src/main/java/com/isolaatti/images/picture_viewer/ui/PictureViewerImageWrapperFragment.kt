@@ -8,13 +8,14 @@ import androidx.fragment.app.Fragment
 import coil.load
 import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.databinding.FragmentTouchImageViewWrapperBinding
+import com.isolaatti.images.image_list.domain.entity.Image
 import com.ortiz.touchview.OnTouchImageViewListener
 
 
 class PictureViewerImageWrapperFragment : Fragment() {
 
     private lateinit var binding: FragmentTouchImageViewWrapperBinding
-    private var url: String? = null
+    private var image: Image? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,7 +24,7 @@ class PictureViewerImageWrapperFragment : Fragment() {
     ): View {
         binding = FragmentTouchImageViewWrapperBinding.inflate(inflater)
 
-        url = arguments?.getString(ARGUMENT_URL)
+        image = arguments?.getSerializable(ARGUMENT_IMAGE) as Image
 
         return binding.root
     }
@@ -42,17 +43,17 @@ class PictureViewerImageWrapperFragment : Fragment() {
 
 
 
-        url?.let {
-            binding.touchImageView.load(it, imageLoader)
+        image?.let {
+            binding.touchImageView.load(it.imageUrl, imageLoader)
         }
     }
 
     companion object {
-        const val ARGUMENT_URL = "url"
-        fun getInstance(url: String): PictureViewerImageWrapperFragment {
+        const val ARGUMENT_IMAGE = "image"
+        fun getInstance(image: Image): PictureViewerImageWrapperFragment {
             val fragment = PictureViewerImageWrapperFragment()
             fragment.arguments = Bundle().apply {
-                putString(ARGUMENT_URL, url)
+                putSerializable(ARGUMENT_IMAGE, image)
             }
 
             return fragment

@@ -15,7 +15,7 @@ class ImagesRepositoryImpl @Inject constructor(private val imagesApi: ImagesApi)
             val response = imagesApi.getImagesOfUser(userId, lastId).awaitResponse()
             if(response.isSuccessful) {
                 val imagesDto = response.body()
-                val images = imagesDto?.map { Image.fromDto(it) }
+                val images = imagesDto?.data?.map { Image.fromDto(it) }
 
                 emit(Resource.Success(images))
 
