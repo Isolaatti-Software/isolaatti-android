@@ -21,6 +21,7 @@ import com.isolaatti.databinding.FragmentImagesBinding
 import com.isolaatti.images.image_list.domain.entity.Image
 import com.isolaatti.images.image_list.presentation.ImageListViewModel
 import com.isolaatti.images.image_list.presentation.ImagesAdapter
+import com.isolaatti.images.image_maker.ui.ImageMakerContract
 import com.isolaatti.images.picture_viewer.ui.PictureViewerActivity
 import com.isolaatti.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,12 +41,19 @@ class ImagesFragment : Fragment() {
         PictureViewerActivity.startActivityWithImages(requireContext(), images.toTypedArray(), position)
     }
 
+    private val imageMakerLauncher = registerForActivityResult(ImageMakerContract()) {
+
+    }
+
     private val choosePictureLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
-        // use uri
+        imageMakerLauncher.launch(it)
     }
 
     private val takePhotoLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) {
-        // use cameraPhotoUri if success
+        if(it && cameraPhotoUri != null) {
+            imageMakerLauncher.launch(cameraPhotoUri)
+        }
+
     }
 
     private fun makePhotoUri(): Uri {
