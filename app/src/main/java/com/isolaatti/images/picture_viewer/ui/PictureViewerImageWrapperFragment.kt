@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import coil.load
 import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.databinding.FragmentTouchImageViewWrapperBinding
-import com.isolaatti.images.image_list.domain.entity.Image
+import com.isolaatti.images.common.domain.entity.Image
 import com.ortiz.touchview.OnTouchImageViewListener
 
 

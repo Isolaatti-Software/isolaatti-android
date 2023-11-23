@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
@@ -22,7 +23,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.isolaatti.MyApplication
 import com.isolaatti.R
 import com.isolaatti.databinding.FragmentImagesBinding
-import com.isolaatti.images.image_list.domain.entity.Image
+import com.isolaatti.images.common.domain.entity.Image
 import com.isolaatti.images.image_list.presentation.ImageListViewModel
 import com.isolaatti.images.image_list.presentation.ImagesAdapter
 import com.isolaatti.images.image_maker.ui.ImageMakerContract
@@ -46,7 +47,7 @@ class ImagesFragment : Fragment() {
     }
 
     private val imageMakerLauncher = registerForActivityResult(ImageMakerContract()) {
-
+        Toast.makeText(requireContext(), "se subio la imagen ${it?.id}", Toast.LENGTH_SHORT).show()
     }
 
     private val choosePictureLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
@@ -191,9 +192,12 @@ class ImagesFragment : Fragment() {
         viewModel.list.observe(viewLifecycleOwner) { resource ->
             when(resource) {
                 is Resource.Error -> {}
-                is Resource.Loading -> {}
+                is Resource.Loading -> {
+                    viewBinding.progressBarLoading.visibility = View.VISIBLE
+                }
                 is Resource.Success -> {
                     resource.data?.let {
+                        viewBinding.progressBarLoading.visibility = View.GONE
                         adapter.setData(it)
                     }
                 }

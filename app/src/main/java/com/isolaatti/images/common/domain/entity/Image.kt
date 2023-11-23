@@ -1,6 +1,6 @@
-package com.isolaatti.images.image_list.domain.entity
+package com.isolaatti.images.common.domain.entity
 
-import com.isolaatti.images.image_list.data.remote.ImageDto
+import com.isolaatti.images.common.data.remote.ImageDto
 import com.isolaatti.utils.UrlGen
 import java.io.Serializable
 

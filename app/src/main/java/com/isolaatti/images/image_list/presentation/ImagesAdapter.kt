@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import coil.load
 import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.databinding.ImageItemBinding
-import com.isolaatti.images.image_list.domain.entity.Image
+import com.isolaatti.images.common.domain.entity.Image
 
 class ImagesAdapter(
     private val imageOnClick: ((images: List<Image>, position: Int) -> Unit),

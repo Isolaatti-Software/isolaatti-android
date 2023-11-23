@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.isolaatti.databinding.ActivityPictureViewerBinding
-import com.isolaatti.images.image_list.domain.entity.Image
+import com.isolaatti.images.common.domain.entity.Image
 import com.isolaatti.images.picture_viewer.presentation.PictureViewerViewPagerAdapter
 
 class PictureViewerActivity : AppCompatActivity() {

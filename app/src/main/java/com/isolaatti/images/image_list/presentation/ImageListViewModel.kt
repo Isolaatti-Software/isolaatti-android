@@ -3,8 +3,8 @@ package com.isolaatti.images.image_list.presentation
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.isolaatti.images.image_list.domain.entity.Image
-import com.isolaatti.images.image_list.domain.repository.ImagesRepository
+import com.isolaatti.images.common.domain.entity.Image
+import com.isolaatti.images.common.domain.repository.ImagesRepository
 import com.isolaatti.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

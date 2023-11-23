@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.isolaatti.databinding.FragmentMainPictureViewerBinding
-import com.isolaatti.images.image_list.domain.entity.Image
+import com.isolaatti.images.common.domain.entity.Image
 import com.isolaatti.images.picture_viewer.presentation.PictureViewerViewPagerAdapter
 
 class PictureViewerMainFragment : Fragment() {

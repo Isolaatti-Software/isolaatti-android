@@ -60,6 +60,7 @@ class LogInActivity: AppCompatActivity() {
                 Resource.Error.ErrorType.ServerError -> showServerErrorMessage()
                 Resource.Error.ErrorType.OtherError -> showUnknownErrorMessage()
                 null -> {}
+                Resource.Error.ErrorType.InputError -> {}
             }
 
         }

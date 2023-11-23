@@ -5,7 +5,7 @@ sealed class Resource<T> {
     class Loading<T>:  Resource<T>()
     class Error<T>(val errorType: ErrorType? = null, val message: String? = null): Resource<T>() {
         enum class ErrorType {
-            NetworkError, AuthError, NotFoundError, ServerError, OtherError
+            NetworkError, AuthError, NotFoundError, ServerError, InputError, OtherError
         }
         companion object {
             fun mapErrorCode(errorCode: Int): ErrorType {

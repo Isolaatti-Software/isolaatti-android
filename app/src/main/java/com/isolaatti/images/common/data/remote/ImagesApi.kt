@@ -1,6 +1,7 @@
-package com.isolaatti.images.image_list.data.remote
+package com.isolaatti.images.common.data.remote
 
 import com.isolaatti.utils.SimpleData
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -19,7 +20,7 @@ interface ImagesApi {
 
     @POST("images/create")
     @Multipart
-    fun postImage(@Part("file") file: RequestBody,
+    fun postImage(@Part file: MultipartBody.Part,
                   @Part("name") name: String,
                   @Part("setAsProfile") setAsProfile: Boolean? = null,
                   @Part("squadId") squadId: String? = null): Call<ImageDto>
