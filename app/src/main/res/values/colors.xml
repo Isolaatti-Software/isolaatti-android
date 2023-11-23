@@ -7,4 +7,5 @@
     <color name="danger">#BA0606</color>
     <color name="black">#000000</color>
     <color name="translucent_black">#9A000000</color>
+    <color name="translucent_purple">#704D3B68</color>
 </resources>

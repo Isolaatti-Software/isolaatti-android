@@ -26,4 +26,8 @@ class ImageListViewModel @Inject constructor(private val imagesRepository: Image
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }
+
+    fun removeImages(images: List<Image>) {
+
+    }
 }

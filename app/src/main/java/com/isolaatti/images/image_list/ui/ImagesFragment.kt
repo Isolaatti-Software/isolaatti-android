@@ -3,7 +3,10 @@ package com.isolaatti.images.image_list.ui
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
+import android.view.ActionMode
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.PickVisualMediaRequest
@@ -15,6 +18,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.isolaatti.MyApplication
 import com.isolaatti.R
 import com.isolaatti.databinding.FragmentImagesBinding
@@ -88,9 +92,59 @@ class ImagesFragment : Fragment() {
         viewBinding.topAppBar.inflateMenu(R.menu.images_menu)
     }
 
+    private fun showDeleteDialog() {
+        val imagesToDelete = adapter.getSelectedImages()
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.delete)
+            .setMessage(getString(R.string.delete_images_dialog_message, imagesToDelete.size))
+            .setPositiveButton(R.string.yes_continue) { _, _ ->
+                viewModel.removeImages(imagesToDelete)
+            }
+            .setNegativeButton(R.string.no, null)
+            .show()
+    }
+
+    private var actionMode: ActionMode? = null
+
+    private val contextBarCallback: ActionMode.Callback = object: ActionMode.Callback {
+        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            requireActivity().menuInflater.inflate(R.menu.images_context_menu, menu)
+            return true
+        }
+
+        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            return true
+        }
+
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+            return when(item?.itemId) {
+                R.id.delete_item -> {
+                    showDeleteDialog()
+                    true
+                }
+                else -> false
+            }
+        }
+
+        override fun onDestroyActionMode(mode: ActionMode?) {
+            adapter.deleteMode = false
+        }
+
+    }
+
     private fun setupListeners() {
         viewBinding.topAppBar.setNavigationOnClickListener {
             findNavController().popBackStack()
+        }
+        viewBinding.topAppBar.setOnMenuItemClickListener {
+            when(it.itemId) {
+                R.id.delete_mode_item -> {
+                    adapter.deleteMode = true
+                    actionMode = requireActivity().startActionMode(contextBarCallback)
+                    true
+                }
+                else -> false
+            }
         }
         viewBinding.newPictureButton.setOnClickListener {
             val popup = PopupMenu(requireContext(), it)
@@ -116,7 +170,17 @@ class ImagesFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = ImagesAdapter(imageOnClick, Resources.getSystem().displayMetrics.widthPixels/3)
+        adapter = ImagesAdapter(
+            imageOnClick = imageOnClick,
+            itemWidth = Resources.getSystem().displayMetrics.widthPixels/3,
+            onImageSelectedCountUpdate = {
+                actionMode?.title = getString(R.string.selected_images_count, it)
+                actionMode?.menu?.findItem(R.id.delete_item)?.isEnabled = it > 0
+            },
+            onDeleteMode = {
+                adapter.deleteMode = it
+                actionMode = requireActivity().startActionMode(contextBarCallback)
+            })
         viewBinding.recyclerView.layoutManager =
             GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
         viewBinding.recyclerView.adapter = adapter

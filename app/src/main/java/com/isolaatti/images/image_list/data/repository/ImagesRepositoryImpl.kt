@@ -26,4 +26,8 @@ class ImagesRepositoryImpl @Inject constructor(private val imagesApi: ImagesApi)
             emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }
     }
+
+    override fun deleteImages(images: List<Image>): Flow<Resource<Boolean>> = flow {
+
+    }
 }

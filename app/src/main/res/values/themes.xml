@@ -5,6 +5,9 @@
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/on_surface</item>
         <item name="android:statusBarColor">@color/purple</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeCloseDrawable">@drawable/baseline_close_24</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.Material3.Dark.ActionBar</item>
     </style>
 
     <style name="Theme.Isolaatti.Splash" parent="Theme.SplashScreen"/>

@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface ImagesRepository {
     fun getImagesOfUser(userId: Int, lastId: String? = null): Flow<Resource<List<Image>>>
+    fun deleteImages(images: List<Image>): Flow<Resource<Boolean>>
 }

@@ -27,6 +27,9 @@ interface ImagesApi {
     @DELETE("images/{imageId}")
     fun deleteImage(@Path("imageId") imageId: String): Call<Any>
 
+    @DELETE("images/delete_many")
+    fun deleteImages(@Body deleteImagesDto: DeleteImagesDto): Call<DeleteImagesResultDto>
+
     @GET("images/of_squad/{squadId}")
     fun getImagesOfSquad(@Path("squadId") squadId: String,
                          @Query("lastId") lastId: String?): Call<List<ImageDto>>
