@@ -31,8 +31,14 @@
     </fragment>
     <fragment
         android:id="@+id/audiosFragment"
-        android:name="com.isolaatti.profile.ui.AudiosFragment"
-        android:label="AudiosFragment" />
+        android:name="com.isolaatti.audio.audios_list.ui.AudiosFragment"
+        android:label="AudiosFragment" >
+        <argument
+            android:name="source"
+            app:argType="string" />
+        <argument android:name="sourceId"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/imagesFragment"
         android:name="com.isolaatti.images.image_list.ui.ImagesFragment"
@@ -64,4 +70,7 @@
             android:name="userId"
             app:argType="integer" />
     </fragment>
+    <argument
+        android:name="userId"
+        app:argType="integer" />
 </navigation>

@@ -19,26 +19,26 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
+import com.isolaatti.audio.audios_list.ui.AudiosFragment
 import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.common.Dialogs
 import com.isolaatti.common.ErrorMessageViewModel
-import com.isolaatti.databinding.FragmentDiscussionsBinding
-import com.isolaatti.followers.domain.FollowingState
-import com.isolaatti.posting.posts.viewer.ui.PostViewerActivity
-import com.isolaatti.posting.comments.ui.BottomSheetPostComments
 import com.isolaatti.common.Ownable
 import com.isolaatti.common.options_bottom_sheet.domain.OptionClicked
 import com.isolaatti.common.options_bottom_sheet.domain.Options
 import com.isolaatti.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
+import com.isolaatti.databinding.FragmentDiscussionsBinding
+import com.isolaatti.followers.domain.FollowingState
 import com.isolaatti.images.image_list.ui.ImagesFragment
-import com.isolaatti.images.picture_viewer.ui.PictureViewerActivity
+import com.isolaatti.posting.comments.ui.BottomSheetPostComments
 import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.posting.posts.presentation.CreatePostContract
 import com.isolaatti.posting.posts.presentation.EditPostContract
 import com.isolaatti.posting.posts.presentation.PostListingRecyclerViewAdapterWiring
 import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
 import com.isolaatti.posting.posts.presentation.UpdateEvent
+import com.isolaatti.posting.posts.viewer.ui.PostViewerActivity
 import com.isolaatti.profile.domain.entity.UserProfile
 import com.isolaatti.profile.presentation.ProfileViewModel
 import com.isolaatti.utils.UrlGen
@@ -214,7 +214,7 @@ class ProfileMainFragment : Fragment() {
         viewBinding.bottomAppBar.setOnMenuItemClickListener {
             when(it.itemId) {
                 R.id.audios_menu_item -> {
-                    findNavController().navigate(ProfileMainFragmentDirections.actionDiscussionsFragmentToAudiosFragment())
+                    findNavController().navigate(ProfileMainFragmentDirections.actionDiscussionsFragmentToAudiosFragment(AudiosFragment.SOURCE_PROFILE, userId.toString()))
                     true
                 }
                 R.id.images_menu_item -> {
