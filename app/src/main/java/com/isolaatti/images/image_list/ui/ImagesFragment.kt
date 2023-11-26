@@ -51,7 +51,9 @@ class ImagesFragment : Fragment() {
     }
 
     private val choosePictureLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
-        imageMakerLauncher.launch(it)
+        if(it != null) {
+            imageMakerLauncher.launch(it)
+        }
     }
 
     private val takePhotoLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) {

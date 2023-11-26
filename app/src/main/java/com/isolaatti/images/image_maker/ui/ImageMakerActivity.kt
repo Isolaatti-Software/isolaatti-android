@@ -1,13 +1,10 @@
 package com.isolaatti.images.image_maker.ui
 
 import android.app.Activity
-import android.content.ContentProvider
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.content.ContentProviderCompat
 import androidx.core.widget.doOnTextChanged
 import coil.load
 import com.isolaatti.R
@@ -59,8 +56,7 @@ class ImageMakerActivity : IsolaattiBaseActivity() {
                 }
                 is Resource.Success -> {
                     binding.progressBarLoading.visibility = View.GONE
-                    setResult(Activity.RESULT_OK)
-                    intent = Intent().putExtra(EXTRA_IMAGE, it.data)
+                    setResult(Activity.RESULT_OK, Intent().putExtra(EXTRA_IMAGE, it.data))
                     finish()
                 }
             }
