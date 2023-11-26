@@ -233,6 +233,10 @@ class ProfileMainFragment : Fragment() {
             }
         }
 
+        viewBinding.newPost.setOnClickListener {
+            createDiscussion.launch(Unit)
+        }
+
         viewBinding.goToFollowersBtn.setOnClickListener {
             findNavController().navigate(ProfileMainFragmentDirections.actionDiscussionsFragmentToMainFollowersFragment(userId!!))
         }
