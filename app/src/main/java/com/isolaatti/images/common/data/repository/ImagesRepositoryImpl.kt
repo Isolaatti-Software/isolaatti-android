@@ -51,6 +51,7 @@ class ImagesRepositoryImpl @Inject constructor(private val imagesApi: ImagesApi,
     }
 
     override fun uploadImage(name: String, imageUri: Uri, squadId: String?): Flow<Resource<Image>> = flow {
+        emit(Resource.Loading())
         var imageInputStream: InputStream? = null
         try {
             imageInputStream = contentResolver.openInputStream(imageUri)
