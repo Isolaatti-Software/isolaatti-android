@@ -70,6 +70,8 @@ class ProfileMainFragment : Fragment() {
         if(it != null) {
             Toast.makeText(requireContext(), R.string.posted_successfully, Toast.LENGTH_SHORT).show()
         }
+
+        // TODO add post to recycler view
     }
 
     private val editDiscussion = registerForActivityResult(EditPostContract()) {
@@ -298,6 +300,7 @@ class ProfileMainFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         userId = (requireActivity()).intent.extras?.getInt(ProfileActivity.EXTRA_USER_ID)
+        getData()
     }
 
     override fun onAttach(context: Context) {
@@ -344,7 +347,6 @@ class ProfileMainFragment : Fragment() {
         setupPostsAdapter()
         bind()
         setObservers()
-        getData()
         setupCollapsingBar()
 
 
