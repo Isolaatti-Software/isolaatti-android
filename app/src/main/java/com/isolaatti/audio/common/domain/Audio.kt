@@ -15,7 +15,7 @@ data class Audio(
 ): Ownable {
     var playing: Boolean = false
     val downloadUrl: String get() {
-        return "${BASE_URL}/$id"
+        return "${BASE_URL}audios/$id.webm"
     }
 
     val thumbnail: String get() {

@@ -20,6 +20,8 @@ import coil.load
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.audio.audios_list.ui.AudiosFragment
+import com.isolaatti.audio.common.domain.Audio
+import com.isolaatti.audio.player.AudioPlayerConnector
 import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.common.Dialogs
 import com.isolaatti.common.ErrorMessageViewModel
@@ -60,6 +62,10 @@ class ProfileMainFragment : Fragment() {
     private var userId: Int? = null
 
     lateinit var postsAdapter: PostsRecyclerViewAdapter
+
+    private var audioDescriptionAudio: Audio? = null
+
+    private lateinit var audioPlayerConnector: AudioPlayerConnector
 
     // collapsing bar
     private var title = ""
@@ -102,6 +108,9 @@ class ProfileMainFragment : Fragment() {
             val fragment = BottomSheetPostOptionsFragment()
             fragment.show(parentFragmentManager, BottomSheetPostOptionsFragment.TAG)
         }
+
+        audioDescriptionAudio = profile.descriptionAudio
+        viewBinding.playButton.visibility = if(profile.descriptionAudio != null) View.VISIBLE else View.GONE
 
         setupUiForUserType(profile.isUserItself)
     }
@@ -247,6 +256,11 @@ class ProfileMainFragment : Fragment() {
         viewBinding.swipeToRefresh.setOnRefreshListener {
             viewModel.getFeed(true)
         }
+        viewBinding.playButton.setOnClickListener {
+            audioDescriptionAudio?.let { audio ->
+                audioPlayerConnector.playAudio(audio)
+            }
+        }
     }
 
     private fun setObservers() {
@@ -309,6 +323,7 @@ class ProfileMainFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
         postListingRecyclerViewAdapterWiring = object: PostListingRecyclerViewAdapterWiring(viewModel) {
             override fun onComment(postId: Long) {
                 val modalBottomSheet = BottomSheetPostComments.getInstance(postId)
@@ -353,6 +368,9 @@ class ProfileMainFragment : Fragment() {
         setObservers()
         setupCollapsingBar()
 
+        audioPlayerConnector = AudioPlayerConnector(requireContext())
+
+        viewLifecycleOwner.lifecycle.addObserver(audioPlayerConnector)
 
 
         viewLifecycleOwner.lifecycleScope.launch {

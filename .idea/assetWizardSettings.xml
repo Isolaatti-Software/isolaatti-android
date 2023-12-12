@@ -308,7 +308,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/download/baseline_download_24.xml" />
+                                      <entry key="url" value="jar:file:/home/erik/Descargas/android-studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/play_circle/baseline_play_circle_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -318,8 +318,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="baseline_download_24" />
-                            <entry key="sourceFile" value="C:\Users\erike\Downloads\isolaatti.svg" />
+                            <entry key="outputName" value="baseline_play_circle_24" />
+                            <entry key="sourceFile" value="$USER_HOME$/C:\Users\erike\Downloads\isolaatti.svg" />
                           </map>
                         </option>
                       </PersistentState>

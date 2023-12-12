@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.isolaatti.MyApplication
 import com.isolaatti.R
+import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentImagesBinding
 import com.isolaatti.images.common.domain.entity.Image
 import com.isolaatti.images.image_list.presentation.ImageListViewModel
@@ -38,6 +40,7 @@ class ImagesFragment : Fragment() {
     lateinit var viewBinding: FragmentImagesBinding
     lateinit var adapter: ImagesAdapter
     private val viewModel: ImageListViewModel by viewModels()
+    private val errorViewModel: ErrorMessageViewModel by activityViewModels()
     private val arguments: ImagesFragmentArgs by navArgs()
 
     private var cameraPhotoUri: Uri? = null
@@ -84,7 +87,8 @@ class ImagesFragment : Fragment() {
         when(arguments.source) {
             SOURCE_SQUAD -> {}
             SOURCE_PROFILE -> {
-                viewModel.loadNext(arguments.sourceId.toInt())
+                viewModel.userId = arguments.sourceId.toInt()
+                viewModel.loadNext()
             }
         }
 
@@ -141,11 +145,7 @@ class ImagesFragment : Fragment() {
         }
         viewBinding.topAppBar.setOnMenuItemClickListener {
             when(it.itemId) {
-                R.id.delete_mode_item -> {
-                    adapter.deleteMode = true
-                    actionMode = requireActivity().startActionMode(contextBarCallback)
-                    true
-                }
+
                 else -> false
             }
         }
@@ -170,6 +170,9 @@ class ImagesFragment : Fragment() {
 
             popup.show()
         }
+        viewBinding.swipeToRefresh.setOnRefreshListener {
+            viewModel.refresh()
+        }
     }
 
     private fun setupAdapter() {
@@ -183,6 +186,10 @@ class ImagesFragment : Fragment() {
             onDeleteMode = {
                 adapter.deleteMode = it
                 actionMode = requireActivity().startActionMode(contextBarCallback)
+            },
+            onContentRequested = {
+                adapter.newContentRequestFinished()
+                viewModel.loadNext()
             })
         viewBinding.recyclerView.layoutManager =
             GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
@@ -191,19 +198,23 @@ class ImagesFragment : Fragment() {
 
     private fun setupObservers() {
 
-        viewModel.list.observe(viewLifecycleOwner) { resource ->
-            when(resource) {
-                is Resource.Error -> {}
-                is Resource.Loading -> {
-                    viewBinding.progressBarLoading.visibility = View.VISIBLE
-                }
-                is Resource.Success -> {
-                    resource.data?.let {
-                        viewBinding.progressBarLoading.visibility = View.GONE
-                        adapter.setData(it)
-                    }
-                }
+        viewModel.liveList.observe(viewLifecycleOwner) { list ->
+            adapter.submitList(list)
+        }
+
+        viewModel.loading.observe(viewLifecycleOwner) {
+            viewBinding.progressBarLoading.visibility = if(it) {
+                View.VISIBLE
+            } else {
+                View.GONE
             }
+            if(!it) {
+                viewBinding.swipeToRefresh.isRefreshing = false
+            }
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) {
+            errorViewModel.error.value = it
         }
     }
 

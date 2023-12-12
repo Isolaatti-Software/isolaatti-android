@@ -1,9 +1,12 @@
 package com.isolaatti.images.image_list.presentation
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import coil.load
@@ -15,9 +18,22 @@ class ImagesAdapter(
     private val imageOnClick: ((images: List<Image>, position: Int) -> Unit),
     private val itemWidth: Int,
     private val onImageSelectedCountUpdate: ((count: Int) -> Unit)? = null,
-    private val onDeleteMode: ((enabled: Boolean) -> Unit)? = null) : Adapter<ImagesAdapter.ImageViewHolder>(){
+    private val onDeleteMode: ((enabled: Boolean) -> Unit)? = null,
+    private val onContentRequested: (() -> Unit)? = null) : ListAdapter<Image, ImagesAdapter.ImageViewHolder>(diffCallback){
 
-    private var data: List<Image> = listOf()
+    companion object {
+        val diffCallback = object: DiffUtil.ItemCallback<Image>() {
+            override fun areItemsTheSame(oldItem: Image, newItem: Image): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: Image, newItem: Image): Boolean {
+                return oldItem == newItem
+            }
+
+        }
+    }
+
     private var selectionState: Array<Boolean> = arrayOf()
 
     var deleteMode: Boolean = false
@@ -31,14 +47,17 @@ class ImagesAdapter(
 
     inner class ImageViewHolder(val imageItemBinding: ImageItemBinding) : RecyclerView.ViewHolder(imageItemBinding.root)
 
-    fun setData(data: List<Image>) {
-        this.data = data
-        selectionState = Array(data.size) { false }
-        notifyDataSetChanged()
+    fun getSelectedImages(): List<Image> {
+        return currentList.filterIndexed { index, _ -> selectionState[index] }
     }
 
-    fun getSelectedImages(): List<Image> {
-        return data.filterIndexed { index, _ -> selectionState[index] }
+    override fun onCurrentListChanged(
+        previousList: MutableList<Image>,
+        currentList: MutableList<Image>
+    ) {
+        super.onCurrentListChanged(previousList, currentList)
+        noMoreContent = (currentList.size - previousList.size) == 0
+        selectionState = Array(currentList.size) { false }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
@@ -49,12 +68,18 @@ class ImagesAdapter(
         return ImageViewHolder(binding)
     }
 
-    override fun getItemCount(): Int {
-        return data.size
+    private var requestedNewContent = false
+    private var noMoreContent = false
+
+    /**
+     * Call this method when new content has been added on onLoadMore() callback
+     */
+    fun newContentRequestFinished() {
+        requestedNewContent = false
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        val image = data[position]
+        val image = getItem(position)
 
         holder.imageItemBinding.image.load(image.reducedImageUrl, imageLoader)
 
@@ -76,7 +101,7 @@ class ImagesAdapter(
             holder.imageItemBinding.imageCheckbox.isChecked = false
             holder.imageItemBinding.imageOverlay.visibility = View.GONE
             holder.imageItemBinding.root.setOnClickListener {
-                imageOnClick(data, position)
+                imageOnClick(currentList, position)
             }
             holder.imageItemBinding.imageCheckbox.setOnCheckedChangeListener(null)
             holder.imageItemBinding.root.setOnLongClickListener {
@@ -86,5 +111,16 @@ class ImagesAdapter(
                 true
             }
         }
+        val totalItems = currentList.size
+        if(totalItems > 0 && !requestedNewContent && !noMoreContent) {
+            Log.d("ImagesAdapter", "Total items: $totalItems")
+            if(position == totalItems - 1) {
+                requestedNewContent = true
+                onContentRequested?.invoke()
+            }
+        }
+
     }
+
+
 }

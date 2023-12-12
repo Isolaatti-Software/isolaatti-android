@@ -1,5 +1,6 @@
 package com.isolaatti.profile.domain.entity
 
+import com.isolaatti.audio.common.domain.Audio
 import com.isolaatti.common.Ownable
 import com.isolaatti.profile.data.remote.UserProfileDto
 import com.isolaatti.utils.UrlGen
@@ -17,7 +18,8 @@ data class UserProfile(
     val thisUserIsFollowingMe: Boolean,
     val profileImageId: String?,
     val descriptionText: String?,
-    val descriptionAudioId: String?
+    val descriptionAudioId: String?,
+    val descriptionAudio: Audio?
 ) : Ownable {
 
     val profileAvatarPictureUrl: String get() = UrlGen.userProfileImage(userId)
@@ -37,7 +39,8 @@ data class UserProfile(
                 thisUserIsFollowingMe = userProfileDto.thisUserIsFollowingMe,
                 profileImageId = userProfileDto.profileImageId,
                 descriptionText = userProfileDto.descriptionText,
-                descriptionAudioId = userProfileDto.descriptionAudioId
+                descriptionAudioId = userProfileDto.descriptionAudioId,
+                descriptionAudio = userProfileDto.audio?.let { Audio.fromDto(it) }
             )
         }
     }

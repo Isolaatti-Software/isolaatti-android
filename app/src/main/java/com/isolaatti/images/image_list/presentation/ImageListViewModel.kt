@@ -13,18 +13,57 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 @HiltViewModel
 class ImageListViewModel @Inject constructor(private val imagesRepository: ImagesRepository) : ViewModel() {
 
-    val list: MutableLiveData<Resource<List<Image>>> = MutableLiveData()
-    fun loadNext(userId: Int) {
+    val liveList: MutableLiveData<List<Image>> = MutableLiveData()
+    val error: MutableLiveData<Resource.Error.ErrorType?> = MutableLiveData()
+    val loading: MutableLiveData<Boolean> = MutableLiveData()
+    var noMoreContent = false
+    private var loadedFirstTime = false
+    var userId by Delegates.notNull<Int>()
+
+    private val list: List<Image> get() {
+        return liveList.value ?: listOf()
+    }
+
+    private val lastId: String? get() {
+        return list.lastOrNull()?.id
+    }
+
+    fun loadNext() {
         viewModelScope.launch {
 
-            imagesRepository.getImagesOfUser(userId, null).onEach {
-                list.postValue(it)
+            imagesRepository.getImagesOfUser(userId, lastId).onEach { resource ->
+                when(resource) {
+                    is Resource.Error -> {
+                        error.postValue(resource.errorType)
+                    }
+                    is Resource.Loading -> {
+                        if(!loadedFirstTime) {
+                            loading.postValue(true)
+                        }
+                    }
+                    is Resource.Success -> {
+                        loading.postValue(false)
+                        noMoreContent = resource.data?.isEmpty() == true
+                        loadedFirstTime = true
+                        if(noMoreContent) {
+                            return@onEach
+                        }
+
+                        liveList.postValue(list + (resource.data ?: listOf()))
+                    }
+                }
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
+    }
+
+    fun refresh() {
+        liveList.value = listOf()
+        loadNext()
     }
 
     fun removeImages(images: List<Image>) {
