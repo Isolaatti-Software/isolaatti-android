@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -86,6 +87,27 @@ class ProfileMainFragment : Fragment() {
         }
     }
 
+    private val audioPlayerConnectorListener = object: AudioPlayerConnector.Listener {
+        override fun onPlaying(isPlaying: Boolean, audio: Audio) {
+            viewBinding.playButton.icon = AppCompatResources.getDrawable(requireContext(), if(isPlaying) R.drawable.baseline_pause_circle_24 else R.drawable.baseline_play_circle_24)
+
+        }
+
+        override fun isLoading(isLoading: Boolean, audio: Audio) {
+            viewBinding.playButton.isEnabled = !isLoading
+            viewBinding.audioProgress.isIndeterminate = isLoading
+        }
+
+        override fun progressChanged(second: Int, audio: Audio) {
+            viewBinding.audioProgress.setProgress(second, true)
+        }
+
+        override fun durationChanged(duration: Int, audio: Audio) {
+            viewBinding.audioProgress.max = duration
+        }
+
+    }
+
     private val profileObserver = Observer<UserProfile> { profile ->
         viewBinding.profileImageView.load(UrlGen.userProfileImage(profile.userId), imageLoader)
 
@@ -110,7 +132,7 @@ class ProfileMainFragment : Fragment() {
         }
 
         audioDescriptionAudio = profile.descriptionAudio
-        viewBinding.playButton.visibility = if(profile.descriptionAudio != null) View.VISIBLE else View.GONE
+        viewBinding.playButtonContainer.visibility = if(profile.descriptionAudio != null) View.VISIBLE else View.GONE
 
         setupUiForUserType(profile.isUserItself)
     }
@@ -258,7 +280,7 @@ class ProfileMainFragment : Fragment() {
         }
         viewBinding.playButton.setOnClickListener {
             audioDescriptionAudio?.let { audio ->
-                audioPlayerConnector.playAudio(audio)
+                audioPlayerConnector.playPauseAudio(audio)
             }
         }
     }
@@ -369,6 +391,8 @@ class ProfileMainFragment : Fragment() {
         setupCollapsingBar()
 
         audioPlayerConnector = AudioPlayerConnector(requireContext())
+
+        audioPlayerConnector.addListener(audioPlayerConnectorListener)
 
         viewLifecycleOwner.lifecycle.addObserver(audioPlayerConnector)
 
