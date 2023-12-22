@@ -7,6 +7,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.ZonedDateTime
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -25,6 +26,9 @@ class RetrofitClient @Inject constructor(private val authenticationInterceptor: 
 
     private val okHttpClient get() = OkHttpClient.Builder()
         .addInterceptor(authenticationInterceptor)
+        .connectTimeout(5, TimeUnit.MINUTES)
+        .writeTimeout(5, TimeUnit.MINUTES)
+        .readTimeout(5, TimeUnit.MINUTES)
         .build()
 
     private val gson = GsonBuilder()
