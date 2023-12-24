@@ -18,10 +18,16 @@ import kotlin.properties.Delegates
 @HiltViewModel
 class ImageListViewModel @Inject constructor(private val imagesRepository: ImagesRepository) : ViewModel() {
 
-    val liveList: MutableLiveData<List<Image>> = MutableLiveData()
+    enum class Event {
+        REMOVED_IMAGE, ADDED_IMAGE_BEGINNING
+    }
+
+    val liveList: MutableLiveData<List<Image>> = MutableLiveData(listOf())
     val error: MutableLiveData<Resource.Error.ErrorType?> = MutableLiveData()
     val loading: MutableLiveData<Boolean> = MutableLiveData()
+    val deleting: MutableLiveData<Boolean> = MutableLiveData()
     var noMoreContent = false
+    var lastEvent: Event? = null
     private var loadedFirstTime = false
     var userId by Delegates.notNull<Int>()
 
@@ -74,10 +80,16 @@ class ImageListViewModel @Inject constructor(private val imagesRepository: Image
         viewModelScope.launch {
             imagesRepository.deleteImages(images).onEach {
                 when(it) {
-                    is Resource.Error -> {}
-                    is Resource.Loading -> {}
+                    is Resource.Error -> {
+                        deleting.postValue(false)
+                    }
+                    is Resource.Loading -> {
+                        deleting.postValue(true)
+                    }
                     is Resource.Success -> {
-                        liveList.value = list.filterNot { image -> images.contains(image) }
+                        deleting.postValue(false)
+                        lastEvent = Event.REMOVED_IMAGE
+                        liveList.postValue(list.filterNot { image -> images.contains(image) })
                     }
                 }
             }.flowOn(Dispatchers.IO).launchIn(this)

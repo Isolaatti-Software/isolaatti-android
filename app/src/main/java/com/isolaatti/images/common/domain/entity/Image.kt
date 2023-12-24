@@ -1,5 +1,6 @@
 package com.isolaatti.images.common.domain.entity
 
+import com.isolaatti.common.Deletable
 import com.isolaatti.images.common.data.remote.ImageDto
 import com.isolaatti.utils.UrlGen
 import java.io.Serializable
@@ -9,7 +10,7 @@ data class Image(
     val userId: Int,
     val name: String,
     val username: String
-): Serializable {
+): Deletable(), Serializable {
     val imageUrl: String get() = UrlGen.imageUrl(id)
     val smallImageUrl : String get() = UrlGen.imageUrl(id, UrlGen.IMAGE_MODE_SMALL)
     val reducedImageUrl: String get() = UrlGen.imageUrl(id, UrlGen.IMAGE_MODE_REDUCED)

@@ -65,14 +65,17 @@ class ImageMakerActivity : IsolaattiBaseActivity() {
                 is Resource.Error -> {
                     errorViewModel.error.value = it.errorType
                     binding.progressBarLoading.visibility = View.GONE
+                    binding.uploadPhotoFab.visibility = View.VISIBLE
                     binding.textImageName.isEnabled = true
                 }
                 is Resource.Loading -> {
                     binding.progressBarLoading.visibility = View.VISIBLE
+                    binding.uploadPhotoFab.visibility = View.INVISIBLE
                     binding.textImageName.isEnabled = false
                 }
                 is Resource.Success -> {
                     binding.progressBarLoading.visibility = View.GONE
+                    binding.uploadPhotoFab.visibility = View.VISIBLE
                     setResult(Activity.RESULT_OK, Intent().putExtra(EXTRA_IMAGE, it.data))
                     finish()
                 }

@@ -34,13 +34,11 @@ class ImagesAdapter(
         }
     }
 
-    private var selectionState: Array<Boolean> = arrayOf()
-
     var deleteMode: Boolean = false
         set(value) {
             field = value
             if(!value) {
-                selectionState.forEachIndexed { index, _ ->  selectionState[index] = false }
+                currentList.forEach { it.delete = false }
             }
             notifyDataSetChanged()
         }
@@ -48,7 +46,7 @@ class ImagesAdapter(
     inner class ImageViewHolder(val imageItemBinding: ImageItemBinding) : RecyclerView.ViewHolder(imageItemBinding.root)
 
     fun getSelectedImages(): List<Image> {
-        return currentList.filterIndexed { index, _ -> selectionState[index] }
+        return currentList.filter { it.delete }
     }
 
     override fun onCurrentListChanged(
@@ -57,7 +55,6 @@ class ImagesAdapter(
     ) {
         super.onCurrentListChanged(previousList, currentList)
         noMoreContent = (currentList.size - previousList.size) == 0
-        selectionState = Array(currentList.size) { false }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
@@ -89,11 +86,11 @@ class ImagesAdapter(
             holder.imageItemBinding.root.setOnClickListener {
                 holder.imageItemBinding.imageCheckbox.isChecked = !holder.imageItemBinding.imageCheckbox.isChecked
             }
-            holder.imageItemBinding.imageCheckbox.isChecked = selectionState[position]
+            holder.imageItemBinding.imageCheckbox.isChecked = image.delete
             holder.imageItemBinding.imageCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-                selectionState[position] = isChecked
+                image.delete = isChecked
 
-                onImageSelectedCountUpdate?.invoke(selectionState.count { it })
+                onImageSelectedCountUpdate?.invoke(currentList.count { it.delete })
             }
             holder.imageItemBinding.root.setOnLongClickListener(null)
         } else {
@@ -105,9 +102,9 @@ class ImagesAdapter(
             }
             holder.imageItemBinding.imageCheckbox.setOnCheckedChangeListener(null)
             holder.imageItemBinding.root.setOnLongClickListener {
-                selectionState[position] = true
+                image.delete = true
                 onDeleteMode?.invoke(true)
-                onImageSelectedCountUpdate?.invoke(selectionState.count { it })
+                onImageSelectedCountUpdate?.invoke(currentList.count { it.delete })
                 true
             }
         }

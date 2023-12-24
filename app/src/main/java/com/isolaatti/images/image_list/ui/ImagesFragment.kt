@@ -1,5 +1,6 @@
 package com.isolaatti.images.image_list.ui
 
+import android.app.Dialog
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
@@ -51,6 +52,7 @@ class ImagesFragment : Fragment() {
 
     private val imageMakerLauncher = registerForActivityResult(ImageMakerContract()) { image ->
         image?.also {
+            viewModel.lastEvent = ImageListViewModel.Event.ADDED_IMAGE_BEGINNING
             viewModel.addImageAtTheBeginning(it)
         }
     }
@@ -73,6 +75,8 @@ class ImagesFragment : Fragment() {
         return FileProvider.getUriForFile(requireContext(), "${MyApplication.myApp.packageName}.provider", cacheFile)
     }
 
+    private var deletingImagesDialog: Dialog? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -93,7 +97,6 @@ class ImagesFragment : Fragment() {
                 viewModel.loadNext()
             }
         }
-
         setupAdapter()
         setupObservers()
         setupListeners()
@@ -201,6 +204,11 @@ class ImagesFragment : Fragment() {
     private fun setupObservers() {
 
         viewModel.liveList.observe(viewLifecycleOwner) { list ->
+            if(viewModel.lastEvent == ImageListViewModel.Event.REMOVED_IMAGE || viewModel.lastEvent == ImageListViewModel.Event.ADDED_IMAGE_BEGINNING) {
+                actionMode?.finish()
+
+            }
+            viewBinding.noImagesCard.visibility = if(list.isEmpty()) View.VISIBLE else View.GONE
             adapter.submitList(list)
         }
 
@@ -217,6 +225,18 @@ class ImagesFragment : Fragment() {
 
         viewModel.error.observe(viewLifecycleOwner) {
             errorViewModel.error.value = it
+        }
+
+        viewModel.deleting.observe(viewLifecycleOwner) { deleting ->
+            if(deleting) {
+                deletingImagesDialog = MaterialAlertDialogBuilder(requireContext())
+                    .setMessage(R.string.deleting_please_wait)
+                    .setCancelable(false)
+                    .show()
+            } else {
+                deletingImagesDialog?.dismiss()
+                deletingImagesDialog = null
+            }
         }
     }
 

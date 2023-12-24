@@ -25,7 +25,7 @@ interface ImagesApi {
                   @Part setAsProfile: MultipartBody.Part? = null,
                   @Part squadId: MultipartBody.Part? = null): Call<ImageDto>
 
-    @POST("images/delete_many")
+    @POST("images/delete/delete_many")
     fun deleteImages(@Body deleteImagesDto: DeleteImagesDto): Call<Void>
 
     @GET("images/of_squad/{squadId}")

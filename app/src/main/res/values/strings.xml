@@ -124,4 +124,5 @@
     <string name="audio_options">Audio options</string>
     <string name="yes_discard_image">Yes, discard image</string>
     <string name="discard_image">Discard image?</string>
+    <string name="deleting_please_wait">Deleting, please wait…</string>
 </resources>

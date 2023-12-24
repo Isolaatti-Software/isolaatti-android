@@ -46,7 +46,7 @@ class ImagesRepositoryImpl @Inject constructor(private val imagesApi: ImagesApi,
 
     override fun deleteImages(images: List<Image>): Flow<Resource<Boolean>> = flow {
         emit(Resource.Loading())
-        val dto = DeleteImagesDto(images.map { it.imageUrl })
+        val dto = DeleteImagesDto(images.map { it.id })
         try {
             val response = imagesApi.deleteImages(dto).awaitResponse()
             if(response.isSuccessful) {
