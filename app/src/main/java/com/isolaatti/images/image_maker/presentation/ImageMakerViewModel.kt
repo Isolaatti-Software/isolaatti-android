@@ -25,7 +25,7 @@ class ImageMakerViewModel @Inject constructor(private val imagesRepository: Imag
             return
         }
         viewModelScope.launch {
-            imagesRepository.uploadImage(name!!, imageUri!!, null).onEach {
+            imagesRepository.uploadImage(name!!.trim(), imageUri!!, null).onEach {
                 image.postValue(it)
             }.flowOn(Dispatchers.IO).launchIn(this)
         }

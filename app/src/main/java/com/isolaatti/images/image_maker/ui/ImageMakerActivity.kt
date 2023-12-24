@@ -4,9 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.widget.doOnTextChanged
 import coil.load
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.isolaatti.R
 import com.isolaatti.common.IsolaattiBaseActivity
 import com.isolaatti.databinding.ActivityImageMakerBinding
@@ -25,23 +27,35 @@ class ImageMakerActivity : IsolaattiBaseActivity() {
         setContentView(binding.root)
         viewModel.imageUri = intent.data
         binding.imagePreview.load(intent.data)
-
+        onBackPressedDispatcher.addCallback(onBackPressedCallback)
         setupListeners()
         setupObservers()
     }
 
+    private val onBackPressedCallback = object: OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            showExitConfirmationDialog()
+        }
+    }
+
+    private fun showExitConfirmationDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.discard_image)
+            .setPositiveButton(R.string.yes_discard_image) {_, _ ->
+                finish()
+            }.setNegativeButton(R.string.no, null)
+            .show()
+    }
+
     private fun setupListeners() {
-        binding.materialToolbar.setOnMenuItemClickListener {
-            when(it.itemId) {
-                R.id.upload_picture_item -> {
-                    viewModel.uploadPicture()
-                    true
-                }
-                else -> false
-            }
+        binding.uploadPhotoFab.setOnClickListener {
+            viewModel.uploadPicture()
         }
         binding.textImageName.editText?.doOnTextChanged { text, _, _, _ ->
             viewModel.name = text.toString()
+        }
+        binding.toolbar.setNavigationOnClickListener {
+            showExitConfirmationDialog()
         }
     }
 
@@ -50,9 +64,12 @@ class ImageMakerActivity : IsolaattiBaseActivity() {
             when(it) {
                 is Resource.Error -> {
                     errorViewModel.error.value = it.errorType
+                    binding.progressBarLoading.visibility = View.GONE
+                    binding.textImageName.isEnabled = true
                 }
                 is Resource.Loading -> {
                     binding.progressBarLoading.visibility = View.VISIBLE
+                    binding.textImageName.isEnabled = false
                 }
                 is Resource.Success -> {
                     binding.progressBarLoading.visibility = View.GONE

@@ -122,4 +122,6 @@
     <string name="selected_images_count">Images selected: %d</string>
     <string name="picture_name">Picture name</string>
     <string name="audio_options">Audio options</string>
+    <string name="yes_discard_image">Yes, discard image</string>
+    <string name="discard_image">Discard image?</string>
 </resources>
