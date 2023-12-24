@@ -21,15 +21,12 @@ interface ImagesApi {
     @POST("images/create")
     @Multipart
     fun postImage(@Part file: MultipartBody.Part,
-                  @Part("name") name: String,
-                  @Part("setAsProfile") setAsProfile: Boolean? = null,
-                  @Part("squadId") squadId: String? = null): Call<ImageDto>
+                  @Part name: MultipartBody.Part,
+                  @Part setAsProfile: MultipartBody.Part? = null,
+                  @Part squadId: MultipartBody.Part? = null): Call<ImageDto>
 
-    @DELETE("images/{imageId}")
-    fun deleteImage(@Path("imageId") imageId: String): Call<Any>
-
-    @DELETE("images/delete_many")
-    fun deleteImages(@Body deleteImagesDto: DeleteImagesDto): Call<DeleteImagesResultDto>
+    @POST("images/delete_many")
+    fun deleteImages(@Body deleteImagesDto: DeleteImagesDto): Call<Void>
 
     @GET("images/of_squad/{squadId}")
     fun getImagesOfSquad(@Path("squadId") squadId: String,

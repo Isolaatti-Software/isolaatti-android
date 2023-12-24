@@ -33,6 +33,10 @@ class ImageListViewModel @Inject constructor(private val imagesRepository: Image
         return list.lastOrNull()?.id
     }
 
+    fun addImageAtTheBeginning(image: Image) {
+        liveList.value = listOf(image) + list
+    }
+
     fun loadNext() {
         viewModelScope.launch {
 
@@ -67,6 +71,16 @@ class ImageListViewModel @Inject constructor(private val imagesRepository: Image
     }
 
     fun removeImages(images: List<Image>) {
-
+        viewModelScope.launch {
+            imagesRepository.deleteImages(images).onEach {
+                when(it) {
+                    is Resource.Error -> {}
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
+                        liveList.value = list.filterNot { image -> images.contains(image) }
+                    }
+                }
+            }.flowOn(Dispatchers.IO).launchIn(this)
+        }
     }
 }

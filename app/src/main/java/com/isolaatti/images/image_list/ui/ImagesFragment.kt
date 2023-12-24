@@ -49,8 +49,10 @@ class ImagesFragment : Fragment() {
         PictureViewerActivity.startActivityWithImages(requireContext(), images.toTypedArray(), position)
     }
 
-    private val imageMakerLauncher = registerForActivityResult(ImageMakerContract()) {
-        Toast.makeText(requireContext(), "se subio la imagen ${it?.id}", Toast.LENGTH_SHORT).show()
+    private val imageMakerLauncher = registerForActivityResult(ImageMakerContract()) { image ->
+        image?.also {
+            viewModel.addImageAtTheBeginning(it)
+        }
     }
 
     private val choosePictureLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
