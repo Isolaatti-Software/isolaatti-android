@@ -18,6 +18,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 abstract class PostListingViewModelBase : ViewModel() {
+
+    companion object {
+        const val TAG = "PostListingViewModelBase"
+    }
+
     @Inject
     lateinit var likesRepository: LikesRepository
     @Inject
@@ -46,8 +51,12 @@ abstract class PostListingViewModelBase : ViewModel() {
             likesRepository.likePost(postId).onEach {like ->
 
                 when(like) {
-                    is Resource.Error -> {}
-                    is Resource.Loading -> {}
+                    is Resource.Error -> {
+                        Log.e(TAG, "Error likePost($postId) ${like.errorType} ${like.message}")
+                    }
+                    is Resource.Loading -> {
+                        Log.i(TAG, "Loading likePost($postId)")
+                    }
                     is Resource.Success -> {
                         val likedPost = posts.value?.first?.find { post -> post.id == like.data?.postId }
                         val index = posts.value?.first?.indexOf(likedPost)
@@ -74,8 +83,12 @@ abstract class PostListingViewModelBase : ViewModel() {
             likesRepository.unLikePost(postId).onEach {like ->
 
                 when(like) {
-                    is Resource.Error -> TODO()
-                    is Resource.Loading -> TODO()
+                    is Resource.Error -> {
+                        Log.e(TAG, "Error unLikePost($postId) ${like.errorType} ${like.message}")
+                    }
+                    is Resource.Loading -> {
+                        Log.i(TAG, "Loading unLikePost($postId)")
+                    }
                     is Resource.Success -> {
                         val likedPost = posts.value?.first?.find { post -> post.id == like.data?.postId }
                         val index = posts.value?.first?.indexOf(likedPost)
@@ -115,7 +128,11 @@ abstract class PostListingViewModelBase : ViewModel() {
         }
     }
 
-    fun onPostUpdate(post: FeedDto.PostDto) {
+    fun onPostUpdate(post: Post) {
+
+    }
+
+    fun onPostAddedAtTheBeginning(post: Post) {
 
     }
 }

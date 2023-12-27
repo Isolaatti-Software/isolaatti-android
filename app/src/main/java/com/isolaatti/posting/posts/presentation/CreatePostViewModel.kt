@@ -7,6 +7,7 @@ import com.isolaatti.posting.posts.data.remote.CreatePostDto
 import com.isolaatti.posting.posts.data.remote.EditPostDto
 import com.isolaatti.posting.posts.data.remote.EditPostDto.Companion.PRIVACY_ISOLAATTI
 import com.isolaatti.posting.posts.data.remote.FeedDto
+import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.posting.posts.domain.use_case.EditPost
 import com.isolaatti.posting.posts.domain.use_case.LoadSinglePost
 import com.isolaatti.posting.posts.domain.use_case.MakePost
@@ -22,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreatePostViewModel @Inject constructor(private val makePost: MakePost, private val editPost: EditPost, private val loadPost: LoadSinglePost) : ViewModel() {
     val validation: MutableLiveData<Boolean> = MutableLiveData(false)
-    val posted: MutableLiveData<FeedDto.PostDto?> = MutableLiveData()
+    val posted: MutableLiveData<Post?> = MutableLiveData()
     val error: MutableLiveData<Resource.Error.ErrorType?> = MutableLiveData()
     val loading: MutableLiveData<Boolean> = MutableLiveData(false)
     val postToEdit: MutableLiveData<EditPostDto> = MutableLiveData()
@@ -33,7 +34,7 @@ class CreatePostViewModel @Inject constructor(private val makePost: MakePost, pr
                 when(it) {
                     is Resource.Success -> {
                         loading.postValue(false)
-                        posted.postValue(it.data)
+                        posted.postValue(Post.fromPostDto(it.data!!))
                     }
                     is Resource.Error -> {
                         loading.postValue(false)
@@ -53,7 +54,7 @@ class CreatePostViewModel @Inject constructor(private val makePost: MakePost, pr
                 when(it) {
                     is Resource.Success -> {
                         loading.postValue(false)
-                        posted.postValue(it.data)
+                        posted.postValue(Post.fromPostDto(it.data!!))
                     }
                     is Resource.Error -> {
                         loading.postValue(false)

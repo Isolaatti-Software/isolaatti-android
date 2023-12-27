@@ -5,9 +5,10 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import com.isolaatti.posting.posts.data.remote.FeedDto
+import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.posting.posts.ui.CreatePostActivity
 
-class EditPostContract : ActivityResultContract<Long, FeedDto.PostDto?>() {
+class EditPostContract : ActivityResultContract<Long, Post?>() {
     override fun createIntent(context: Context, input: Long): Intent {
         return Intent(context, CreatePostActivity::class.java).apply {
             putExtra(CreatePostActivity.EXTRA_KEY_MODE, CreatePostActivity.EXTRA_MODE_EDIT)
@@ -15,7 +16,7 @@ class EditPostContract : ActivityResultContract<Long, FeedDto.PostDto?>() {
         }
     }
 
-    override fun parseResult(resultCode: Int, intent: Intent?): FeedDto.PostDto? {
+    override fun parseResult(resultCode: Int, intent: Intent?): Post? {
         return if(resultCode == Activity.RESULT_OK) {
             intent?.extras?.getParcelable(CreatePostActivity.EXTRA_KEY_POST_POSTED)
         } else {

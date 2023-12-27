@@ -74,11 +74,12 @@ class ProfileMainFragment : Fragment() {
     private var isShow = false
 
     private val createDiscussion = registerForActivityResult(CreatePostContract()) {
-        if(it != null) {
-            Toast.makeText(requireContext(), R.string.posted_successfully, Toast.LENGTH_SHORT).show()
-        }
+        if(it == null)
+            return@registerForActivityResult
 
-        // TODO add post to recycler view
+        Toast.makeText(requireContext(), R.string.posted_successfully, Toast.LENGTH_SHORT).show()
+
+        viewModel.onPostAddedAtTheBeginning(it)
     }
 
     private val editDiscussion = registerForActivityResult(EditPostContract()) {
