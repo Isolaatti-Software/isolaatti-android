@@ -27,8 +27,9 @@ class CreatePostViewModel @Inject constructor(private val makePost: MakePost, pr
     val error: MutableLiveData<Resource.Error.ErrorType?> = MutableLiveData()
     val loading: MutableLiveData<Boolean> = MutableLiveData(false)
     val postToEdit: MutableLiveData<EditPostDto> = MutableLiveData()
+    var content: String = ""
 
-    fun postDiscussion(content: String) {
+    fun postDiscussion() {
         viewModelScope.launch {
             makePost(EditPostDto.PRIVACY_ISOLAATTI, content, null, null).onEach {
                 when(it) {
@@ -48,7 +49,7 @@ class CreatePostViewModel @Inject constructor(private val makePost: MakePost, pr
         }
     }
 
-    fun editDiscussion(postId: Long, content: String) {
+    fun editDiscussion(postId: Long) {
         viewModelScope.launch {
             editPost(postId, EditPostDto.PRIVACY_ISOLAATTI, content, null, null).onEach {
                 when(it) {

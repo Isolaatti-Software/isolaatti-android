@@ -125,4 +125,6 @@
     <string name="yes_discard_image">Yes, discard image</string>
     <string name="discard_image">Discard image?</string>
     <string name="deleting_please_wait">Deleting, please wait…</string>
+    <string name="markdown">Markdown</string>
+    <string name="preview">Preview</string>
 </resources>

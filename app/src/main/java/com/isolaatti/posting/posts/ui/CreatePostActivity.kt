@@ -9,6 +9,8 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
+import com.google.android.material.tabs.TabLayout
 import com.isolaatti.R
 import com.isolaatti.common.IsolaattiBaseActivity
 import com.isolaatti.databinding.ActivityCreatePostBinding
@@ -69,9 +71,9 @@ class CreatePostActivity : IsolaattiBaseActivity() {
                     }
 
                     if(mode == EXTRA_MODE_EDIT && postId != 0L) {
-                        viewModel.editDiscussion(postId, binding.filledTextField.editText?.text.toString())
+                        viewModel.editDiscussion(postId)
                     } else {
-                        viewModel.postDiscussion(binding.filledTextField.editText?.text.toString())
+                        viewModel.postDiscussion()
                     }
                 }
             }
@@ -81,25 +83,45 @@ class CreatePostActivity : IsolaattiBaseActivity() {
 
     private fun setupUI() {
         binding.toolbar.setTitle(if(mode == EXTRA_MODE_EDIT && postId != 0L) R.string.edit else R.string.new_post)
-        binding.filledTextField.requestFocus()
+
     }
 
     private fun setListeners() {
         binding.toolbar.setNavigationOnClickListener {
             exit()
         }
-        binding.filledTextField.editText?.doOnTextChanged { text, _, _, _ ->
-            // make better validation :)
-            viewModel.validation.postValue(!text.isNullOrEmpty())
-        }
+
 
         binding.postButton.setOnClickListener {
             if(mode == EXTRA_MODE_EDIT && postId != 0L) {
-                viewModel.editDiscussion(postId, binding.filledTextField.editText?.text.toString())
+                viewModel.editDiscussion(postId)
             } else {
-                viewModel.postDiscussion(binding.filledTextField.editText?.text.toString())
+                viewModel.postDiscussion()
             }
         }
+
+        binding.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+
+                when(tab?.position) {
+                    0 -> /*editing*/ {
+                        findNavController(binding.fragmentContainerView.id).navigate(R.id.markdownEditingFragment)
+                    }
+                    1 -> /*preview*/ {
+                        findNavController(binding.fragmentContainerView.id).navigate(R.id.markdownPreviewFragment)
+                    }
+                }
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                // Handle tab reselect
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                // Handle tab unselect
+            }
+        })
     }
 
     private fun setObservers() {
@@ -120,10 +142,6 @@ class CreatePostActivity : IsolaattiBaseActivity() {
 
         viewModel.loading.observe(this@CreatePostActivity) {
             binding.progressBarLoading.visibility = if(it) View.VISIBLE else View.GONE
-        }
-
-        viewModel.postToEdit.observe(this) {
-            binding.filledTextField.editText?.setText(it.content)
         }
     }
 

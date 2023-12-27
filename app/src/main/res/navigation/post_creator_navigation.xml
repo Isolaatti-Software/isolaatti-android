@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/post_creator_navigation"
+    app:startDestination="@id/markdownEditingFragment">
+
+    <fragment
+        android:id="@+id/markdownPreviewFragment"
+        android:name="com.isolaatti.posting.posts.ui.MarkdownPreviewFragment"
+        android:label="MarkdownPreviewFragment" />
+    <fragment
+        android:id="@+id/markdownEditingFragment"
+        android:name="com.isolaatti.posting.posts.ui.MarkdownEditingFragment"
+        android:label="MarkdownEditingFragment" />
+</navigation>
