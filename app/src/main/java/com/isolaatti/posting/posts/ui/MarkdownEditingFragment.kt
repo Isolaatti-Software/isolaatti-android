@@ -49,50 +49,6 @@ class MarkdownEditingFragment : Fragment(){
             viewModel.content = text.toString()
         }
 
-        binding.filledTextField.editText?.customSelectionActionModeCallback = object: ActionMode.Callback {
-            override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                return true
-            }
-
-            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                return true
-            }
-
-            override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-                return false
-            }
-
-            override fun onDestroyActionMode(mode: ActionMode?) {
-
-            }
-        }
-
-        binding.filledTextField.editText?.customInsertionActionModeCallback = object: ActionMode.Callback {
-            override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                MenuInflater(requireContext()).inflate(R.menu.contextual_menu_post_content, menu)
-                return true
-            }
-
-            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                return true
-            }
-
-            override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-                if(item?.itemId == R.id.add_image_here_menu_item) {
-                    insertImage()
-                    mode?.finish()
-                    return true
-                }
-
-                return false
-            }
-
-            override fun onDestroyActionMode(mode: ActionMode?) {
-
-            }
-
-        }
-
         viewModel.postToEdit.observe(viewLifecycleOwner) {
             binding.filledTextField.editText?.setText(it.content)
         }
