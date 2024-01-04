@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/image_chooser_navigation"
+    app:startDestination="@id/imageChooserMainFragment">
+
+    <fragment
+        android:id="@+id/imageChooserMainFragment"
+        android:name="com.isolaatti.images.image_chooser.ui.ImageChooserMainFragment"
+        android:label="ImageChooserMainFragment" >
+        <action
+            android:id="@+id/action_imageChooserMainFragment_to_imageChooserPreview"
+            app:destination="@id/imageChooserPreview" />
+    </fragment>
+    <fragment
+        android:id="@+id/imageChooserPreview"
+        android:name="com.isolaatti.images.image_chooser.ui.ImageChooserPreview"
+        android:label="ImageChooserPreview" />
+</navigation>

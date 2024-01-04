@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.isolaatti.R
 import com.isolaatti.common.IsolaattiBaseActivity
 import com.isolaatti.databinding.ActivityCreatePostBinding
@@ -84,6 +85,16 @@ class CreatePostActivity : IsolaattiBaseActivity() {
     private fun setupUI() {
         binding.toolbar.setTitle(if(mode == EXTRA_MODE_EDIT && postId != 0L) R.string.edit else R.string.new_post)
 
+        binding.pager.adapter = CreatePostFragmentStateAdapter(this)
+
+
+        TabLayoutMediator(binding.tabs, binding.pager) { tab, position ->
+            when(position) {
+                0 -> tab.setText(R.string.markdown)
+                1 -> tab.setText(R.string.preview)
+            }
+        }.attach()
+
     }
 
     private fun setListeners() {
@@ -100,28 +111,6 @@ class CreatePostActivity : IsolaattiBaseActivity() {
             }
         }
 
-        binding.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-
-                when(tab?.position) {
-                    0 -> /*editing*/ {
-                        findNavController(binding.fragmentContainerView.id).navigate(R.id.markdownEditingFragment)
-                    }
-                    1 -> /*preview*/ {
-                        findNavController(binding.fragmentContainerView.id).navigate(R.id.markdownPreviewFragment)
-                    }
-                }
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                // Handle tab reselect
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                // Handle tab unselect
-            }
-        })
     }
 
     private fun setObservers() {

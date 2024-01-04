@@ -27,6 +27,7 @@ import com.isolaatti.R
 import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentImagesBinding
 import com.isolaatti.images.common.domain.entity.Image
+import com.isolaatti.images.image_list.presentation.ImageAdapterItem
 import com.isolaatti.images.image_list.presentation.ImageListViewModel
 import com.isolaatti.images.image_list.presentation.ImagesAdapter
 import com.isolaatti.images.image_maker.ui.ImageMakerContract

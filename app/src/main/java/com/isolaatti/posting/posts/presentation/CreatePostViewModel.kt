@@ -27,7 +27,9 @@ class CreatePostViewModel @Inject constructor(private val makePost: MakePost, pr
     val error: MutableLiveData<Resource.Error.ErrorType?> = MutableLiveData()
     val loading: MutableLiveData<Boolean> = MutableLiveData(false)
     val postToEdit: MutableLiveData<EditPostDto> = MutableLiveData()
+    val liveContent: MutableLiveData<String> = MutableLiveData()
     var content: String = ""
+        set(value) {field = value; liveContent.value = value} // TODO remove this and use only liveContent
 
     fun postDiscussion() {
         viewModelScope.launch {

@@ -2,6 +2,7 @@ package com.isolaatti.images.common.domain.entity
 
 import com.isolaatti.common.Deletable
 import com.isolaatti.images.common.data.remote.ImageDto
+import com.isolaatti.markdown.Generators
 import com.isolaatti.utils.UrlGen
 import java.io.Serializable
 
@@ -15,7 +16,7 @@ data class Image(
     val smallImageUrl : String get() = UrlGen.imageUrl(id, UrlGen.IMAGE_MODE_SMALL)
     val reducedImageUrl: String get() = UrlGen.imageUrl(id, UrlGen.IMAGE_MODE_REDUCED)
 
-
+    val markdown: String get() = Generators.generateImage(imageUrl)
 
     companion object {
         fun fromDto(imageDto: ImageDto) = Image(imageDto.id, imageDto.userId, imageDto.name, imageDto.username)

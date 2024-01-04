@@ -56,6 +56,9 @@ class MarkdownPreviewFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        markwon?.setMarkdown(binding.textView, viewModel.content)
+        viewModel.liveContent.observe(viewLifecycleOwner) {
+            markwon?.setMarkdown(binding.textView, it)
+        }
+
     }
 }
