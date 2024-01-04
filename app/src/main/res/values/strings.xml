@@ -129,4 +129,7 @@
     <string name="preview">Preview</string>
     <string name="add_image_here">Add image here</string>
     <string name="choose_image">Choose image</string>
+    <string name="url">Url</string>
+    <string name="text">Text</string>
+    <string name="insert_url">Insert url</string>
 </resources>
