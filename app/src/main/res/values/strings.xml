@@ -132,4 +132,5 @@
     <string name="url">Url</string>
     <string name="text">Text</string>
     <string name="insert_url">Insert url</string>
+    <string name="enlarge_text_box">Enlarge text box</string>
 </resources>

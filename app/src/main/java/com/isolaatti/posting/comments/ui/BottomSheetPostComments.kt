@@ -1,6 +1,7 @@
 package com.isolaatti.posting.comments.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +32,9 @@ import com.isolaatti.common.options_bottom_sheet.domain.OptionClicked
 import com.isolaatti.common.options_bottom_sheet.domain.Options
 import com.isolaatti.common.options_bottom_sheet.presentation.BottomSheetPostOptionsViewModel
 import com.isolaatti.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
+import com.isolaatti.images.image_chooser.ui.ImageChooserContract
+import com.isolaatti.posting.link_creator.presentation.LinkCreatorViewModel
+import com.isolaatti.posting.link_creator.ui.LinkCreatorFragment
 import com.isolaatti.profile.ui.ProfileActivity
 import dagger.hilt.android.AndroidEntryPoint
 import io.noties.markwon.AbstractMarkwonPlugin
@@ -49,6 +53,7 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
     private lateinit var adapter: CommentsRecyclerViewAdapter
     private val errorViewModel: ErrorMessageViewModel by activityViewModels()
     private val optionsViewModel: BottomSheetPostOptionsViewModel by activityViewModels()
+    private val linkCreatorViewModel: LinkCreatorViewModel by viewModels()
 
     private val optionsObserver: Observer<OptionClicked?> = Observer { optionClicked ->
         if(optionClicked?.callerId == CALLER_ID) {
@@ -113,6 +118,14 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
 
     }
 
+    private val imageChooserLauncher = registerForActivityResult(ImageChooserContract()) { image ->
+        Log.d("BottomSheetPostComment", "${image?.markdown}")
+
+        if(image != null) {
+            viewBinding.newCommentTextField.editText?.setText("${viewBinding.newCommentTextField.editText?.text}\n\n${image.markdown}")
+        }
+    }
+
     private fun setObservers() {
         viewModel.comments.observe(viewLifecycleOwner, commentsObserver)
         viewModel.noMoreContent.observe(viewLifecycleOwner, noMoreContentObserver)
@@ -123,6 +136,12 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
         }
 
         optionsViewModel.optionClicked.observe(viewLifecycleOwner, optionsObserver)
+        linkCreatorViewModel.inserted.observe(viewLifecycleOwner) {
+            if(it) {
+                viewBinding.newCommentTextField.editText?.setText("${viewBinding.newCommentTextField.editText?.text} ${linkCreatorViewModel.markdown}")
+                linkCreatorViewModel.inserted.value = false
+            }
+        }
     }
 
     private fun setListeners() {
@@ -134,18 +153,34 @@ class BottomSheetPostComments() : BottomSheetDialogFragment(), OnUserInteractedC
             val content = viewBinding.newCommentTextField.editText?.text ?: return@setOnClickListener
             viewModel.postComment(content.toString())
         }
+
+        viewBinding.addImageButton.setOnClickListener {
+            insertImage()
+        }
+
+        viewBinding.addLinkButton.setOnClickListener {
+            insertLink()
+        }
+
+        viewBinding.enlargeTextBoxSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked) {
+                viewBinding.newCommentTextField.editText?.setLines(5)
+            } else {
+                viewBinding.newCommentTextField.editText?.setLines(1)
+            }
+        }
     }
 
     private fun clearNewCommentUi() {
         viewBinding.newCommentTextField.editText?.text?.clear()
     }
 
-    private fun switchEditionModeUi(editionMode: Boolean) {
-        if(editionMode) {
+    private fun insertImage() {
+        imageChooserLauncher.launch(ImageChooserContract.Requester.UserPost)
+    }
 
-        } else {
-
-        }
+    private fun insertLink() {
+        LinkCreatorFragment().show(childFragmentManager, null)
     }
 
 
