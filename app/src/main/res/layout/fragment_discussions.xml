@@ -146,6 +146,45 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/go_to_followers_btn" />
 
+                <HorizontalScrollView
+                    android:id="@+id/profile_actions_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/follow_button"
+                    android:layout_marginHorizontal="16dp">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/create_post_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/Widget.Material3.Button.IconButton.Filled"
+                            android:text="@string/new_post"
+                            app:icon="@drawable/baseline_post_add_24"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/images_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                            android:layout_marginStart="16dp"
+                            android:text="@string/images"
+                            app:icon="@drawable/baseline_image_24"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/audios_button"
+                            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="@string/audios"
+                            app:icon="@drawable/baseline_audio_file_24" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.appbar.MaterialToolbar
@@ -178,19 +217,4 @@
         app:layout_anchor="@id/swipe_to_refresh"
         app:layout_anchorGravity="bottom"/>
 
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_gravity="bottom"
-        app:menu="@menu/profile_bottom_bar_menu"
-        style="@style/Widget.Material3.BottomAppBar" />
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/new_post"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:icon="@drawable/baseline_add_24"
-        app:layout_anchorGravity="bottom"
-        app:layout_anchor="@id/bottomAppBar" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

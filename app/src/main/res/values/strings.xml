@@ -133,4 +133,5 @@
     <string name="text">Text</string>
     <string name="insert_url">Insert url</string>
     <string name="enlarge_text_box">Enlarge text box</string>
+    <string name="create_a_new_discussion">Create a new discussion</string>
 </resources>

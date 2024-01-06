@@ -33,6 +33,8 @@ import com.isolaatti.common.options_bottom_sheet.presentation.BottomSheetPostOpt
 import com.isolaatti.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
 import com.isolaatti.databinding.FragmentDiscussionsBinding
 import com.isolaatti.followers.domain.FollowingState
+import com.isolaatti.images.image_chooser.ui.ImageChooserActivity
+import com.isolaatti.images.image_chooser.ui.ImageChooserContract
 import com.isolaatti.images.image_list.ui.ImagesFragment
 import com.isolaatti.posting.comments.ui.BottomSheetPostComments
 import com.isolaatti.posting.posts.domain.entity.Post
@@ -80,6 +82,10 @@ class ProfileMainFragment : Fragment() {
         Toast.makeText(requireContext(), R.string.posted_successfully, Toast.LENGTH_SHORT).show()
 
         viewModel.onPostAddedAtTheBeginning(it)
+    }
+
+    private val chooseImageLauncher = registerForActivityResult(ImageChooserContract()) {
+        // here change profile picture
     }
 
     private val editDiscussion = registerForActivityResult(EditPostContract()) {
@@ -179,7 +185,9 @@ class ProfileMainFragment : Fragment() {
                 Options.PROFILE_PHOTO_OPTIONS -> {
                     val profile = optionClicked.payload as? UserProfile
                     when(optionClicked.optionId) {
-                        Options.Option.OPTION_PROFILE_PHOTO_CHANGE_PHOTO -> {}
+                        Options.Option.OPTION_PROFILE_PHOTO_CHANGE_PHOTO -> {
+                            chooseImageLauncher.launch(ImageChooserContract.Requester.UserPost)
+                        }
                         Options.Option.OPTION_PROFILE_PHOTO_REMOVE_PHOTO -> {}
                         Options.Option.OPTION_PROFILE_PHOTO_VIEW_PHOTO -> {
                             val profilePictureUrl = profile?.profilePictureUrl
@@ -245,27 +253,17 @@ class ProfileMainFragment : Fragment() {
             requireActivity().finish()
         }
 
-        viewBinding.bottomAppBar.setOnMenuItemClickListener {
-            when(it.itemId) {
-                R.id.audios_menu_item -> {
-                    findNavController().navigate(ProfileMainFragmentDirections.actionDiscussionsFragmentToAudiosFragment(AudiosFragment.SOURCE_PROFILE, userId.toString()))
-                    true
-                }
-                R.id.images_menu_item -> {
-                    if(userId != null) {
-                        findNavController().navigate(
-                            ProfileMainFragmentDirections.actionDiscussionsFragmentToImagesFragment(ImagesFragment.SOURCE_PROFILE, userId.toString())
-                        )
-                        true
-                    } else {
-                        false
-                    }
-                }
-                else -> { false }
-            }
+        viewBinding.audiosButton.setOnClickListener {
+            findNavController().navigate(ProfileMainFragmentDirections.actionDiscussionsFragmentToAudiosFragment(AudiosFragment.SOURCE_PROFILE, userId.toString()))
         }
 
-        viewBinding.newPost.setOnClickListener {
+        viewBinding.imagesButton.setOnClickListener {
+            findNavController().navigate(
+                ProfileMainFragmentDirections.actionDiscussionsFragmentToImagesFragment(ImagesFragment.SOURCE_PROFILE, userId.toString())
+            )
+        }
+
+        viewBinding.createPostButton.setOnClickListener {
             createDiscussion.launch(Unit)
         }
 
@@ -333,7 +331,7 @@ class ProfileMainFragment : Fragment() {
         if(isOwnProfile) {
             viewBinding.followButton.visibility = View.GONE
         } else {
-            viewBinding.newPost.visibility = View.GONE
+            viewBinding.createPostButton.visibility = View.GONE
         }
     }
 
