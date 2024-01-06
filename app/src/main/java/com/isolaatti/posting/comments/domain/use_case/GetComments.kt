@@ -8,5 +8,5 @@ import javax.inject.Inject
 
 class GetComments @Inject constructor(private val commentsRepository: CommentsRepository) {
     operator fun invoke(postId: Long, lastId: Long? = null): Flow<Resource<MutableList<Comment>>> =
-        commentsRepository.getComments(postId, lastId ?: 0)
+        commentsRepository.getComments(postId, lastId)
 }

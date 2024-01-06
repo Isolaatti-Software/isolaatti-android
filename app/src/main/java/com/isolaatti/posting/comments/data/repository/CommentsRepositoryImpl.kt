@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class CommentsRepositoryImpl @Inject constructor(private val commentsApi: CommentsApi) :
     CommentsRepository {
-    override fun getComments(postId: Long, lastId: Long): Flow<Resource<MutableList<Comment>>> = flow {
+    override fun getComments(postId: Long, lastId: Long?): Flow<Resource<MutableList<Comment>>> = flow {
         try {
             emit(Resource.Loading())
             val response = commentsApi.getCommentsOfPosts(postId, lastId, 15).awaitResponse()

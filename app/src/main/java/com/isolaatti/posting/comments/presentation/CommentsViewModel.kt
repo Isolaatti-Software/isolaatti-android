@@ -59,7 +59,7 @@ class CommentsViewModel @Inject constructor(
             getContent()
         }
 
-    private var lastId: Long = 0L
+    private var lastId: Long? = null
 
     fun getContent(refresh: Boolean = false) {
         viewModelScope.launch {

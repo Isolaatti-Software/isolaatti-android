@@ -13,7 +13,7 @@ interface CommentsApi {
     fun postComment(@Path("postId") postId: Long, @Body commentToPost: CommentToPostDto): Call<CommentDto>
 
     @GET("Fetch/Post/{postId}/Comments")
-    fun getCommentsOfPosts(@Path("postId") postId: Long, @Query("lastId") lastId: Long, @Query("take") count: Int): Call<FeedCommentsDto>
+    fun getCommentsOfPosts(@Path("postId") postId: Long, @Query("lastId") lastId: Long?, @Query("take") count: Int): Call<FeedCommentsDto>
 
     @GET("Fetch/Comments/{commentId}")
     fun getComment(@Path("commentId") commentId: Long): Call<CommentDto>
