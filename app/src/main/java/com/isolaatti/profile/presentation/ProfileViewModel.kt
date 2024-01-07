@@ -2,18 +2,15 @@ package com.isolaatti.profile.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.isolaatti.followers.domain.FollowingState
-import com.isolaatti.posting.posts.data.remote.FeedDto
-import com.isolaatti.posting.posts.data.remote.FeedFilterDto
+import com.isolaatti.images.common.domain.entity.Image
 import com.isolaatti.posting.posts.presentation.PostListingViewModelBase
 import com.isolaatti.posting.posts.presentation.UpdateEvent
-import com.isolaatti.profile.data.remote.UserProfileDto
-import com.isolaatti.profile.domain.ProfileRepository
 import com.isolaatti.profile.domain.entity.UserProfile
 import com.isolaatti.profile.domain.use_case.GetProfile
 import com.isolaatti.profile.domain.use_case.GetProfilePosts
+import com.isolaatti.profile.domain.use_case.SetProfileImage
 import com.isolaatti.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,14 +18,14 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.Month
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(private val getProfileUseCase: GetProfile, private val getProfilePostsUseCase: GetProfilePosts) : PostListingViewModelBase() {
+class ProfileViewModel @Inject constructor(
+    private val getProfileUseCase: GetProfile,
+    private val getProfilePostsUseCase: GetProfilePosts,
+    private val setProfileImageUC: SetProfileImage
+) : PostListingViewModelBase() {
     private val _profile = MutableLiveData<UserProfile>()
     val profile: LiveData<UserProfile> get() = _profile
 
@@ -74,6 +71,14 @@ class ProfileViewModel @Inject constructor(private val getProfileUseCase: GetPro
                         )
                     }
                 }
+            }.flowOn(Dispatchers.IO).launchIn(this)
+        }
+    }
+
+    fun setProfileImage(image: Image) {
+        viewModelScope.launch {
+            setProfileImageUC(image).onEach {
+                _profile.postValue(_profile.value?.copy(profileImageId = image.id))
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }

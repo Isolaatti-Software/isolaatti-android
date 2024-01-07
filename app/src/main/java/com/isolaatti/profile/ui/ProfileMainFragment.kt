@@ -33,7 +33,6 @@ import com.isolaatti.common.options_bottom_sheet.presentation.BottomSheetPostOpt
 import com.isolaatti.common.options_bottom_sheet.ui.BottomSheetPostOptionsFragment
 import com.isolaatti.databinding.FragmentDiscussionsBinding
 import com.isolaatti.followers.domain.FollowingState
-import com.isolaatti.images.image_chooser.ui.ImageChooserActivity
 import com.isolaatti.images.image_chooser.ui.ImageChooserContract
 import com.isolaatti.images.image_list.ui.ImagesFragment
 import com.isolaatti.posting.comments.ui.BottomSheetPostComments
@@ -84,8 +83,11 @@ class ProfileMainFragment : Fragment() {
         viewModel.onPostAddedAtTheBeginning(it)
     }
 
-    private val chooseImageLauncher = registerForActivityResult(ImageChooserContract()) {
+    private val chooseImageLauncher = registerForActivityResult(ImageChooserContract()) { image ->
         // here change profile picture
+        if(image != null) {
+            viewModel.setProfileImage(image)
+        }
     }
 
     private val editDiscussion = registerForActivityResult(EditPostContract()) {
@@ -116,7 +118,7 @@ class ProfileMainFragment : Fragment() {
     }
 
     private val profileObserver = Observer<UserProfile> { profile ->
-        viewBinding.profileImageView.load(UrlGen.userProfileImage(profile.userId), imageLoader)
+        viewBinding.profileImageView.load(UrlGen.userProfileImage(profile.userId, invalidateCache = true), imageLoader)
 
         title = profile.name
         viewBinding.textViewUsername.text = profile.name
