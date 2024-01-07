@@ -3,6 +3,7 @@ package com.isolaatti.images.image_list.presentation
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.isolaatti.auth.domain.AuthRepository
 import com.isolaatti.images.common.domain.entity.Image
 import com.isolaatti.images.common.domain.repository.ImagesRepository
 import com.isolaatti.utils.Resource
@@ -16,7 +17,7 @@ import javax.inject.Inject
 import kotlin.properties.Delegates
 
 @HiltViewModel
-class ImageListViewModel @Inject constructor(private val imagesRepository: ImagesRepository) : ViewModel() {
+class ImageListViewModel @Inject constructor(private val imagesRepository: ImagesRepository, private val authRepository: AuthRepository) : ViewModel() {
 
     enum class Event {
         REMOVED_IMAGE, ADDED_IMAGE_BEGINNING
@@ -30,6 +31,8 @@ class ImageListViewModel @Inject constructor(private val imagesRepository: Image
     var lastEvent: Event? = null
     private var loadedFirstTime = false
     var userId by Delegates.notNull<Int>()
+
+    val isUserItself: MutableLiveData<Boolean> = MutableLiveData()
 
     private val list: List<Image> get() {
         return liveList.value ?: listOf()
@@ -92,6 +95,14 @@ class ImageListViewModel @Inject constructor(private val imagesRepository: Image
                         liveList.postValue(list.filterNot { image -> images.contains(image) })
                     }
                 }
+            }.flowOn(Dispatchers.IO).launchIn(this)
+        }
+    }
+
+    fun getUserId() {
+        viewModelScope.launch {
+            authRepository.getUserId().onEach {
+                isUserItself.postValue(userId == it)
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }

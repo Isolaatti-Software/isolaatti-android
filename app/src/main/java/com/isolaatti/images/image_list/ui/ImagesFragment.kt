@@ -95,6 +95,7 @@ class ImagesFragment : Fragment() {
             SOURCE_SQUAD -> {}
             SOURCE_PROFILE -> {
                 viewModel.userId = arguments.sourceId.toInt()
+                viewModel.getUserId()
                 viewModel.loadNext()
             }
         }
@@ -239,6 +240,14 @@ class ImagesFragment : Fragment() {
                 deletingImagesDialog = null
             }
         }
+
+        viewModel.isUserItself.observe(viewLifecycleOwner) {
+            setupUiForUser(it)
+        }
+    }
+
+    private fun setupUiForUser(isUserItSelf: Boolean) {
+        viewBinding.newPictureButton.visibility = if(isUserItSelf) View.VISIBLE else View.GONE
     }
 
     companion object {
