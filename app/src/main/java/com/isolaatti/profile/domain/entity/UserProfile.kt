@@ -14,7 +14,7 @@ data class UserProfile(
     val numberOfLikes: Int,
     val numberOfPosts: Int,
     val isUserItself: Boolean,
-    val followingThisUser: Boolean,
+    var followingThisUser: Boolean,
     val thisUserIsFollowingMe: Boolean,
     val profileImageId: String?,
     val descriptionText: String?,

@@ -8,6 +8,7 @@ import com.isolaatti.images.common.domain.entity.Image
 import com.isolaatti.posting.posts.presentation.PostListingViewModelBase
 import com.isolaatti.posting.posts.presentation.UpdateEvent
 import com.isolaatti.profile.domain.entity.UserProfile
+import com.isolaatti.profile.domain.use_case.FollowUser
 import com.isolaatti.profile.domain.use_case.GetProfile
 import com.isolaatti.profile.domain.use_case.GetProfilePosts
 import com.isolaatti.profile.domain.use_case.SetProfileImage
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val getProfileUseCase: GetProfile,
     private val getProfilePostsUseCase: GetProfilePosts,
-    private val setProfileImageUC: SetProfileImage
+    private val setProfileImageUC: SetProfileImage,
+    private val followUserUC: FollowUser
 ) : PostListingViewModelBase() {
     private val _profile = MutableLiveData<UserProfile>()
     val profile: LiveData<UserProfile> get() = _profile
@@ -34,6 +36,8 @@ class ProfileViewModel @Inject constructor(
     val followingState: MutableLiveData<FollowingState> = MutableLiveData()
 
     private val toRetry: MutableList<Runnable> = mutableListOf()
+
+    val followingLoading: MutableLiveData<Boolean> = MutableLiveData()
 
 
     // runs the lists of "Runnable" one by one and clears list. After this is executed,
@@ -60,14 +64,7 @@ class ProfileViewModel @Inject constructor(
                     is Resource.Success -> {
                         _profile.postValue(it.data!!)
                         followingState.postValue(
-                            it.data.let {user->
-                                when {
-                                    user.followingThisUser && user.thisUserIsFollowingMe -> FollowingState.MutuallyFollowing
-                                    user.followingThisUser -> FollowingState.FollowingThisUser
-                                    user.thisUserIsFollowingMe -> FollowingState.ThisUserIsFollowingMe
-                                    else -> FollowingState.NotMutuallyFollowing
-                                }
-                            }
+                            it.data.let { user-> getFollowingState(user.followingThisUser, user.thisUserIsFollowingMe) }
                         )
                     }
                 }
@@ -75,10 +72,41 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    private fun getFollowingState(followingThisUser: Boolean, userIsFollowingMe: Boolean): FollowingState {
+        return when {
+            followingThisUser && userIsFollowingMe -> FollowingState.MutuallyFollowing
+            followingThisUser -> FollowingState.FollowingThisUser
+            userIsFollowingMe -> FollowingState.ThisUserIsFollowingMe
+            else -> FollowingState.NotMutuallyFollowing
+        }
+    }
+
     fun setProfileImage(image: Image) {
         viewModelScope.launch {
             setProfileImageUC(image).onEach {
                 _profile.postValue(_profile.value?.copy(profileImageId = image.id))
+            }.flowOn(Dispatchers.IO).launchIn(this)
+        }
+    }
+
+    fun followUser() {
+        val currentProfile = _profile.value ?: return
+        val following = currentProfile.followingThisUser
+        viewModelScope.launch {
+            followUserUC(profileId, !following).onEach {
+                when(it) {
+                    is Resource.Error -> {
+                        followingLoading.postValue(false)
+                    }
+                    is Resource.Loading -> {
+                        followingLoading.postValue(true)
+                    }
+                    is Resource.Success -> {
+                        followingLoading.postValue(false)
+                        _profile.postValue(currentProfile.apply { followingThisUser = !following })
+                        followingState.postValue(getFollowingState(!following, currentProfile.thisUserIsFollowingMe))
+                    }
+                }
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }

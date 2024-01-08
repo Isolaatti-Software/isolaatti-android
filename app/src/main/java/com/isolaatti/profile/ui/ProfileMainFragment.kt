@@ -284,6 +284,11 @@ class ProfileMainFragment : Fragment() {
                 audioPlayerConnector.playPauseAudio(audio)
             }
         }
+
+        viewBinding.followButton.setOnClickListener {
+            it.isEnabled = false
+            viewModel.followUser()
+        }
     }
 
     private fun setObservers() {
@@ -299,6 +304,9 @@ class ProfileMainFragment : Fragment() {
         }
         viewModel.errorLoading.observe(viewLifecycleOwner) {
             errorViewModel.error.postValue(it)
+        }
+        viewModel.followingLoading.observe(viewLifecycleOwner) {
+            viewBinding.followButton.isEnabled = !it
         }
     }
 
