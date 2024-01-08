@@ -4,6 +4,7 @@ import com.isolaatti.audio.common.data.AudioDto
 import com.isolaatti.common.Ownable
 import com.isolaatti.connectivity.RetrofitClient.Companion.BASE_URL
 import com.isolaatti.utils.UrlGen
+import java.io.Serializable
 import java.time.ZonedDateTime
 
 data class Audio(
@@ -12,7 +13,7 @@ data class Audio(
     val creationTime: ZonedDateTime,
     override val userId: Int,
     val userName: String
-): Ownable {
+): Ownable, Serializable {
     var playing: Boolean = false
     val downloadUrl: String get() {
         return "${BASE_URL}audios/$id.webm"

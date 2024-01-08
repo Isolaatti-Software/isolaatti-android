@@ -16,4 +16,8 @@ class EditProfileActivity : IsolaattiBaseActivity() {
 
         setContentView(binding.root)
     }
+
+    companion object {
+        const val EXTRA_OUT_USER_PROFILE = "user_profile"
+    }
 }

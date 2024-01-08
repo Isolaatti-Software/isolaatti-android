@@ -4,6 +4,7 @@ import com.isolaatti.audio.common.domain.Audio
 import com.isolaatti.common.Ownable
 import com.isolaatti.profile.data.remote.UserProfileDto
 import com.isolaatti.utils.UrlGen
+import java.io.Serializable
 
 data class UserProfile(
     override val userId: Int,
@@ -20,7 +21,7 @@ data class UserProfile(
     val descriptionText: String?,
     val descriptionAudioId: String?,
     val descriptionAudio: Audio?
-) : Ownable {
+) : Ownable, Serializable {
 
     val profileAvatarPictureUrl: String get() = UrlGen.userProfileImage(userId)
     val profilePictureUrl: String get() = UrlGen.userProfileImageFullQuality(userId)

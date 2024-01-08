@@ -3,9 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/edit_profile"
+        android:title="@string/edit_profile"
+        android:icon="@drawable/baseline_edit_24"
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/user_link_menu_item"
         android:title="@string/user_link"
-        app:showAsAction="never" />
+        android:icon="@drawable/baseline_qr_code_24"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/report_profile_menu_item"

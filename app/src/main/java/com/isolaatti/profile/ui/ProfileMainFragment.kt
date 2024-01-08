@@ -18,6 +18,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.audio.audios_list.ui.AudiosFragment
@@ -35,6 +36,7 @@ import com.isolaatti.databinding.FragmentDiscussionsBinding
 import com.isolaatti.followers.domain.FollowingState
 import com.isolaatti.images.image_chooser.ui.ImageChooserContract
 import com.isolaatti.images.image_list.ui.ImagesFragment
+import com.isolaatti.images.picture_viewer.ui.PictureViewerActivity
 import com.isolaatti.posting.comments.ui.BottomSheetPostComments
 import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.posting.posts.presentation.CreatePostContract
@@ -44,6 +46,7 @@ import com.isolaatti.posting.posts.presentation.PostsRecyclerViewAdapter
 import com.isolaatti.posting.posts.presentation.UpdateEvent
 import com.isolaatti.posting.posts.viewer.ui.PostViewerActivity
 import com.isolaatti.profile.domain.entity.UserProfile
+import com.isolaatti.profile.presentation.EditProfileContract
 import com.isolaatti.profile.presentation.ProfileViewModel
 import com.isolaatti.utils.UrlGen
 import dagger.hilt.android.AndroidEntryPoint
@@ -94,6 +97,10 @@ class ProfileMainFragment : Fragment() {
         if(it != null) {
             viewModel.onPostUpdate(it)
         }
+    }
+
+    private val editProfile = registerForActivityResult(EditProfileContract()) {
+
     }
 
     private val audioPlayerConnectorListener = object: AudioPlayerConnector.Listener {
@@ -190,11 +197,13 @@ class ProfileMainFragment : Fragment() {
                         Options.Option.OPTION_PROFILE_PHOTO_CHANGE_PHOTO -> {
                             chooseImageLauncher.launch(ImageChooserContract.Requester.UserPost)
                         }
-                        Options.Option.OPTION_PROFILE_PHOTO_REMOVE_PHOTO -> {}
+                        Options.Option.OPTION_PROFILE_PHOTO_REMOVE_PHOTO -> {
+                            showRemoveProfileImageDialog()
+                        }
                         Options.Option.OPTION_PROFILE_PHOTO_VIEW_PHOTO -> {
                             val profilePictureUrl = profile?.profilePictureUrl
                             if(profilePictureUrl != null) {
-                                //PictureViewerActivity.startActivityWithUrls(requireContext(), arrayOf(profilePictureUrl))
+                                // TODO show image
                             }
                         }
                     }
@@ -228,6 +237,17 @@ class ProfileMainFragment : Fragment() {
         }
     }
 
+    private fun showRemoveProfileImageDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(R.string.remove_image_message_confirmation)
+            .setTitle(R.string.remove_photo)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.yes_continue) { _, _ ->
+                // remove image here
+            }
+            .show()
+    }
+
     private lateinit var postListingRecyclerViewAdapterWiring: PostListingRecyclerViewAdapterWiring
 
 
@@ -253,6 +273,25 @@ class ProfileMainFragment : Fragment() {
 
         viewBinding.topAppBar.setNavigationOnClickListener {
             requireActivity().finish()
+        }
+
+        viewBinding.topAppBar.setOnMenuItemClickListener {
+            when(it.itemId) {
+                R.id.edit_profile -> {
+                    editProfile.launch(null)
+                    true
+                }
+                R.id.user_link_menu_item -> {
+                    true
+                }
+                R.id.report_profile_menu_item -> {
+                    true
+                }
+                R.id.block_profile_menu_item -> {
+                    true
+                }
+                else -> false
+            }
         }
 
         viewBinding.audiosButton.setOnClickListener {
@@ -340,8 +379,13 @@ class ProfileMainFragment : Fragment() {
     private fun setupUiForUserType(isOwnProfile: Boolean) {
         if(isOwnProfile) {
             viewBinding.followButton.visibility = View.GONE
+            viewBinding.topAppBar.menu?.run {
+                removeItem(R.id.block_profile_menu_item)
+                removeItem(R.id.report_profile_menu_item)
+            }
         } else {
             viewBinding.createPostButton.visibility = View.GONE
+            viewBinding.topAppBar.menu.removeItem(R.id.edit_profile)
         }
     }
 

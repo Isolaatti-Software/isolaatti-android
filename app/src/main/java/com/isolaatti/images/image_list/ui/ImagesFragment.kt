@@ -191,6 +191,7 @@ class ImagesFragment : Fragment() {
                 actionMode?.menu?.findItem(R.id.delete_item)?.isEnabled = it > 0
             },
             onDeleteMode = {
+                if(viewModel.isUserItself.value == false) return@ImagesAdapter
                 adapter.deleteMode = it
                 actionMode = requireActivity().startActionMode(contextBarCallback)
             },

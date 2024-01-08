@@ -32,7 +32,7 @@ class ImageListViewModel @Inject constructor(private val imagesRepository: Image
     private var loadedFirstTime = false
     var userId by Delegates.notNull<Int>()
 
-    val isUserItself: MutableLiveData<Boolean> = MutableLiveData()
+    val isUserItself: MutableLiveData<Boolean> = MutableLiveData(false)
 
     private val list: List<Image> get() {
         return liveList.value ?: listOf()
