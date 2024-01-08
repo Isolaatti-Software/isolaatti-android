@@ -26,9 +26,7 @@ class ProfileListItem(
         if (id != other.id) return false
         if (name != other.name) return false
         if (profileImageId != other.profileImageId) return false
-        if (following != other.following) return false
-
-        return true
+        return following == other.following
     }
 
     override fun hashCode(): Int {

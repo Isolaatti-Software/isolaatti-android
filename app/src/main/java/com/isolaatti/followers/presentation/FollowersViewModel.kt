@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.isolaatti.common.ListUpdateEvent
+import com.isolaatti.common.UpdateEvent
 import com.isolaatti.followers.domain.FollowersRepository
 import com.isolaatti.profile.domain.entity.ProfileListItem
 import com.isolaatti.utils.Resource
@@ -19,15 +21,15 @@ import javax.inject.Inject
 class FollowersViewModel @Inject constructor(private val followersRepository: FollowersRepository) : ViewModel() {
     var userId: Int = 0
 
-    private val followersList: MutableList<ProfileListItem> = mutableListOf()
-    private val followingsList: MutableList<ProfileListItem> = mutableListOf()
+    private var followersList: List<ProfileListItem> = listOf()
+    private var followingsList: List<ProfileListItem> = listOf()
 
 
-    private val _followers: MutableLiveData<List<ProfileListItem>> = MutableLiveData()
-    private val _followings: MutableLiveData<List<ProfileListItem>> = MutableLiveData()
+    private val _followers: MutableLiveData<Pair<List<ProfileListItem>, UpdateEvent>> = MutableLiveData()
+    private val _followings: MutableLiveData<Pair<List<ProfileListItem>, UpdateEvent>> = MutableLiveData()
 
-    val followers: LiveData<List<ProfileListItem>> get() = _followers
-    val followings: LiveData<List<ProfileListItem>> get() = _followings
+    val followers: LiveData<Pair<List<ProfileListItem>, UpdateEvent>> get() = _followers
+    val followings: LiveData<Pair<List<ProfileListItem>, UpdateEvent>> get() = _followings
 
     private val toRetry: MutableList<Runnable> = mutableListOf()
 
@@ -59,20 +61,26 @@ class FollowersViewModel @Inject constructor(private val followersRepository: Fo
         return followingsList.last().id
     }
 
-    fun fetchFollowers() {
+    fun fetchFollowers(refresh: Boolean = false) {
         if(userId <= 0) {
             return
         }
+
+        if(refresh) {
+            followersList = mutableListOf()
+        }
+
+        val updateListEvent = if(refresh) ListUpdateEvent.Refresh else ListUpdateEvent.ItemsAdded
 
         viewModelScope.launch {
             followersRepository.getFollowersOfUser(userId, getFollowersLastId()).onEach {
                 when(it) {
                     is Resource.Success -> {
                         if(it.data != null) {
-                            followersList.addAll(it.data)
+                            val prevCount = followersList.count()
+                            followersList += it.data
+                            _followers.postValue(Pair(followersList, UpdateEvent(updateListEvent, arrayOf(prevCount))))
                         }
-
-                        _followers.postValue(followersList)
                     }
                     is Resource.Error -> {
                         toRetry.add {
@@ -85,10 +93,16 @@ class FollowersViewModel @Inject constructor(private val followersRepository: Fo
         }
     }
 
-    fun fetchFollowings() {
+    fun fetchFollowings(refresh: Boolean = false) {
         if(userId <= 0) {
             return
         }
+
+        if(refresh) {
+            followingsList = mutableListOf()
+        }
+
+        val updateListEvent = if(refresh) ListUpdateEvent.Refresh else ListUpdateEvent.ItemsAdded
 
         viewModelScope.launch {
             followersRepository.getFollowingsOfUser(userId, getFollowingsLastId()).onEach {
@@ -101,8 +115,9 @@ class FollowersViewModel @Inject constructor(private val followersRepository: Fo
                     is Resource.Loading -> {}
                     is Resource.Success -> {
                         if(it.data != null) {
-                            followingsList.addAll(it.data)
-                            _followings.postValue(followingsList)
+                            val prevCount = followersList.count()
+                            followingsList += it.data
+                            _followings.postValue(Pair(followingsList, UpdateEvent(updateListEvent, arrayOf(prevCount))))
                         }
                     }
                 }
@@ -115,15 +130,19 @@ class FollowersViewModel @Inject constructor(private val followersRepository: Fo
         val followingsIndex = followingsList.indexOf(user)
 
         if(followersIndex >= 0) {
-            followersList[followersIndex] = user
+            followersList = followersList.toMutableList().apply {
+                set(followersIndex, user)
+            }
 
-            _followers.postValue(followersList)
+            _followers.postValue(Pair(followersList, UpdateEvent(ListUpdateEvent.ItemUpdated, arrayOf(followersIndex))))
         }
 
         if(followingsIndex >= 0) {
-            followingsList[followingsIndex] = user
+            followingsList = followingsList.toMutableList().apply {
+                set(followingsIndex, user)
+            }
 
-            _followings.postValue(followingsList)
+            _followings.postValue(Pair(followingsList, UpdateEvent(ListUpdateEvent.ItemUpdated, arrayOf(followingsIndex))))
         }
     }
 

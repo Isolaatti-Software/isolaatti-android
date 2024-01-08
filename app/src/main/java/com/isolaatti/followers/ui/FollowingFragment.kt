@@ -1,6 +1,7 @@
 package com.isolaatti.followers.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,8 @@ class FollowingFragment : Fragment(), UserItemCallback {
     private val viewModel: FollowersViewModel by viewModels({ requireParentFragment() })
     private lateinit var adapter: UserListRecyclerViewAdapter
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -29,8 +32,9 @@ class FollowingFragment : Fragment(), UserItemCallback {
     }
 
     private fun setObservers() {
-        viewModel.followings.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        viewModel.followings.observe(viewLifecycleOwner) { (list, updateEvent) ->
+            adapter.updateData(list, updateEvent)
+            binding.swipeToRefresh.isRefreshing = false
         }
     }
 
@@ -38,6 +42,10 @@ class FollowingFragment : Fragment(), UserItemCallback {
         adapter = UserListRecyclerViewAdapter(this)
         binding.recyclerUsers.adapter = adapter
         binding.recyclerUsers.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+        binding.swipeToRefresh.setOnRefreshListener {
+            viewModel.fetchFollowings(refresh = true)
+        }
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

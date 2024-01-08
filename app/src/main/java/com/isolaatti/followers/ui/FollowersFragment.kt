@@ -1,6 +1,7 @@
 package com.isolaatti.followers.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.isolaatti.common.UserListRecyclerViewAdapter
 import com.isolaatti.databinding.FragmentFollowersBinding
 import com.isolaatti.followers.presentation.FollowersViewModel
 import com.isolaatti.profile.domain.entity.ProfileListItem
+import com.isolaatti.profile.ui.ProfileActivity
 
 class FollowersFragment : Fragment(), UserItemCallback {
     private lateinit var binding: FragmentFollowersBinding
@@ -28,8 +30,9 @@ class FollowersFragment : Fragment(), UserItemCallback {
     }
 
     private fun setObservers() {
-        viewModel.followers.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        viewModel.followers.observe(viewLifecycleOwner) { (list, updateEvent) ->
+            adapter.updateData(list, updateEvent)
+            binding.swipeToRefresh.isRefreshing = false
         }
     }
 
@@ -37,6 +40,10 @@ class FollowersFragment : Fragment(), UserItemCallback {
         adapter = UserListRecyclerViewAdapter(this)
         binding.recyclerUsers.adapter = adapter
         binding.recyclerUsers.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+        binding.swipeToRefresh.setOnRefreshListener {
+            viewModel.fetchFollowers(refresh = true)
+        }
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,7 +55,7 @@ class FollowersFragment : Fragment(), UserItemCallback {
     }
 
     override fun itemClick(userId: Int) {
-
+        ProfileActivity.startActivity(requireContext(), userId)
     }
 
     override fun followButtonClick(user: ProfileListItem, action: UserItemCallback.FollowButtonAction) {

@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import com.isolaatti.R
@@ -13,18 +15,30 @@ import com.isolaatti.databinding.ItemUserListBinding
 import com.isolaatti.profile.domain.entity.ProfileListItem
 import com.isolaatti.utils.UrlGen
 
-class UserListRecyclerViewAdapter(private val callback: UserItemCallback) : ListAdapter<ProfileListItem, UserListRecyclerViewAdapter.UserListViewHolder>(diffCallback) {
+class UserListRecyclerViewAdapter(private val callback: UserItemCallback) : Adapter<UserListRecyclerViewAdapter.UserListViewHolder>() {
+
+    private var data: List<ProfileListItem> = listOf()
 
     inner class UserListViewHolder(val item: ItemUserListBinding) : ViewHolder(item.root)
+
+    fun updateData(newData: List<ProfileListItem>, updateEvent: UpdateEvent) {
+        data = newData
+        updateEvent.notify(this)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserListViewHolder {
         return UserListViewHolder(ItemUserListBinding.inflate(LayoutInflater.from(parent.context)))
     }
 
+    override fun getItemCount(): Int {
+        return data.size
+    }
+
     override fun onBindViewHolder(holder: UserListViewHolder, position: Int) {
         val context = holder.itemView.context
         holder.itemView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
-        getItem(position).let { user ->
+        holder.item.followButton.isEnabled = true
+        data[position].let { user ->
             holder.item.root.setOnClickListener {
                 callback.itemClick(user.id)
             }
@@ -34,34 +48,17 @@ class UserListRecyclerViewAdapter(private val callback: UserItemCallback) : List
                 holder.item.followButton.text = context.getText(R.string.unfollow)
                 holder.item.followButton.setTextColor(ResourcesCompat.getColor(context.resources, R.color.danger, null))
                 holder.item.followButton.setOnClickListener {
+                    it.isEnabled = false
                     callback.followButtonClick(user, UserItemCallback.FollowButtonAction.Unfollow)
                 }
             } else {
                 holder.item.followButton.text = context.getText(R.string.follow)
                 holder.item.followButton.setTextColor(ResourcesCompat.getColor(context.resources, R.color.purple_lighter, null))
                 holder.item.followButton.setOnClickListener {
+                    it.isEnabled = false
                     callback.followButtonClick(user, UserItemCallback.FollowButtonAction.Follow)
                 }
             }
         }
     }
-
-    companion object {
-        val diffCallback: DiffUtil.ItemCallback<ProfileListItem> = object: DiffUtil.ItemCallback<ProfileListItem>() {
-            override fun areItemsTheSame(
-                oldItem: ProfileListItem,
-                newItem: ProfileListItem
-            ): Boolean {
-                return oldItem.id == newItem.id
-            }
-
-            override fun areContentsTheSame(
-                oldItem: ProfileListItem,
-                newItem: ProfileListItem
-            ): Boolean {
-                return oldItem == newItem
-            }
-        }
-    }
-
 }
