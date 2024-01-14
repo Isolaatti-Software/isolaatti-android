@@ -8,7 +8,7 @@ import java.io.Serializable
 
 data class UserProfile(
     override val userId: Int,
-    val name: String,
+    var name: String,
     val email: String?,
     val numberOfFollowers: Int,
     val numberOfFollowing: Int,
@@ -18,7 +18,7 @@ data class UserProfile(
     var followingThisUser: Boolean,
     val thisUserIsFollowingMe: Boolean,
     val profileImageId: String?,
-    val descriptionText: String?,
+    var descriptionText: String?,
     val descriptionAudioId: String?,
     val descriptionAudio: Audio?
 ) : Ownable, Serializable {

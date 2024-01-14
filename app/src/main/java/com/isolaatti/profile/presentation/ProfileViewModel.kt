@@ -139,4 +139,8 @@ class ProfileViewModel @Inject constructor(
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }
+
+    fun setProfile(profile: UserProfile) {
+        _profile.value = profile
+    }
 }

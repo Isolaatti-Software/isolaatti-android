@@ -136,4 +136,5 @@
     <string name="create_a_new_discussion">Create a new discussion</string>
     <string name="edit_profile">Edit profile</string>
     <string name="remove_image_message_confirmation">Remove image? This will not delete your image, but only unset it as profile image</string>
+    <string name="description">Description</string>
 </resources>

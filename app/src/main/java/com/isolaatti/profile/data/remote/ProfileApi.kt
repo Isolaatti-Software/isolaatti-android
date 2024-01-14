@@ -1,6 +1,7 @@
 package com.isolaatti.profile.data.remote
 
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -13,5 +14,8 @@ interface ProfileApi {
 
     @POST("EditProfile/SetProfilePhoto")
     fun setProfileImage(@Query("imageId") imageId: String): Call<Void>
+
+    @POST("EditProfile/UpdateProfile")
+    fun updateProfile(@Body updateProfileDto: UpdateProfileDto): Call<UserProfileDto>
 
 }

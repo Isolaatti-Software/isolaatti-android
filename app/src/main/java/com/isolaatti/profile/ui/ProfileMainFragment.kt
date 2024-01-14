@@ -99,8 +99,10 @@ class ProfileMainFragment : Fragment() {
         }
     }
 
-    private val editProfile = registerForActivityResult(EditProfileContract()) {
-
+    private val editProfile = registerForActivityResult(EditProfileContract()) { updatedProfile ->
+        if(updatedProfile != null) {
+            viewModel.setProfile(updatedProfile)
+        }
     }
 
     private val audioPlayerConnectorListener = object: AudioPlayerConnector.Listener {
@@ -278,7 +280,8 @@ class ProfileMainFragment : Fragment() {
         viewBinding.topAppBar.setOnMenuItemClickListener {
             when(it.itemId) {
                 R.id.edit_profile -> {
-                    editProfile.launch(null)
+                    viewModel.profile.value?.let { profile -> editProfile.launch(profile) }
+
                     true
                 }
                 R.id.user_link_menu_item -> {

@@ -8,9 +8,11 @@ import androidx.activity.result.contract.ActivityResultContract
 import com.isolaatti.profile.domain.entity.UserProfile
 import com.isolaatti.profile.ui.EditProfileActivity
 
-class EditProfileContract : ActivityResultContract<Void?, UserProfile?>() {
-    override fun createIntent(context: Context, input: Void?): Intent {
-        return Intent(context, EditProfileActivity::class.java)
+class EditProfileContract : ActivityResultContract<UserProfile, UserProfile?>() {
+    override fun createIntent(context: Context, input: UserProfile): Intent {
+        return Intent(context, EditProfileActivity::class.java).apply {
+            putExtra(EditProfileActivity.EXTRA_IN_USER_PROFILE, input)
+        }
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): UserProfile? {
