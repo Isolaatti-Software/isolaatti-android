@@ -68,14 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:gravity="end">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/comment_button"
-                    style="?attr/materialIconButtonFilledTonalStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:icon="@drawable/comments_solid" />
+                android:gravity="start">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/like_button"
@@ -83,6 +76,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:icon="@drawable/hands_clapping_solid" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/comment_button"
+                    style="?attr/materialIconButtonFilledTonalStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/comments_solid" />
             </LinearLayout>
         </LinearLayout>
 
