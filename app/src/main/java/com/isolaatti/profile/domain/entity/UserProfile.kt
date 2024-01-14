@@ -8,6 +8,7 @@ import java.io.Serializable
 
 data class UserProfile(
     override val userId: Int,
+    val uniqueUsername: String,
     var name: String,
     val email: String?,
     val numberOfFollowers: Int,
@@ -29,6 +30,7 @@ data class UserProfile(
         fun fromDto(userProfileDto: UserProfileDto): UserProfile {
             return UserProfile(
                 userId = userProfileDto.id,
+                uniqueUsername = userProfileDto.uniqueUsername,
                 name = userProfileDto.name,
                 email = userProfileDto.email,
                 numberOfFollowers = userProfileDto.numberOfFollowers,

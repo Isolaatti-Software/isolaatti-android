@@ -28,6 +28,10 @@
             app:destination="@id/mainFollowersFragment">
 
         </action>
+        <action
+            android:id="@+id/action_mainFragment_to_qrCodeFragment"
+            app:destination="@id/qrCodeFragment"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/audiosFragment"
@@ -73,4 +77,12 @@
     <argument
         android:name="userId"
         app:argType="integer" />
+    <fragment
+        android:id="@+id/qrCodeFragment"
+        android:name="com.isolaatti.profile.ui.QrCodeFragment"
+        android:label="QrCodeFragment" >
+        <argument
+            android:name="profile"
+            app:argType="com.isolaatti.profile.domain.entity.UserProfile" />
+    </fragment>
 </navigation>

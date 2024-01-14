@@ -4,6 +4,7 @@ import com.isolaatti.audio.common.data.AudioDto
 
 data class UserProfileDto(
     val id: Int,
+    val uniqueUsername: String,
     val name: String,
     val email: String?,
     val numberOfFollowers: Int,

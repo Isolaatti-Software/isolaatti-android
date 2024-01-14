@@ -285,6 +285,10 @@ class ProfileMainFragment : Fragment() {
                     true
                 }
                 R.id.user_link_menu_item -> {
+                    viewModel.profile.value?.let { profile ->
+                        findNavController().navigate(ProfileMainFragmentDirections.actionMainFragmentToQrCodeFragment(profile))
+                    }
+
                     true
                 }
                 R.id.report_profile_menu_item -> {
