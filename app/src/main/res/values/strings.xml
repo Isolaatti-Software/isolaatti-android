@@ -137,4 +137,13 @@
     <string name="edit_profile">Edit profile</string>
     <string name="remove_image_message_confirmation">Remove image? This will not delete your image, but only unset it as profile image</string>
     <string name="description">Description</string>
+    <string name="go_to_account_settings">Go to account settings</string>
+    <string name="go_to_feed_settings">Go to feed settings</string>
+    <string name="feed_settings_card_description">This is the place to take control over what you see on your feed. These settings affect your account, not only this device.</string>
+    <string name="feed_settings">Feed settings</string>
+    <string name="go_to_privacy_settings">Go to privacy settings</string>
+    <string name="privacy_settings">Privacy settings</string>
+    <string name="privacy_settings_card_description">Set how other people see you on Isolaatti. Hide or show information</string>
+    <string name="qr_code">QR Code</string>
+    <string name="squads">Squads</string>
 </resources>

@@ -2,21 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/my_profile_menu_item"
-        android:icon="@drawable/baseline_person_24"
-        android:title="My Profile" />
-    <item
         android:id="@+id/squads_menu_item"
         android:icon="@drawable/baseline_people_24"
-        android:title="Squads" />
+        android:title="@string/squads" />
     <item
         android:id="@+id/drafts_menu_item"
         android:icon="@drawable/baseline_pending_24"
         android:title="@string/drafts"/>
     <item
+        android:id="@+id/qr_menu_item"
+        android:icon="@drawable/baseline_qr_code_24"
+        android:title="@string/qr_code"/>
+    <item
         android:id="@+id/settings_menu_item"
         android:icon="@drawable/baseline_settings_24"
-        android:title="Settings" />
+        android:title="@string/settings" />
     <item
         android:id="@+id/about_menu_item"
         android:icon="@drawable/baseline_info_24"

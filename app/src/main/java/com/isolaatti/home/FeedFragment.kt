@@ -17,6 +17,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.about.AboutActivity
@@ -50,6 +52,7 @@ import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.image.destination.ImageDestinationProcessorRelativeToAbsolute
 import io.noties.markwon.linkify.LinkifyPlugin
 import kotlinx.coroutines.launch
+import org.w3c.dom.Text
 
 @AndroidEntryPoint
 class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
@@ -134,10 +137,6 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
         viewBinding.homeDrawer.setNavigationItemSelectedListener {
             when(it.itemId) {
-                R.id.my_profile_menu_item -> {
-                    ProfileActivity.startActivity(requireContext(), currentUserId)
-                    true
-                }
                 R.id.drafts_menu_item -> {
                     startActivity(Intent(requireActivity(), DraftsActivity::class.java))
                     true
@@ -194,14 +193,18 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
             val image: ImageView? = header?.findViewById(R.id.profileImageView)
             val textViewName: TextView? = header?.findViewById(R.id.textViewName)
             val textViewEmail: TextView? = header?.findViewById(R.id.textViewEmail)
+            val textViewUsername: TextView? = header?.findViewById(R.id.textViewUsername)
 
             image?.load(UrlGen.userProfileImage(it.userId), imageLoader)
-            image?.setOnClickListener {_ ->
-                //PictureViewerActivity.startActivityWithImages(requireContext(), arrayOf(UrlGen.userProfileImageFullQuality(it.userId)))
+
+            val card: MaterialCardView? = header?.findViewById(R.id.drawer_header_card)
+            card?.setOnClickListener {
+                ProfileActivity.startActivity(requireContext(), currentUserId)
             }
 
             textViewName?.text = it.name
             textViewEmail?.text = it.email
+            textViewUsername?.text = "@${it.uniqueUsername}"
             currentUserId = it.userId
         }
 

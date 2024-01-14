@@ -9,14 +9,14 @@
         android:name="com.isolaatti.settings.ui.SettingsFragment"
         android:label="SettingsFragment" >
         <action
-            android:id="@+id/action_settingsFragment_to_changePasswordFragment"
-            app:destination="@id/changePasswordFragment" />
-        <action
-            android:id="@+id/action_settingsFragment_to_sessionsFragment"
-            app:destination="@id/sessionsFragment" />
-        <action
             android:id="@+id/action_settingsFragment_to_feedSettingsFragment"
             app:destination="@id/feedSettingsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_accountSettingsFragment"
+            app:destination="@id/accountSettingsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_privacySettingsFragment"
+            app:destination="@id/privacySettingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/changePasswordFragment"
@@ -30,4 +30,19 @@
         android:id="@+id/feedSettingsFragment"
         android:name="com.isolaatti.settings.ui.FeedSettingsFragment"
         android:label="FeedSettingsFragment" />
+    <fragment
+        android:id="@+id/accountSettingsFragment"
+        android:name="com.isolaatti.settings.ui.AccountSettingsFragment"
+        android:label="AccountSettingsFragment" >
+        <action
+            android:id="@+id/action_accountSettingsFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
+        <action
+            android:id="@+id/action_accountSettingsFragment_to_sessionsFragment"
+            app:destination="@id/sessionsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/privacySettingsFragment"
+        android:name="com.isolaatti.settings.ui.PrivacySettingsFragment"
+        android:label="PrivacySettingsFragment" />
 </navigation>
