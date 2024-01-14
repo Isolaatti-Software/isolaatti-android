@@ -137,10 +137,6 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
         viewBinding.homeDrawer.setNavigationItemSelectedListener {
             when(it.itemId) {
-                R.id.drafts_menu_item -> {
-                    startActivity(Intent(requireActivity(), DraftsActivity::class.java))
-                    true
-                }
                 R.id.settings_menu_item -> {
                     startActivity(Intent(requireActivity(), SettingsActivity::class.java))
                     true
