@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
     fun authWithEmailAndPassword(email: String, password: String): Flow<Resource<Boolean>>
-    fun logout(): Flow<Boolean>
     fun getCurrentToken(): AuthTokenDto?
     fun getUserId(): Flow<Int?>
     suspend fun setToken(sessionDto: AuthTokenDto)

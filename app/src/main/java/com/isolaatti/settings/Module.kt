@@ -1,8 +1,13 @@
 package com.isolaatti.settings
 
+import com.isolaatti.auth.data.local.TokenStorage
+import com.isolaatti.connectivity.RetrofitClient
 import com.isolaatti.database.AppDatabase
 import com.isolaatti.settings.data.KeyValueDao
 import com.isolaatti.settings.data.SettingsRepositoryImpl
+import com.isolaatti.settings.data.remote.AccountSettingsApi
+import com.isolaatti.settings.data.repository.AccountSettingsRepositoryImpl
+import com.isolaatti.settings.domain.AccountSettingsRepository
 import com.isolaatti.settings.domain.SettingsRepository
 import dagger.Module
 import dagger.Provides
@@ -20,5 +25,15 @@ class Module {
     @Provides
     fun provideSettingsRepository(keyValueDao: KeyValueDao): SettingsRepository {
         return SettingsRepositoryImpl(keyValueDao)
+    }
+
+    @Provides
+    fun provideAccountSettingsApi(retrofitClient: RetrofitClient): AccountSettingsApi {
+        return retrofitClient.client.create(AccountSettingsApi::class.java)
+    }
+
+    @Provides
+    fun provideAccountSettingsRepository(tokenStorage: TokenStorage, accountSettingsApi: AccountSettingsApi): AccountSettingsRepository {
+        return AccountSettingsRepositoryImpl(tokenStorage, accountSettingsApi)
     }
 }

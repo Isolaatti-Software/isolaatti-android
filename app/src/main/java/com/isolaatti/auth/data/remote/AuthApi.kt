@@ -12,7 +12,4 @@ interface AuthApi {
 
     @POST("LogIn")
     fun signInWithEmailAndPassword(@Header("apiClientId") clientId: String, @Header("apiClientSecret") clientSecret: String, @Body credential: Credential): Call<AuthTokenDto>
-
-    @GET("LogIn/SignOut")
-    fun signOut(): Call<Nothing>
 }

@@ -47,14 +47,6 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun logout(): Flow<Boolean> = flow {
-        tokenStorage.removeToken()
-        try {
-            authApi.signOut().awaitResponse()
-        } catch(_: Exception) { }
-        emit(true)
-    }
-
     override fun getCurrentToken(): AuthTokenDto? {
         return tokenStorage.token
     }
