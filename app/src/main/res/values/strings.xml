@@ -152,4 +152,8 @@
     <string name="change_password">Change password</string>
     <string name="password_description">A password allows you to sign in securely. Keep this password safe.</string>
     <string name="sessions">Sessions</string>
+    <string name="sessions_selected_count">Sessions selected: %d</string>
+    <string name="delete_sessions">Delete sessions</string>
+    <string name="delete_sessions_conf_dialog_message">The selected sessions will become invalid, sign out those devices.</string>
+    <string name="current">Current</string>
 </resources>

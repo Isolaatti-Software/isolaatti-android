@@ -33,6 +33,7 @@ class AccountSettingsRepositoryImpl @Inject constructor(
     }
 
     override fun getSessions(): Flow<Resource<List<SessionsDto.SessionDto>>> = flow {
+        emit(Resource.Loading())
         try {
             val response = accountSettingsApi.getSessions().awaitResponse()
 
