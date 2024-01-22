@@ -18,7 +18,7 @@ class AccountSettingsRepositoryImpl @Inject constructor(
     private val accountSettingsApi: AccountSettingsApi
 ) : AccountSettingsRepository {
     override fun logout(): Flow<Resource<Boolean>> = flow {
-        tokenStorage.removeToken()
+
         try {
             val response = accountSettingsApi.signOut().awaitResponse()
             if(response.isSuccessful) {
@@ -26,6 +26,7 @@ class AccountSettingsRepositoryImpl @Inject constructor(
             } else {
                 emit(Resource.Error(Resource.Error.mapErrorCode(response.code())))
             }
+            tokenStorage.removeToken()
 
         } catch (exception: Exception) {
             emit(Resource.Error(Resource.Error.ErrorType.NetworkError))

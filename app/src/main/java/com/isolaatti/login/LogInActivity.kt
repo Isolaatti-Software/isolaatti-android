@@ -1,35 +1,41 @@
 package com.isolaatti.login
 
 import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
-import com.isolaatti.common.IsolaattiBaseActivity
 import com.isolaatti.databinding.ActivityLoginBinding
-import com.isolaatti.home.HomeActivity
 import com.isolaatti.sign_up.ui.SignUpActivity
 import com.isolaatti.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LogInActivity: AppCompatActivity() {
+class LogInActivity : AppCompatActivity() {
 
 
     lateinit var viewBinding: ActivityLoginBinding
     private val viewModel: LogInViewModel by viewModels()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                setResult(RESULT_CANCELED)
+                finish()
+            }
+
+        })
 
         viewBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)

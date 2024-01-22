@@ -22,6 +22,8 @@ class MainActivity : ComponentActivity() {
             val homeActivityIntent = Intent(this@MainActivity, HomeActivity::class.java)
             homeActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(homeActivityIntent)
+        } else {
+            finish()
         }
     }
 
