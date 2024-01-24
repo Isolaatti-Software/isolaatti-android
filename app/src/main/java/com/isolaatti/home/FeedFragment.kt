@@ -163,6 +163,7 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
             .build()
         adapter = PostsRecyclerViewAdapter(markwon, this)
         viewBinding.feedRecyclerView.adapter = adapter
+        viewBinding.feedRecyclerView.setItemViewCacheSize(7)
         viewBinding.feedRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
 

@@ -50,7 +50,7 @@ class PostViewerViewModel @Inject constructor(private val loadSinglePost: LoadSi
                     is Resource.Loading -> {}
                     is Resource.Success -> {
                         if(it.data != null) {
-                            post.postValue(it.data)
+                            post.postValue(it.data!!)
                             postLiked.postValue(it.data.liked)
                         }
                     }
@@ -62,7 +62,7 @@ class PostViewerViewModel @Inject constructor(private val loadSinglePost: LoadSi
     private fun updateLikesCount(likesCount: Int) {
         val updatedPost = post.value?.copy(numberOfLikes = likesCount)
         if(updatedPost != null) {
-            post.postValue(updatedPost)
+            post.postValue(updatedPost!!)
         }
     }
 

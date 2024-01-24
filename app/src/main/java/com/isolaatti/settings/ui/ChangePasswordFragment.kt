@@ -19,10 +19,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ChangePasswordFragment @Inject constructor(private val signOutUC: SignOutUC) : Fragment() {
+class ChangePasswordFragment : Fragment() {
     lateinit var viewBinding: FragmentSettingsChangePasswordBinding
 
     private val viewModel: ChangePasswordViewModel by viewModels()
+
+    @Inject
+    lateinit var signOutUC: SignOutUC
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,7 +72,7 @@ class ChangePasswordFragment @Inject constructor(private val signOutUC: SignOutU
 
         viewBinding.signOutAll.setOnCheckedChangeListener { buttonView, isChecked ->
             viewBinding.signOutCurrent.isEnabled = isChecked
-            viewModel.signOutCurrent = isChecked
+            viewModel.signOut = isChecked
             if(!isChecked){
                 viewBinding.signOutCurrent.isChecked = false
             }

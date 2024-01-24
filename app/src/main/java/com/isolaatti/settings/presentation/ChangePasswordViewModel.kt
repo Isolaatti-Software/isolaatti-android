@@ -24,8 +24,8 @@ class ChangePasswordViewModel @Inject constructor(private val accountSettingsRep
             field = value
             validatePassword(value)
         }
-    var signOut = false
-    var signOutCurrent = true
+    var signOut = true
+    var signOutCurrent = false
 
 
     val newPasswordIsValid: MutableLiveData<Boolean> = MutableLiveData()
