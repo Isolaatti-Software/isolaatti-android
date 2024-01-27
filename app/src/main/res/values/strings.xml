@@ -1,4 +1,16 @@
 <resources>
+    <!-- About texts -->
+
+    <string name="copyright">Erik Cavazos © 2024</string>
+    <string name="blog">Blog</string>
+    <string name="source_code">Source code</string>
+    <string name="app_description">Lightweight, non-tracking, audios social network platform</string>
+    <string name="app_full_name">Isolaatti for Android</string>
+    <string name="licences">Open source licences</string>
+    <string name="version">Version</string>
+
+
+
     <string name="app_name">Isolaatti</string>
     <string name="searchbar_hint">Search the whole network</string>
     <string name="email">Email</string>

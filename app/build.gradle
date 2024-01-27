@@ -89,7 +89,7 @@ dependencies {
     final def markwon_version = '4.6.2'
 
     // Customtabs
-    implementation 'androidx.browser:browser:1.5.0'
+    implementation 'androidx.browser:browser:1.7.0'
 
     implementation 'io.coil-kt:coil:2.5.0'
     implementation 'io.coil-kt:coil-svg:2.5.0'

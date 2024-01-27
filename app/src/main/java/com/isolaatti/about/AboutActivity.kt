@@ -2,6 +2,9 @@ package com.isolaatti.about
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
+import com.isolaatti.BuildConfig
 import com.isolaatti.databinding.ActivityAboutBinding
 
 class AboutActivity : AppCompatActivity() {
@@ -16,6 +19,37 @@ class AboutActivity : AppCompatActivity() {
 
         binding.toolbar.setNavigationOnClickListener {
             finish()
+        }
+
+        binding.blogButton.setOnClickListener {
+            CustomTabsIntent.Builder()
+                .build()
+                .launchUrl(this, BuildConfig.blogUrl.toUri())
+        }
+
+        binding.sourceCodeButton.setOnClickListener {
+            CustomTabsIntent.Builder()
+                .setSendToExternalDefaultHandlerEnabled(true)
+                .build()
+                .launchUrl(this, BuildConfig.sourceCodeUrl.toUri())
+        }
+
+        binding.openSourceLicences.setOnClickListener {
+            CustomTabsIntent.Builder()
+                .build()
+                .launchUrl(this, BuildConfig.openSourceLicences.toUri())
+        }
+
+        binding.privacyPolicyButton.setOnClickListener {
+            CustomTabsIntent.Builder()
+                .build()
+                .launchUrl(this, BuildConfig.privacyPolicy.toUri())
+        }
+
+        binding.termsButon.setOnClickListener {
+            CustomTabsIntent.Builder()
+                .build()
+                .launchUrl(this, BuildConfig.terms.toUri())
         }
     }
 }
