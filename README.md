@@ -23,6 +23,19 @@ Se conecta con el backend https://isolaatti.com
 * Media 3 https://developer.android.com/jetpack/androidx/releases/media3?hl=es-419
 * Algunos modulos de Android Jetpack y bibliotecas de compatibilidad (revisar build.gradle)
 
+## Compilar
+Para compilar la app es necesario utilizar Android Studio. Modifica el archivo local.properties para incluir las siguientes propiedades según tu implementación:
+```
+backend=https://isolaatti.com
+clientId=
+secret=
+terms=https://isolaatti.com/terminos_de_uso
+privacyPolicy=https://isolaatti.com/politica_de_privacidad
+sourceCodeUrl=https://github.com/Isolaatti-Software/isolaatti-android
+blogUrl=https://isolaattisoftware.com.mx/
+openSourceLicences=https://files.isolaatti.com/licencias.html
+```
+
 
 ## Características planeadas
 * Grabar audios
