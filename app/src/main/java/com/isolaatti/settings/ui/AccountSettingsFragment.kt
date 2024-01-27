@@ -9,17 +9,20 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.isolaatti.MainActivity
 import com.isolaatti.R
+import com.isolaatti.auth.domain.SignOutUC
 import com.isolaatti.databinding.FragmentAccountSettingsBinding
 import com.isolaatti.settings.presentation.AccountSettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AccountSettingsFragment : Fragment() {
     private lateinit var binding: FragmentAccountSettingsBinding
     private val viewModel: AccountSettingsViewModel by viewModels()
 
+    @Inject
+    lateinit var signOutUC: SignOutUC
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,10 +54,7 @@ class AccountSettingsFragment : Fragment() {
 
         viewModel.loggedOut.observe(viewLifecycleOwner) {
             if(it) {
-                val loginIntent = Intent(requireContext(), MainActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                }
-                startActivity(loginIntent)
+                signOutUC()
                 viewModel.loggedOut.value = false
             }
         }

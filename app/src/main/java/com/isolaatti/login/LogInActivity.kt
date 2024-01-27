@@ -1,18 +1,16 @@
 package com.isolaatti.login
 
 import android.app.Activity
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.isolaatti.BuildConfig
 import com.isolaatti.R
+import com.isolaatti.auth.openForgotPassword
 import com.isolaatti.databinding.ActivityLoginBinding
 import com.isolaatti.sign_up.ui.SignUpActivity
 import com.isolaatti.utils.Resource
@@ -92,7 +90,7 @@ class LogInActivity : AppCompatActivity() {
         }
 
         viewBinding.forgotPasswordBtn.setOnClickListener {
-            openForgotPassword()
+            openForgotPassword(this)
         }
 
         viewBinding.signUpBtn.setOnClickListener {
@@ -101,17 +99,12 @@ class LogInActivity : AppCompatActivity() {
 
     }
 
-    private fun openForgotPassword() {
-        CustomTabsIntent.Builder()
-            .setShowTitle(true)
-            .build()
-            .launchUrl(this, Uri.parse("${BuildConfig.backend}/recuperacion_cuenta"))
-    }
+
 
     private fun showWrongPasswordErrorMessage() {
         MaterialAlertDialogBuilder(this)
             .setMessage(R.string.wrong_password)
-            .setNeutralButton(R.string.forgot_password) {_,_ -> openForgotPassword()}
+            .setNeutralButton(R.string.forgot_password) {_,_ -> openForgotPassword(this)}
             .setPositiveButton(R.string.dismiss, null)
             .show()
     }

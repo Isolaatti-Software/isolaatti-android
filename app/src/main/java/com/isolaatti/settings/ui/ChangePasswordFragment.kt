@@ -12,7 +12,9 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.isolaatti.R
 import com.isolaatti.auth.domain.SignOutUC
+import com.isolaatti.auth.openForgotPassword
 import com.isolaatti.databinding.FragmentSettingsChangePasswordBinding
+import com.isolaatti.settings.data.remote.ChangePasswordResponseDto
 import com.isolaatti.settings.presentation.ChangePasswordViewModel
 import com.isolaatti.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -109,8 +111,8 @@ class ChangePasswordFragment : Fragment() {
             viewBinding.newPasswordInputText.error = if(valid) null else getString(R.string.password_req)
         }
 
-        viewModel.passwordChangeResource.observe(viewLifecycleOwner) {
-            when(it) {
+        viewModel.passwordChangeResource.observe(viewLifecycleOwner) { resource ->
+            when(resource) {
                 is Resource.Loading -> {
                     lockControls(true)
                     showLoadingDialog()
@@ -124,14 +126,62 @@ class ChangePasswordFragment : Fragment() {
                 is Resource.Success -> {
                     loadingDialog?.dismiss()
                     loadingDialog = null
-                    if(viewModel.signOutCurrent) {
-                        signOut()
+                    if(resource.data?.success == true) {
+                        handlePasswordChangeSuccess()
                     } else {
-
-                        findNavController().popBackStack()
+                        handlePasswordChangeError(resource.data?.reason)
                     }
                 }
             }
         }
+    }
+
+    private fun handlePasswordChangeSuccess() {
+        if(viewModel.signOutCurrent) {
+            signOut()
+        } else {
+            findNavController().popBackStack()
+        }
+    }
+
+    private fun handlePasswordChangeError(error: String?) {
+        when(error) {
+            ChangePasswordResponseDto.ReasonOldPasswordMismatch -> {
+                viewBinding.switcher.showNext()
+                showOldPasswordIsNotCorrectDialog()
+            }
+            ChangePasswordResponseDto.ReasonNewPasswordInvalid -> {
+                showNewPasswordIsInvalid()
+            }
+            // No special handling for "user_does_not_exist" as this
+            // error should not be faced by app user
+            else -> {
+                showUnknownErrorDialog()
+            }
+        }
+    }
+
+    private fun showOldPasswordIsNotCorrectDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(R.string.old_password_not_correct)
+            .setNeutralButton(R.string.recover_password){_, _ ->
+                openForgotPassword(requireContext())
+            }
+            .setPositiveButton(R.string.dismiss, null)
+            .show()
+    }
+
+    private fun showNewPasswordIsInvalid() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(R.string.new_password_is_invalid)
+            .setPositiveButton(R.string.dismiss, null)
+            .show()
+    }
+
+    private fun showUnknownErrorDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(R.string.unknown_error)
+            .setPositiveButton(R.string.dismiss, null)
+            .show()
     }
 }

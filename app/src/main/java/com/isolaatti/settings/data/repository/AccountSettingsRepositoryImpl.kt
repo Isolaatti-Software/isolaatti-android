@@ -1,6 +1,5 @@
 package com.isolaatti.settings.data.repository
 
-import com.isolaatti.auth.data.local.TokenStorage
 import com.isolaatti.settings.data.remote.AccountSettingsApi
 import com.isolaatti.settings.data.remote.ChangePasswordDto
 import com.isolaatti.settings.data.remote.ChangePasswordResponseDto
@@ -14,7 +13,6 @@ import retrofit2.awaitResponse
 import javax.inject.Inject
 
 class AccountSettingsRepositoryImpl @Inject constructor(
-    private val tokenStorage: TokenStorage,
     private val accountSettingsApi: AccountSettingsApi
 ) : AccountSettingsRepository {
     override fun logout(): Flow<Resource<Boolean>> = flow {
@@ -26,8 +24,6 @@ class AccountSettingsRepositoryImpl @Inject constructor(
             } else {
                 emit(Resource.Error(Resource.Error.mapErrorCode(response.code())))
             }
-            tokenStorage.removeToken()
-
         } catch (exception: Exception) {
             emit(Resource.Error(Resource.Error.ErrorType.NetworkError))
         }
@@ -66,7 +62,7 @@ class AccountSettingsRepositoryImpl @Inject constructor(
         try {
             val response = accountSettingsApi.changePassword(ChangePasswordDto(oldPassword, newPassword), signOut, signOutCurrent).awaitResponse()
             if(response.isSuccessful) {
-                emit(Resource.Success(response.body()))
+                emit(Resource.Success(response.body()?.result))
             } else {
                 emit(Resource.Error(Resource.Error.mapErrorCode(response.code())))
             }

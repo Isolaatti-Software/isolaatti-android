@@ -162,4 +162,7 @@
     <string name="continuar">Continue</string>
     <string name="password_req">Password must contain at least 8 characters an have the following: 1–9, a-z, A-Z, special character.</string>
     <string name="changing_password">Changing password…</string>
+    <string name="recover_password">Recover password</string>
+    <string name="old_password_not_correct">Password not changed, old password did not match. If you don\'t remember your password, you can always recover it.</string>
+    <string name="new_password_is_invalid">New password is invalid. Please check it meets the requirements</string>
 </resources>

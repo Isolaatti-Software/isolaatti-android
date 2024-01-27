@@ -33,7 +33,7 @@ class Module {
     }
 
     @Provides
-    fun provideAccountSettingsRepository(tokenStorage: TokenStorage, accountSettingsApi: AccountSettingsApi): AccountSettingsRepository {
-        return AccountSettingsRepositoryImpl(tokenStorage, accountSettingsApi)
+    fun provideAccountSettingsRepository(accountSettingsApi: AccountSettingsApi): AccountSettingsRepository {
+        return AccountSettingsRepositoryImpl(accountSettingsApi)
     }
 }

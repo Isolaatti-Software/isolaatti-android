@@ -1,5 +1,6 @@
 package com.isolaatti.settings.data.remote
 
+import com.isolaatti.common.ResultDto
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,7 +16,7 @@ interface AccountSettingsApi {
         @Body changePasswordDto: ChangePasswordDto,
         @Query("signOut") signOut: Boolean,
         @Query("signOutCurrent") signOutCurrent: Boolean
-    ): Call<ChangePasswordResponseDto>
+    ): Call<ResultDto<ChangePasswordResponseDto>>
 
     @POST("account/sign_out")
     fun signOut(): Call<Any>
