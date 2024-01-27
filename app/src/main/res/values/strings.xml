@@ -160,6 +160,6 @@
     <string name="previous">Previous</string>
     <string name="sign_out_this_device">Sign out this device</string>
     <string name="continuar">Continue</string>
-    <string name="password_req">Password must contain at least 8 characters an have the following: 1-9, a-z, A-Z, special character.</string>
-    <string name="changing_password">Changing password...</string>
+    <string name="password_req">Password must contain at least 8 characters an have the following: 1–9, a-z, A-Z, special character.</string>
+    <string name="changing_password">Changing password…</string>
 </resources>
