@@ -14,6 +14,10 @@ import com.isolaatti.settings.domain.UserIdSetting
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,35 +42,35 @@ class BottomSheetPostOptionsViewModel @Inject constructor(private val userIdSett
             CoroutineScope(Dispatchers.IO).launch {
                 when(options) {
                     POST_OPTIONS -> {
-                        userIdSetting.getUserId()?.let { userId ->
+                        userIdSetting.getUserId().onEach { userId ->
                             _options.postValue(
                                 Options.getPostsOptions(
-                                userOwned = userId == payload?.userId,
-                                savable = false,
-                                snapshotAble = false)
+                                    userOwned = userId == payload?.userId,
+                                    savable = false,
+                                    snapshotAble = false)
                             )
                             _callerId = callerId
                             _payload = payload
-                        }
+                        }.flowOn(Dispatchers.IO).launchIn(this)
                     }
                     COMMENT_OPTIONS -> {
-                        userIdSetting.getUserId()?.let { userId ->
+                        userIdSetting.getUserId().onEach { userId ->
                             _options.postValue(
                                 Options.getCommentOptions(
-                                userOwned = userId == payload?.userId,
-                                savable = false,
-                                snapshotAble = false)
+                                    userOwned = userId == payload?.userId,
+                                    savable = false,
+                                    snapshotAble = false)
                             )
                             _callerId = callerId
                             _payload = payload
-                        }
+                        }.flowOn(Dispatchers.IO).launchIn(this)
                     }
                     PROFILE_PHOTO_OPTIONS -> {
-                        userIdSetting.getUserId()?.let { userId ->
+                        userIdSetting.getUserId().onEach { userId ->
                             _options.postValue(Options.getProfilePhotoOptions(userOwned = userId == payload?.userId,))
                             _callerId = callerId
                             _payload = payload
-                        }
+                        }.flowOn(Dispatchers.IO).launchIn(this)
                     }
                 }
             }

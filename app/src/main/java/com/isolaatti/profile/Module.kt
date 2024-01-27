@@ -1,6 +1,8 @@
 package com.isolaatti.profile
 
+import com.isolaatti.auth.data.local.UserInfoDao
 import com.isolaatti.connectivity.RetrofitClient
+import com.isolaatti.database.AppDatabase
 import com.isolaatti.profile.data.remote.ProfileApi
 import com.isolaatti.profile.data.repository.ProfileRepositoryImpl
 import com.isolaatti.profile.domain.ProfileRepository
@@ -18,7 +20,14 @@ class Module {
     }
 
     @Provides
-    fun provideProfileRepository(profileApi: ProfileApi): ProfileRepository {
-        return ProfileRepositoryImpl(profileApi)
+    fun provideUserInfoDao(database: AppDatabase): UserInfoDao {
+        return database.userInfoDao()
     }
+
+    @Provides
+    fun provideProfileRepository(profileApi: ProfileApi, userInfoDao: UserInfoDao): ProfileRepository {
+        return ProfileRepositoryImpl(profileApi, userInfoDao)
+    }
+
+
 }

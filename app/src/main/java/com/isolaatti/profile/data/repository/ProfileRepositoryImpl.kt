@@ -1,6 +1,8 @@
 package com.isolaatti.profile.data.repository
 
 import android.util.Log
+import com.isolaatti.auth.data.local.UserInfoDao
+import com.isolaatti.auth.data.local.UserInfoEntity
 import com.isolaatti.images.common.domain.entity.Image
 import com.isolaatti.profile.data.remote.ProfileApi
 import com.isolaatti.profile.data.remote.UpdateProfileDto
@@ -12,13 +14,17 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.awaitResponse
 import javax.inject.Inject
 
-class ProfileRepositoryImpl @Inject constructor(private val profileApi: ProfileApi) : ProfileRepository {
+class ProfileRepositoryImpl @Inject constructor(
+    private val profileApi: ProfileApi,
+    private val userInfoDao: UserInfoDao) : ProfileRepository {
     override fun getProfile(userId: Int): Flow<Resource<UserProfile>> = flow {
         try {
             val result = profileApi.userProfile(userId).awaitResponse()
             if(result.isSuccessful) {
                 val dto = result.body()
                 if(dto != null) {
+                    userInfoDao.setUserInfo(UserInfoEntity(userId, dto.uniqueUsername, dto.name))
+
                     emit(Resource.Success(UserProfile.fromDto(dto)))
                 }
             } else {

@@ -1,6 +1,7 @@
 package com.isolaatti.auth.domain
 
 import com.isolaatti.auth.data.remote.AuthTokenDto
+import com.isolaatti.auth.data.remote.AuthTokenVerificationDto
 import com.isolaatti.utils.Resource
 import kotlinx.coroutines.flow.Flow
 
