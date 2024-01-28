@@ -1,5 +1,6 @@
 package com.isolaatti.posting.posts.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.isolaatti.audio.recorder.ui.AudioRecorderActivity
 import com.isolaatti.databinding.FragmentMarkdownEditingBinding
 import com.isolaatti.images.image_chooser.ui.ImageChooserContract
 import com.isolaatti.posting.link_creator.presentation.LinkCreatorViewModel
@@ -62,6 +64,10 @@ class MarkdownEditingFragment : Fragment(){
         }
         binding.addLinkButton.setOnClickListener {
             insertLink()
+        }
+
+        binding.addAudioButton.setOnClickListener {
+            requireContext().startActivity(Intent(requireContext(), AudioRecorderActivity::class.java))
         }
     }
 
