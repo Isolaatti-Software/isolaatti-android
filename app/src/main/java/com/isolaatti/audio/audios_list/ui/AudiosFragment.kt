@@ -18,6 +18,7 @@ import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentAudiosBinding
 import com.isolaatti.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class AudiosFragment : Fragment() {
@@ -26,6 +27,7 @@ class AudiosFragment : Fragment() {
     private val errorViewModel: ErrorMessageViewModel by activityViewModels()
     private val arguments: AudiosFragmentArgs by navArgs()
     private lateinit var adapter: AudiosAdapter
+    private var privilegedUserId by Delegates.notNull<Int>()
 
     private var loadedFirstTime = false
     override fun onCreateView(
@@ -42,20 +44,25 @@ class AudiosFragment : Fragment() {
         val popup = PopupMenu(requireContext(), button)
         popup.menuInflater.inflate(R.menu.audio_item_menu, popup.menu)
 
+        if(audio.userId != privilegedUserId) {
+            popup.menu.removeItem(R.id.rename_item)
+            popup.menu.removeItem(R.id.delete_item)
+            popup.menu.removeItem(R.id.set_as_profile_audio)
+        }
 
         popup.show()
 
         true
     }
 
-    private val onAudioClick: ((audio: Audio) -> Unit) = {
+    private val onAudioPlayClick: ((audio: Audio) -> Unit) = {
         // Play audio
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = AudiosAdapter(onClick = onAudioClick, onOptionsClick = onOptionsClick)
+        adapter = AudiosAdapter(onPlayClick = onAudioPlayClick, onOptionsClick = onOptionsClick)
 
         viewBinding.recyclerAudios.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         viewBinding.recyclerAudios.adapter = adapter
@@ -63,7 +70,8 @@ class AudiosFragment : Fragment() {
 
         setupObservers()
         if(arguments.source == SOURCE_PROFILE) {
-            viewModel.loadAudios(arguments.sourceId.toInt())
+            privilegedUserId = arguments.sourceId.toInt()
+            viewModel.loadAudios(privilegedUserId)
         }
     }
 

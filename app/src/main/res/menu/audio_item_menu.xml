@@ -6,4 +6,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:title="@string/delete" />
+
+    <item
+        android:id="@+id/rename_item"
+        android:title="@string/rename"/>
+
+    <item
+        android:id="@+id/set_as_profile_audio"
+        android:title="@string/set_as_profile_audio"/>
 </menu>

@@ -1,5 +1,7 @@
 package com.isolaatti.audio.common.domain
 
+import android.net.Uri
+import androidx.core.net.toUri
 import com.isolaatti.audio.common.data.AudioDto
 import com.isolaatti.common.Ownable
 import com.isolaatti.connectivity.RetrofitClient.Companion.BASE_URL
@@ -13,16 +15,15 @@ data class Audio(
     val creationTime: ZonedDateTime,
     override val userId: Int,
     val userName: String
-): Ownable, Serializable {
-    var playing: Boolean = false
-    val downloadUrl: String get() {
-        return "${BASE_URL}audios/$id.webm"
+): Ownable, Playable(), Serializable {
+
+    override val uri: Uri get() {
+        return "${BASE_URL}audios/$id.webm".toUri()
     }
 
-    val thumbnail: String get() {
+    override val thumbnail: String get() {
         return UrlGen.userProfileImage(userId)
     }
-
 
     companion object {
         fun fromDto(audioDto: AudioDto): Audio {

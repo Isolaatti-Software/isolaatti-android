@@ -157,7 +157,7 @@ class AudioPlayerConnector(
             return
         }
         this.audio = audio
-        mediaItem = MediaItem.fromUri(Uri.parse(audio.downloadUrl))
+        mediaItem = MediaItem.fromUri(audio.uri)
 
         player?.setMediaItem(mediaItem!!)
     }

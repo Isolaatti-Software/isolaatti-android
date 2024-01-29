@@ -177,4 +177,6 @@
     <string name="recover_password">Recover password</string>
     <string name="old_password_not_correct">Password not changed, old password did not match. If you don\'t remember your password, you can always recover it.</string>
     <string name="new_password_is_invalid">New password is invalid. Please check it meets the requirements</string>
+    <string name="rename">Rename</string>
+    <string name="set_as_profile_audio">Set as profile audio</string>
 </resources>

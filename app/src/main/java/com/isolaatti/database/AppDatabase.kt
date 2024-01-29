@@ -2,8 +2,8 @@ package com.isolaatti.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.isolaatti.audio.recorder.data.AudioDraftEntity
-import com.isolaatti.audio.recorder.data.AudiosDraftsDao
+import com.isolaatti.audio.drafts.data.AudioDraftEntity
+import com.isolaatti.audio.drafts.data.AudiosDraftsDao
 import com.isolaatti.auth.data.local.UserInfoDao
 import com.isolaatti.auth.data.local.UserInfoEntity
 import com.isolaatti.settings.data.KeyValueDao
