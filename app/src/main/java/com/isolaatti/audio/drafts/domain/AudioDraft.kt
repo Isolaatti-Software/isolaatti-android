@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.core.net.toUri
 import com.isolaatti.MyApplication
 import com.isolaatti.audio.common.domain.Playable
+import com.isolaatti.audio.drafts.data.AudioDraftEntity
 import java.io.File
 
 data class AudioDraft(val id: Long, val name: String, val localStorageRelativePath: String) : Playable() {
@@ -15,4 +16,10 @@ data class AudioDraft(val id: Long, val name: String, val localStorageRelativePa
             val appFiles = MyApplication.myApp.applicationContext.filesDir
             return File(appFiles, localStorageRelativePath).toUri()
         }
+
+    companion object {
+        fun fromEntity(audioDraftEntity: AudioDraftEntity): AudioDraft {
+            return AudioDraft(audioDraftEntity.id, audioDraftEntity.name, audioDraftEntity.audioLocalPath)
+        }
+    }
 }

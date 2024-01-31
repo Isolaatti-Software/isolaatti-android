@@ -23,6 +23,7 @@ import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.audio.audios_list.ui.AudiosFragment
 import com.isolaatti.audio.common.domain.Audio
+import com.isolaatti.audio.common.domain.Playable
 import com.isolaatti.audio.player.AudioPlayerConnector
 import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.common.Dialogs
@@ -106,22 +107,26 @@ class ProfileMainFragment : Fragment() {
     }
 
     private val audioPlayerConnectorListener = object: AudioPlayerConnector.Listener {
-        override fun onPlaying(isPlaying: Boolean, audio: Audio) {
+        override fun onPlaying(isPlaying: Boolean, audio: Playable) {
             viewBinding.playButton.icon = AppCompatResources.getDrawable(requireContext(), if(isPlaying) R.drawable.baseline_pause_circle_24 else R.drawable.baseline_play_circle_24)
 
         }
 
-        override fun isLoading(isLoading: Boolean, audio: Audio) {
+        override fun isLoading(isLoading: Boolean, audio: Playable) {
             viewBinding.playButton.isEnabled = !isLoading
             viewBinding.audioProgress.isIndeterminate = isLoading
         }
 
-        override fun progressChanged(second: Int, audio: Audio) {
+        override fun progressChanged(second: Int, audio: Playable) {
             viewBinding.audioProgress.setProgress(second, true)
         }
 
-        override fun durationChanged(duration: Int, audio: Audio) {
+        override fun durationChanged(duration: Int, audio: Playable) {
             viewBinding.audioProgress.max = duration
+        }
+
+        override fun onEnded(audio: Playable) {
+            viewBinding.audioProgress.progress = 0
         }
 
     }

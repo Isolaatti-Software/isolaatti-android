@@ -4,7 +4,11 @@ import androidx.media3.common.Player
 import com.isolaatti.audio.common.data.AudiosApi
 import com.isolaatti.audio.common.data.AudiosRepositoryImpl
 import com.isolaatti.audio.common.domain.AudiosRepository
+import com.isolaatti.audio.drafts.data.AudioDraftsRepositoryImpl
+import com.isolaatti.audio.drafts.data.AudiosDraftsDao
+import com.isolaatti.audio.drafts.domain.repository.AudioDraftsRepository
 import com.isolaatti.connectivity.RetrofitClient
+import com.isolaatti.database.AppDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,5 +25,15 @@ class Module {
     @Provides
     fun provideAudiosRepository(audiosApi: AudiosApi): AudiosRepository {
         return AudiosRepositoryImpl(audiosApi)
+    }
+
+    @Provides
+    fun provideAudioDraftsDao(database: AppDatabase): AudiosDraftsDao {
+        return database.audioDrafts()
+    }
+
+    @Provides
+    fun provideAudioDraftsRepository(audiosDraftsDao: AudiosDraftsDao): AudioDraftsRepository {
+        return AudioDraftsRepositoryImpl(audiosDraftsDao)
     }
 }

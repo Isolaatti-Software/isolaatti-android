@@ -11,6 +11,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.isolaatti.audio.common.domain.Audio
+import com.isolaatti.audio.common.domain.Playable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,7 +29,7 @@ class AudioPlayerConnector(
         const val TAG = "AudioPlayerConnector"
     }
     private var player: Player? = null
-    private var audio: Audio? = null
+    private var audio: Playable? = null
     private var mediaItem: MediaItem? = null
     private var ended = false
 
@@ -83,12 +84,23 @@ class AudioPlayerConnector(
                 Player.STATE_ENDED -> {
                     Log.d(TAG, "STATE_ENDED")
                     audio?.let {
-                        listeners.forEach { listener ->  listener.onPlaying(false, it)}
+                        listeners.forEach { listener ->
+                            listener.onPlaying(false, it)
+                            listener.onEnded(it)
+                        }
                     }
                     stopTimer()
                     ended = true
                 }
-                Player.STATE_BUFFERING -> {}
+                Player.STATE_BUFFERING -> {
+                    player?.totalBufferedDuration?.let {
+                        val seconds = (it / 1000).toInt()
+                        Log.d(TAG, "Duration $it")
+                        audio?.let {
+                            listeners.forEach { listener -> listener.durationChanged(seconds, it) }
+                        }
+                    }
+                }
                 Player.STATE_IDLE -> {}
                 Player.STATE_READY -> {
                     Log.d(TAG, "STATE_READY")
@@ -136,12 +148,13 @@ class AudioPlayerConnector(
             }
             Lifecycle.Event.ON_STOP, Lifecycle.Event.ON_DESTROY -> {
                 releasePlayer()
+                listeners.clear()
             }
             else -> {}
         }
     }
 
-    fun playPauseAudio(audio: Audio) {
+    fun playPauseAudio(audio: Playable) {
 
         // intention is to pause current audio
         if(audio == this.audio && player?.isPlaying == true) {
@@ -162,10 +175,36 @@ class AudioPlayerConnector(
         player?.setMediaItem(mediaItem!!)
     }
 
+    fun stopPlayback() {
+        ended = true
+        player?.pause()
+        stopTimer()
+    }
+
     interface Listener {
-        fun onPlaying(isPlaying: Boolean, audio: Audio)
-        fun isLoading(isLoading: Boolean, audio: Audio)
-        fun progressChanged(second: Int, audio: Audio)
-        fun durationChanged(duration: Int, audio: Audio)
+        fun onPlaying(isPlaying: Boolean, audio: Playable)
+        fun isLoading(isLoading: Boolean, audio: Playable)
+        fun progressChanged(second: Int, audio: Playable)
+        fun durationChanged(duration: Int, audio: Playable)
+        fun onEnded(audio: Playable)
+    }
+
+    open class DefaultListener() : Listener {
+        override fun onPlaying(isPlaying: Boolean, audio: Playable) {}
+
+        override fun isLoading(isLoading: Boolean, audio: Playable) {}
+
+        override fun progressChanged(second: Int, audio: Playable) {
+
+        }
+
+        override fun durationChanged(duration: Int, audio: Playable) {
+
+        }
+
+        override fun onEnded(audio: Playable) {
+
+        }
+
     }
 }
