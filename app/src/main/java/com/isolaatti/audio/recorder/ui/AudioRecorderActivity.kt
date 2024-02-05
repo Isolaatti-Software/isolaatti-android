@@ -191,6 +191,13 @@ class AudioRecorderActivity : AppCompatActivity() {
         binding.toolbar.setOnMenuItemClickListener {
             when(it.itemId) {
                 R.id.save_draft -> {
+
+                    viewModel.relativePath = "/audios/${UUID.randomUUID()}.3gp"
+                    File(outputFile).run {
+                        viewModel.size = length()
+                        copyTo(File(filesDir.absolutePath, viewModel.relativePath), overwrite = true)
+                    }
+
                     viewModel.saveAudioDraft()
                     true
                 }

@@ -23,8 +23,8 @@ class Module {
     }
 
     @Provides
-    fun provideAudiosRepository(audiosApi: AudiosApi): AudiosRepository {
-        return AudiosRepositoryImpl(audiosApi)
+    fun provideAudiosRepository(audiosApi: AudiosApi, audiosDraftsDao: AudiosDraftsDao): AudiosRepository {
+        return AudiosRepositoryImpl(audiosApi, audiosDraftsDao)
     }
 
     @Provides

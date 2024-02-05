@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,6 +24,7 @@ class AudioRecorderViewModel @Inject constructor(
             validate()
         }
     var relativePath = ""
+    var size: Long = 0
     private var audioRecorded = false
 
     val audioDraft: MutableLiveData<AudioDraft> = MutableLiveData()
@@ -44,7 +46,7 @@ class AudioRecorderViewModel @Inject constructor(
     }
     fun saveAudioDraft() {
         viewModelScope.launch {
-            saveAudioDraftUC(name, relativePath).onEach {
+            saveAudioDraftUC(name, relativePath, size).onEach {
                 audioDraft.postValue(it)
             }.flowOn(Dispatchers.IO).launchIn(this)
         }

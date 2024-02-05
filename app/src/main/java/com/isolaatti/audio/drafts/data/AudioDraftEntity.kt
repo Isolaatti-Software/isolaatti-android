@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class AudioDraftEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
     val name: String,
-    val audioLocalPath: String
+    val audioLocalPath: String,
+    val sizeInBytes: Long
 )

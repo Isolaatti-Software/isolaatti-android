@@ -5,12 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
-import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.isolaatti.R
 import com.isolaatti.common.IsolaattiBaseActivity
@@ -129,7 +127,7 @@ class CreatePostActivity : IsolaattiBaseActivity() {
             finish()
         }
 
-        viewModel.loading.observe(this@CreatePostActivity) {
+        viewModel.sendingPost.observe(this@CreatePostActivity) {
             binding.progressBarLoading.visibility = if(it) View.VISIBLE else View.GONE
         }
     }

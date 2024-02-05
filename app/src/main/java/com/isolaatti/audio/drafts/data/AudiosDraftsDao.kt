@@ -12,7 +12,7 @@ interface AudiosDraftsDao {
     suspend fun insertAudioDraft(audioDraftEntity: AudioDraftEntity): Long
 
     @Query("SELECT * FROM audio_drafts WHERE id = :draftId")
-    suspend fun getAudioDraftById(draftId: Long): AudioDraftEntity
+    suspend fun getAudioDraftById(draftId: Long): AudioDraftEntity?
 
     @Query("SELECT * FROM audio_drafts WHERE id in (:draftId)")
     suspend fun getAudioDraftsByIds(draftId: LongArray): Array<AudioDraftEntity>

@@ -8,8 +8,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.drm.DrmSessionManagerProvider
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy
 import com.isolaatti.audio.common.domain.Audio
 import com.isolaatti.audio.common.domain.Playable
 import kotlinx.coroutines.CoroutineScope
@@ -63,6 +69,9 @@ class AudioPlayerConnector(
     }
 
     private val playerListener: Player.Listener = object: Player.Listener {
+        override fun onPlayerError(error: PlaybackException) {
+            Log.e(TAG, error.message.toString())
+        }
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             if(audio != null) {
                 listeners.forEach { listener ->  listener.onPlaying(isPlaying, audio!!)}
@@ -119,7 +128,6 @@ class AudioPlayerConnector(
 
     private fun initializePlayer() {
         player = ExoPlayer.Builder(context).build()
-        player?.playWhenReady = true
         player?.addListener(playerListener)
         player?.prepare()
     }
@@ -137,16 +145,14 @@ class AudioPlayerConnector(
     }
 
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        Log.d(TAG, event.toString())
         when(event) {
-            Lifecycle.Event.ON_START -> {
-                initializePlayer()
-            }
             Lifecycle.Event.ON_RESUME -> {
                 if(player == null) {
                     initializePlayer()
                 }
             }
-            Lifecycle.Event.ON_STOP, Lifecycle.Event.ON_DESTROY -> {
+            Lifecycle.Event.ON_DESTROY -> {
                 releasePlayer()
                 listeners.clear()
             }
@@ -173,6 +179,7 @@ class AudioPlayerConnector(
         mediaItem = MediaItem.fromUri(audio.uri)
 
         player?.setMediaItem(mediaItem!!)
+        player?.playWhenReady = true
     }
 
     fun stopPlayback() {
@@ -191,20 +198,9 @@ class AudioPlayerConnector(
 
     open class DefaultListener() : Listener {
         override fun onPlaying(isPlaying: Boolean, audio: Playable) {}
-
         override fun isLoading(isLoading: Boolean, audio: Playable) {}
-
-        override fun progressChanged(second: Int, audio: Playable) {
-
-        }
-
-        override fun durationChanged(duration: Int, audio: Playable) {
-
-        }
-
-        override fun onEnded(audio: Playable) {
-
-        }
-
+        override fun progressChanged(second: Int, audio: Playable) {}
+        override fun durationChanged(duration: Int, audio: Playable) {}
+        override fun onEnded(audio: Playable) {}
     }
 }

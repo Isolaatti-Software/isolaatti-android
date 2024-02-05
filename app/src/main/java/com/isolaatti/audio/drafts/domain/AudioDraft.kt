@@ -7,7 +7,7 @@ import com.isolaatti.audio.common.domain.Playable
 import com.isolaatti.audio.drafts.data.AudioDraftEntity
 import java.io.File
 
-data class AudioDraft(val id: Long, val name: String, val localStorageRelativePath: String) : Playable() {
+data class AudioDraft(val id: Long, val name: String, val localStorageRelativePath: String, val size: Long) : Playable() {
     override val thumbnail: String?
         get() = null
 
@@ -19,7 +19,7 @@ data class AudioDraft(val id: Long, val name: String, val localStorageRelativePa
 
     companion object {
         fun fromEntity(audioDraftEntity: AudioDraftEntity): AudioDraft {
-            return AudioDraft(audioDraftEntity.id, audioDraftEntity.name, audioDraftEntity.audioLocalPath)
+            return AudioDraft(audioDraftEntity.id, audioDraftEntity.name, audioDraftEntity.audioLocalPath, audioDraftEntity.sizeInBytes)
         }
     }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/record_new_audio_item"
+        android:title="@string/record_new_audio"/>
+    <item android:id="@+id/select_from_audios"
+        android:title="@string/select_from_existing"/>
+</menu>
