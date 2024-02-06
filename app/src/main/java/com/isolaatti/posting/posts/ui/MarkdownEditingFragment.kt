@@ -15,6 +15,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.isolaatti.R
+import com.isolaatti.audio.audio_selector.ui.AudioSelectorActivity
+import com.isolaatti.audio.audio_selector.ui.AudioSelectorContract
 import com.isolaatti.audio.common.domain.Audio
 import com.isolaatti.audio.common.domain.Playable
 import com.isolaatti.audio.drafts.domain.AudioDraft
@@ -53,6 +55,10 @@ class MarkdownEditingFragment : Fragment(){
             binding.filledTextField.editText?.setText(viewModel.content)
         }
 
+
+    }
+
+    private val audioSelectorLauncher = registerForActivityResult(AudioSelectorContract()) {
 
     }
 
@@ -142,6 +148,7 @@ class MarkdownEditingFragment : Fragment(){
                         true
                     }
                     R.id.select_from_audios -> {
+                        audioSelectorLauncher.launch(AudioSelectorContract.SelectorConfig(false, null))
                         true
                     }
                     else -> false

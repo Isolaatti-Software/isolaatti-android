@@ -183,4 +183,5 @@
     <string name="select_from_existing">Select from existing</string>
     <string name="audio_attachment">Audio attachment</string>
     <string name="remove">Remove</string>
+    <string name="select_audio">Select audio</string>
 </resources>
