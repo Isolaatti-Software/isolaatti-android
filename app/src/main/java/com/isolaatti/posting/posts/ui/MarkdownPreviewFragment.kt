@@ -10,6 +10,8 @@ import androidx.fragment.app.activityViewModels
 import com.isolaatti.common.CoilImageLoader
 import com.isolaatti.databinding.FragmentMarkdownEditingBinding
 import com.isolaatti.databinding.FragmentMarkdownPreviewBinding
+import com.isolaatti.markdown.HashtagMarkwonPlugin
+import com.isolaatti.markdown.RelativePathMarkwonPlugin
 import com.isolaatti.posting.posts.presentation.CreatePostViewModel
 import dagger.hilt.EntryPoint
 import io.noties.markwon.AbstractMarkwonPlugin
@@ -28,16 +30,10 @@ class MarkdownPreviewFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         markwon = Markwon.builder(requireContext())
-            .usePlugin(object: AbstractMarkwonPlugin() {
-                override fun configureConfiguration(builder: MarkwonConfiguration.Builder) {
-                    builder
-                        .imageDestinationProcessor(
-                            ImageDestinationProcessorRelativeToAbsolute
-                                .create("https://isolaatti.com/"))
-                }
-            })
+            .usePlugin(RelativePathMarkwonPlugin())
             .usePlugin(CoilImagesPlugin.create(requireContext(), CoilImageLoader.imageLoader))
             .usePlugin(LinkifyPlugin.create())
+            .usePlugin(HashtagMarkwonPlugin())
             .build()
     }
     override fun onCreateView(
