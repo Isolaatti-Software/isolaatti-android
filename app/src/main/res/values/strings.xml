@@ -184,4 +184,6 @@
     <string name="audio_attachment">Audio attachment</string>
     <string name="remove">Remove</string>
     <string name="select_audio">Select audio</string>
+    <string name="delete_audio_message">Do you really want to remove this audio? Discussions with this audio linked will still be pointing to it.</string>
+    <string name="delete_audio_title">Remove audio?</string>
 </resources>

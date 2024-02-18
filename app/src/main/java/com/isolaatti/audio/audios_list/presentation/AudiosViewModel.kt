@@ -17,13 +17,23 @@ import javax.inject.Inject
 @HiltViewModel
 class AudiosViewModel @Inject constructor(private val audiosRepository: AudiosRepository) : ViewModel() {
     val resource: MutableLiveData<Resource<List<Audio>>> = MutableLiveData()
-
+    val audioRemoved: MutableLiveData<Audio?> = MutableLiveData()
 
     fun loadAudios(userId: Int) {
         viewModelScope.launch {
             audiosRepository.getAudiosOfUser(userId, null).onEach {
                 resource.postValue(it)
 
+            }.flowOn(Dispatchers.IO).launchIn(this)
+        }
+    }
+
+    fun removeAudio(audio: Audio) {
+        viewModelScope.launch {
+            audiosRepository.deleteAudio(audio.id).onEach {
+                if(it is Resource.Success) {
+                    audioRemoved.postValue(audio)
+                }
             }.flowOn(Dispatchers.IO).launchIn(this)
         }
     }

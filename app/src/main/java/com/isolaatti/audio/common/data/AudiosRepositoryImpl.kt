@@ -80,4 +80,19 @@ class AudiosRepositoryImpl @Inject constructor(private val audiosApi: AudiosApi,
             Log.d(LOG_TAG, e.message.toString())
         }
     }
+
+    override fun deleteAudio(audioId: String): Flow<Resource<Boolean>> = flow {
+        emit(Resource.Loading())
+        try {
+            val response = audiosApi.deleteAudio(audioId).awaitResponse()
+
+            if(response.isSuccessful) {
+                emit(Resource.Success(response.isSuccessful))
+            } else {
+                emit(Resource.Error(Resource.Error.mapErrorCode(response.code())))
+            }
+        } catch(e: Exception) {
+            Log.e(LOG_TAG, e.message.toString())
+        }
+    }
 }

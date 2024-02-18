@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.isolaatti.R
 import com.isolaatti.audio.audios_list.presentation.AudiosAdapter
 import com.isolaatti.audio.audios_list.presentation.AudiosViewModel
@@ -45,6 +46,17 @@ class AudiosFragment : Fragment() {
         return viewBinding.root
     }
 
+    private fun onDeleteAudio(audio: Audio) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(R.string.delete_audio_message)
+            .setTitle(R.string.delete_audio_title)
+            .setPositiveButton(R.string.yes_continue) { _, _ ->
+                viewModel.removeAudio(audio)
+            }
+            .setNegativeButton(R.string.no, null)
+            .show()
+    }
+
     private val onOptionsClick: ((audio: Audio, button: View) -> Boolean) = { audio, button ->
         val popup = PopupMenu(requireContext(), button)
         popup.menuInflater.inflate(R.menu.audio_item_menu, popup.menu)
@@ -53,6 +65,16 @@ class AudiosFragment : Fragment() {
             popup.menu.removeItem(R.id.rename_item)
             popup.menu.removeItem(R.id.delete_item)
             popup.menu.removeItem(R.id.set_as_profile_audio)
+        }
+
+        popup.setOnMenuItemClickListener {
+            when(it.itemId) {
+                R.id.delete_item -> {
+                    onDeleteAudio(audio)
+                    true
+                }
+                else -> false
+            }
         }
 
         popup.show()
@@ -132,6 +154,15 @@ class AudiosFragment : Fragment() {
                     adapter.setData(resource.data!!)
                 }
             }
+        }
+
+        viewModel.audioRemoved.observe(viewLifecycleOwner) {
+            if(it != null){
+                adapter.removeAudio(it)
+                viewModel.audioRemoved.value = null
+            }
+
+
         }
     }
 

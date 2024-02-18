@@ -139,7 +139,16 @@ class AudiosAdapter(
         }
     }
 
-    override fun onBindViewHolder(holder: AudiosViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AudiosViewHolder, position: Int) {}
 
+    fun removeAudio(audio: Audio) {
+        val index = data.indexOf(audio)
+
+        if(index == -1) return
+        // TODO data should be modified from outside
+        data = data.toMutableList().apply {
+            removeAt(index)
+        }
+        notifyItemRemoved(index)
     }
 }

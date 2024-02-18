@@ -1,5 +1,6 @@
 package com.isolaatti.audio.common.data
 
+import com.isolaatti.common.ResultDto
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.GET
@@ -21,4 +22,7 @@ interface AudiosApi {
     @POST("/api/Audios/Create")
     @Multipart
     fun uploadFile(@Part file: MultipartBody.Part, @Part name: MultipartBody.Part, @Part duration: MultipartBody.Part): Call<AudioDto>
+
+    @POST("/api/Audios/{audioId}/Delete")
+    fun deleteAudio(@Path("audioId") audioId: String): Call<ResultDto<String>>
 }
