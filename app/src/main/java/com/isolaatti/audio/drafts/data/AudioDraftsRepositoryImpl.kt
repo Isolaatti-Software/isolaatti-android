@@ -22,7 +22,7 @@ class AudioDraftsRepositoryImpl(private val audiosDraftsDao: AudiosDraftsDao) : 
     }
 
     override fun deleteDrafts(draftIds: LongArray): Flow<Boolean> = flow {
-        val drafts = audiosDraftsDao.getAudioDraftsByIds(draftIds)
+        val drafts = audiosDraftsDao.getAudioDraftsByIds(*draftIds)
         audiosDraftsDao.deleteDrafts(drafts)
 
         try {

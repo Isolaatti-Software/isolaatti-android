@@ -9,20 +9,20 @@ import androidx.room.Update
 @Dao
 interface AudiosDraftsDao {
     @Insert
-    suspend fun insertAudioDraft(audioDraftEntity: AudioDraftEntity): Long
+    fun insertAudioDraft(audioDraftEntity: AudioDraftEntity): Long
 
     @Query("SELECT * FROM audio_drafts WHERE id = :draftId")
-    suspend fun getAudioDraftById(draftId: Long): AudioDraftEntity?
+    fun getAudioDraftById(draftId: Long): AudioDraftEntity?
 
     @Query("SELECT * FROM audio_drafts WHERE id in (:draftId)")
-    suspend fun getAudioDraftsByIds(draftId: LongArray): Array<AudioDraftEntity>
+    fun getAudioDraftsByIds(vararg draftId: Long): Array<AudioDraftEntity>
 
     @Query("SELECT * FROM audio_drafts ORDER BY id DESC")
-    suspend fun getDrafts(): List<AudioDraftEntity>
+    fun getDrafts(): List<AudioDraftEntity>
 
     @Delete
-    suspend fun deleteDrafts(draft: Array<AudioDraftEntity>)
+    fun deleteDrafts(draft: Array<AudioDraftEntity>)
 
     @Query("UPDATE audio_drafts SET name = :name WHERE id = :id")
-    suspend fun renameDraft(id: Long, name: String): Int
+    fun renameDraft(id: Long, name: String): Int
 }

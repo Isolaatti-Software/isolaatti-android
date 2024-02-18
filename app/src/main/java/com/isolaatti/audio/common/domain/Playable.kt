@@ -5,6 +5,7 @@ import android.net.Uri
 abstract class Playable {
     var isPlaying: Boolean = false
     abstract val uri: Uri
+    var isLoading: Boolean = false
 
     /**
      * Image url, null indicating no image should be shown
@@ -25,6 +26,5 @@ abstract class Playable {
         result = 31 * result + (thumbnail?.hashCode() ?: 0)
         return result
     }
-
 
 }

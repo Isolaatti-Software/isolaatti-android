@@ -8,12 +8,15 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.isolaatti.R
 import com.isolaatti.audio.audios_list.presentation.AudiosAdapter
 import com.isolaatti.audio.audios_list.presentation.AudiosViewModel
 import com.isolaatti.audio.common.domain.Audio
+import com.isolaatti.audio.common.domain.Playable
+import com.isolaatti.audio.player.AudioPlayerConnector
 import com.isolaatti.common.ErrorMessageViewModel
 import com.isolaatti.databinding.FragmentAudiosBinding
 import com.isolaatti.utils.Resource
@@ -28,6 +31,8 @@ class AudiosFragment : Fragment() {
     private val arguments: AudiosFragmentArgs by navArgs()
     private lateinit var adapter: AudiosAdapter
     private var privilegedUserId by Delegates.notNull<Int>()
+
+    private lateinit var audioPlayerConnector: AudioPlayerConnector
 
     private var loadedFirstTime = false
     override fun onCreateView(
@@ -55,12 +60,43 @@ class AudiosFragment : Fragment() {
         true
     }
 
-    private val onAudioPlayClick: ((audio: Audio) -> Unit) = {
-        // Play audio
+    private val onAudioPlayClick: (audio: Audio) -> Unit = {
+        audioPlayerConnector.playPauseAudio(it)
+    }
+
+    private val audioPlayerConnectorListener: AudioPlayerConnector.Listener = object: AudioPlayerConnector.Listener {
+        override fun onPlaying(isPlaying: Boolean, audio: Playable) {
+            if(audio is Audio)
+                adapter.setIsPlaying(isPlaying, audio)
+        }
+
+        override fun isLoading(isLoading: Boolean, audio: Playable) {
+            if(audio is Audio)
+                adapter.setIsLoadingAudio(isLoading, audio)
+        }
+
+        override fun progressChanged(second: Int, audio: Playable) {
+
+        }
+
+        override fun durationChanged(duration: Int, audio: Playable) {
+
+        }
+
+        override fun onEnded(audio: Playable) {
+
+        }
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        audioPlayerConnector = AudioPlayerConnector(requireContext())
+
+        audioPlayerConnector.addListener(audioPlayerConnectorListener)
+
+        viewLifecycleOwner.lifecycle.addObserver(audioPlayerConnector)
 
         adapter = AudiosAdapter(onPlayClick = onAudioPlayClick, onOptionsClick = onOptionsClick)
 
@@ -72,6 +108,10 @@ class AudiosFragment : Fragment() {
         if(arguments.source == SOURCE_PROFILE) {
             privilegedUserId = arguments.sourceId.toInt()
             viewModel.loadAudios(privilegedUserId)
+        }
+
+        viewBinding.topAppBar.setNavigationOnClickListener {
+            findNavController().popBackStack()
         }
     }
 
@@ -94,7 +134,7 @@ class AudiosFragment : Fragment() {
             }
         }
     }
-    
+
     companion object {
         const val SOURCE_PROFILE = "source_profile"
         const val SOURCE_SQUAD = "source_squads"

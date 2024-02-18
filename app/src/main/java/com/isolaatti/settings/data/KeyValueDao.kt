@@ -12,8 +12,8 @@ interface KeyValueDao {
     fun getValue(key: String): Flow<String>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun setValue(entity: KeyValueEntity)
+    fun setValue(entity: KeyValueEntity)
 
     @Query("SELECT value FROM key_values WHERE id = :key")
-    suspend fun getValueAsync(key: String): String?
+    fun getValueAsync(key: String): String?
 }
