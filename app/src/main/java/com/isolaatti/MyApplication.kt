@@ -1,9 +1,15 @@
 package com.isolaatti
 
 import android.app.Application
+import android.content.Context
 import android.net.ConnectivityManager
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.isolaatti.connectivity.ConnectivityCallbackImpl
 import dagger.hilt.android.HiltAndroidApp
+
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @HiltAndroidApp
 class MyApplication : Application() {
