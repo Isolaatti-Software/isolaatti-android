@@ -9,6 +9,6 @@ interface PushNotificationsApi {
 
     @PUT("/api/push_notifications/register_device")
     @Multipart
-    fun registerDevice(@Part("token") token: String): Call<Any>
+    fun registerDevice(@Part("token") token: String): Call<Unit>
 
 }

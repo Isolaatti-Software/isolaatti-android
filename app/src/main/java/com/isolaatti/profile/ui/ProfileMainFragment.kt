@@ -106,27 +106,57 @@ class ProfileMainFragment : Fragment() {
         }
     }
 
+
     private val audioPlayerConnectorListener = object: AudioPlayerConnector.Listener {
         override fun onPlaying(isPlaying: Boolean, audio: Playable) {
-            viewBinding.playButton.icon = AppCompatResources.getDrawable(requireContext(), if(isPlaying) R.drawable.baseline_pause_circle_24 else R.drawable.baseline_play_circle_24)
-
+            Log.d(LOG_TAG, "onPlaying() isPlaying: $isPlaying: audio $audio")
+            if(audio == audioDescriptionAudio) {
+                viewBinding.playButton.icon =
+                    AppCompatResources.getDrawable(
+                        requireContext(),
+                        if(isPlaying) R.drawable.baseline_pause_circle_24 else R.drawable.baseline_play_circle_24
+                    )
+            }
+            if(audio is Audio)
+                postsAdapter.setIsPlaying(isPlaying, audio)
         }
 
         override fun isLoading(isLoading: Boolean, audio: Playable) {
-            viewBinding.playButton.isEnabled = !isLoading
-            viewBinding.audioProgress.isIndeterminate = isLoading
+            if(audio == audioDescriptionAudio) {
+                viewBinding.playButton.isEnabled = !isLoading
+                viewBinding.audioProgress.isIndeterminate = isLoading
+            }
+
+            if(audio is Audio)
+                postsAdapter.setIsLoading(isLoading, audio)
+
         }
 
         override fun progressChanged(second: Int, audio: Playable) {
-            viewBinding.audioProgress.setProgress(second, true)
+            if(audio == audioDescriptionAudio) {
+                viewBinding.audioProgress.setProgress(second, true)
+            }
+
+            if(audio is Audio)
+                postsAdapter.setProgress(second, audio)
         }
 
         override fun durationChanged(duration: Int, audio: Playable) {
-            viewBinding.audioProgress.max = duration
+            if(audio == audioDescriptionAudio) {
+                viewBinding.audioProgress.max = duration
+            }
+
+            if(audio is Audio)
+                postsAdapter.setDuration(duration, audio)
         }
 
         override fun onEnded(audio: Playable) {
-            viewBinding.audioProgress.progress = 0
+            if(audio == audioDescriptionAudio) {
+                viewBinding.audioProgress.progress = 0
+            }
+
+            if(audio is Audio)
+                postsAdapter.setEnded(audio)
         }
 
     }
@@ -431,6 +461,10 @@ class ProfileMainFragment : Fragment() {
                 //ProfileActivity.startActivity(requireContext(), userId)
             }
 
+            override fun onPlay(audio: Audio) {
+                audioPlayerConnector.playPauseAudio(audio)
+            }
+
             override fun onLoadMore() {
                 viewModel.getFeed(false)
             }
@@ -474,5 +508,6 @@ class ProfileMainFragment : Fragment() {
 
     companion object {
         const val CALLER_ID = 30
+        const val LOG_TAG = "ProfileMainFragment"
     }
 }

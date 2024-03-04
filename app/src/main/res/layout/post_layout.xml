@@ -56,6 +56,11 @@
                     android:gravity="end"/>
 
             </RelativeLayout>
+            <include android:id="@+id/audio"
+                layout="@layout/audio_attachment"
+                android:layout_marginHorizontal="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/post_content"

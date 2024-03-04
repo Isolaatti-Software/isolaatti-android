@@ -54,7 +54,8 @@ data class Post(
                     numberOfLikes = it.numberOfLikes,
                     userName = it.userName,
                     squadName = it.squadName,
-                    liked = it.liked
+                    liked = it.liked,
+                    audio = it.audio?.let { audioDto -> Audio.fromDto(audioDto) }
                 )
             }.toMutableList()
         }

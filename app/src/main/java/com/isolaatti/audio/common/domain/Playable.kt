@@ -6,6 +6,8 @@ abstract class Playable {
     var isPlaying: Boolean = false
     abstract val uri: Uri
     var isLoading: Boolean = false
+    var progress: Int = 0
+    var duration: Int = 0
 
     /**
      * Image url, null indicating no image should be shown

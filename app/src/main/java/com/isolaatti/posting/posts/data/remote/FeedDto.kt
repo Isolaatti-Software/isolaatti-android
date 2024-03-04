@@ -2,6 +2,7 @@ package com.isolaatti.posting.posts.data.remote
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.isolaatti.audio.common.data.AudioDto
 import java.io.Serializable
 
 data class FeedDto(
@@ -23,7 +24,8 @@ data class FeedDto(
         var numberOfComments: Int,
         val userName: String,
         val squadName: String?,
-        var liked: Boolean
+        var liked: Boolean,
+        var audio: AudioDto?
     ): Parcelable {
 
         constructor(parcel: Parcel) : this(
@@ -32,7 +34,8 @@ data class FeedDto(
             parcel.readInt(),
             parcel.readString()!!,
             parcel.readString(),
-            parcel.readByte() != 0.toByte()
+            parcel.readByte() != 0.toByte(),
+            parcel.readParcelable(AudioDto::class.java.classLoader)
         )
 
         data class Post(
@@ -93,6 +96,7 @@ data class FeedDto(
             parcel.writeString(userName)
             parcel.writeString(squadName)
             parcel.writeByte(if (liked) 1 else 0)
+            parcel.writeSerializable(audio)
         }
 
         override fun describeContents(): Int {

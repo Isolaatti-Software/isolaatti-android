@@ -22,6 +22,9 @@ import com.google.android.material.card.MaterialCardView
 import com.isolaatti.BuildConfig
 import com.isolaatti.R
 import com.isolaatti.about.AboutActivity
+import com.isolaatti.audio.common.domain.Audio
+import com.isolaatti.audio.common.domain.Playable
+import com.isolaatti.audio.player.AudioPlayerConnector
 import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.common.Dialogs
 import com.isolaatti.common.ErrorMessageViewModel
@@ -69,6 +72,8 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
     private lateinit var viewBinding: FragmentFeedBinding
     private lateinit var adapter: PostsRecyclerViewAdapter
+
+    private lateinit var audioPlayerConnector: AudioPlayerConnector
 
     // region launchers
 
@@ -127,6 +132,34 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
     // endregion
 
+    private val audioPlayerConnectorListener = object: AudioPlayerConnector.Listener {
+        override fun onPlaying(isPlaying: Boolean, audio: Playable) {
+            if(audio is Audio)
+                adapter.setIsPlaying(isPlaying, audio)
+        }
+
+        override fun isLoading(isLoading: Boolean, audio: Playable) {
+            if(audio is Audio)
+                adapter.setIsLoading(isLoading, audio)
+        }
+
+        override fun progressChanged(second: Int, audio: Playable) {
+            if(audio is Audio)
+                adapter.setProgress(second, audio)
+        }
+
+        override fun durationChanged(duration: Int, audio: Playable) {
+            if(audio is Audio)
+                adapter.setDuration(duration, audio)
+        }
+
+        override fun onEnded(audio: Playable) {
+            if(audio is Audio)
+                adapter.setEnded(audio)
+        }
+
+    }
+
     // region events
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -149,6 +182,9 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
             }
         }
 
+        audioPlayerConnector = AudioPlayerConnector(requireContext())
+        audioPlayerConnector.addListener(audioPlayerConnectorListener)
+        viewLifecycleOwner.lifecycle.addObserver(audioPlayerConnector)
 
         val markwon = Markwon.builder(requireContext())
             .usePlugin(object: AbstractMarkwonPlugin() {
@@ -256,6 +292,10 @@ class FeedFragment : Fragment(), OnUserInteractedWithPostCallback {
 
     override fun onOpenPost(postId: Long) {
         PostViewerActivity.startActivity(requireContext(), postId)
+    }
+
+    override fun onPlay(audio: Audio) {
+        audioPlayerConnector.playPauseAudio(audio)
     }
 
     override fun onProfileClick(userId: Int) {

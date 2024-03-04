@@ -7,107 +7,149 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.isolaatti.R
+import com.isolaatti.audio.common.domain.Audio
 import com.isolaatti.common.CoilImageLoader.imageLoader
 import com.isolaatti.common.OnUserInteractedWithPostCallback
+import com.isolaatti.databinding.PostLayoutBinding
 import com.isolaatti.posting.posts.domain.entity.Post
 import com.isolaatti.utils.UrlGen.userProfileImage
 import io.noties.markwon.Markwon
 
-class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callback: OnUserInteractedWithPostCallback) : RecyclerView.Adapter<PostsRecyclerViewAdapter.FeedViewHolder>(){
+class PostsRecyclerViewAdapter (
+    private val markwon: Markwon,
+    private val callback: OnUserInteractedWithPostCallback
+) : RecyclerView.Adapter<PostsRecyclerViewAdapter.FeedViewHolder>(){
     private var postList: List<Post>? = null
-    inner class FeedViewHolder(itemView: View) : ViewHolder(itemView) {
-        fun bindView(postDto: Post, payloads: List<Any>) {
-
-            Log.d("payloads", payloads.count().toString())
-            val likeButton: MaterialButton = itemView.findViewById(R.id.like_button)
-            val commentsButton: MaterialButton = itemView.findViewById(R.id.comment_button)
+    inner class FeedViewHolder(val itemBinding: PostLayoutBinding) : ViewHolder(itemBinding.root) {
+        fun bindView(post: Post, payloads: List<Any>) {
 
             if(payloads.isNotEmpty()) {
                 for(payload in payloads) {
-                    when(payload) {
-                        is LikeCountUpdatePayload -> {
+                    when {
+                        payload is LikeCountUpdatePayload -> {
+                            itemBinding.likeButton.isEnabled = true
 
-
-                            likeButton.isEnabled = true
-
-                            if(postDto.liked) {
-                                likeButton.setIconTintResource(R.color.purple_lighter)
-                                likeButton.setTextColor(itemView.context.getColor(R.color.purple_lighter))
+                            if(post.liked) {
+                                itemBinding.likeButton.setIconTintResource(R.color.purple_lighter)
+                                itemBinding.likeButton.setTextColor(itemView.context.getColor(R.color.purple_lighter))
                             } else {
-                                likeButton.setIconTintResource(R.color.on_surface)
-                                likeButton.setTextColor(itemView.context.getColor(R.color.on_surface))
+                                itemBinding.likeButton.setIconTintResource(R.color.on_surface)
+                                itemBinding.likeButton.setTextColor(itemView.context.getColor(R.color.on_surface))
                             }
 
-                            likeButton.text = postDto.numberOfLikes.toString()
-
-
+                            itemBinding.likeButton.text = post.numberOfLikes.toString()
                         }
-
-                        is CommentsCountUpdatePayload -> {
-
-                            commentsButton.text = postDto.numberOfComments.toString()
-
+                        payload is CommentsCountUpdatePayload -> {
+                            itemBinding.commentButton.text = post.numberOfComments.toString()
+                        }
+                        payload is AudioEventPayload && payload == AudioEventPayload.IsPLaying -> {
+                            val audio = post.audio
+                            if(audio != null){
+                                itemBinding.audio.playButton.icon =
+                                    AppCompatResources.getDrawable(
+                                        itemView.context,
+                                        if(audio.isPlaying) R.drawable.baseline_pause_circle_24 else R.drawable.baseline_play_circle_24
+                                    )
+                            }
+                        }
+                        payload is AudioEventPayload && payload == AudioEventPayload.ProgressChanged -> {
+                            val audio = post.audio
+                            if(audio != null){
+                                itemBinding.audio.audioProgress.progress = audio.progress
+                            }
+                        }
+                        payload is AudioEventPayload && payload == AudioEventPayload.IsLoading -> {
+                            val audio = post.audio
+                            if(audio != null){
+                                itemBinding.audio.audioProgress.isIndeterminate = audio.isLoading
+                            }
+                        }
+                        payload is AudioEventPayload && payload == AudioEventPayload.DurationChanged -> {
+                            val audio = post.audio
+                            if(audio != null){
+                                itemBinding.audio.audioProgress.max = audio.duration
+                            }
+                        }
+                        payload is AudioEventPayload && payload == AudioEventPayload.Ended -> {
+                            val audio = post.audio
+                            if(audio != null){
+                                itemBinding.audio.audioProgress.progress = 0
+                                itemBinding.audio.playButton.icon = AppCompatResources.getDrawable(itemView.context, R.drawable.baseline_play_circle_24)
+                            }
                         }
                     }
                 }
 
             } else {
                 val username: TextView = itemView.findViewById(R.id.text_view_username)
-                username.text = postDto.userName
+                username.text = post.userName
                 username.setOnClickListener {
-                    callback.onProfileClick(postDto.userId)
+                    callback.onProfileClick(post.userId)
                 }
 
                 val profileImageView: ImageView = itemView.findViewById(R.id.avatar_picture)
-                profileImageView.load(userProfileImage(postDto.userId), imageLoader)
+                profileImageView.load(userProfileImage(post.userId), imageLoader)
 
                 val dateTextView: TextView = itemView.findViewById(R.id.text_view_date)
-                dateTextView.text = postDto.date
+                dateTextView.text = post.date
 
                 val content: TextView = itemView.findViewById(R.id.post_content)
-                markwon.setMarkdown(content, postDto.textContent)
+                markwon.setMarkdown(content, post.textContent)
 
-                likeButton.isEnabled = true
+                itemBinding.likeButton.isEnabled = true
 
-                if(postDto.liked) {
-                    likeButton.setIconTintResource(R.color.purple_lighter)
-                    likeButton.setTextColor(itemView.context.getColor(R.color.purple_lighter))
+                if(post.liked) {
+                    itemBinding.likeButton.setIconTintResource(R.color.purple_lighter)
+                    itemBinding.likeButton.setTextColor(itemView.context.getColor(R.color.purple_lighter))
                 } else {
-                    likeButton.setIconTintResource(R.color.on_surface)
-                    likeButton.setTextColor(itemView.context.getColor(R.color.on_surface))
+                    itemBinding.likeButton.setIconTintResource(R.color.on_surface)
+                    itemBinding.likeButton.setTextColor(itemView.context.getColor(R.color.on_surface))
                 }
 
-                likeButton.text = postDto.numberOfLikes.toString()
+                itemBinding.likeButton.text = post.numberOfLikes.toString()
 
-                commentsButton.text = postDto.numberOfComments.toString()
+                itemBinding.commentButton.text = post.numberOfComments.toString()
 
                 val moreButton: MaterialButton = itemView.findViewById(R.id.more_button)
                 moreButton.setOnClickListener {
-                    callback.onOptions(postDto)
+                    callback.onOptions(post)
                 }
 
-                likeButton.setOnClickListener {
-                    likeButton.isEnabled = false
-                    if(postDto.liked){
-                        callback.onUnLiked(postDto.id)
+                itemBinding.likeButton.setOnClickListener {
+                    itemBinding.likeButton.isEnabled = false
+                    if(post.liked){
+                        callback.onUnLiked(post.id)
                     } else {
-                        callback.onLiked(postDto.id)
+                        callback.onLiked(post.id)
                     }
                 }
-                commentsButton.setOnClickListener {
-                    callback.onComment(postDto.id)
+                itemBinding.commentButton.setOnClickListener {
+                    callback.onComment(post.id)
                 }
 
                 itemView.findViewById<MaterialCardView>(R.id.card).setOnClickListener {
-                    callback.onOpenPost(postDto.id)
+                    callback.onOpenPost(post.id)
                 }
-
+                if(post.audio != null){
+                    itemBinding.audio.apply {
+                        root.visibility = View.VISIBLE
+                        textViewDescription.text = post.audio.name
+                    }
+                    itemBinding.audio.playButton.setOnClickListener {
+                        callback.onPlay(post.audio)
+                    }
+                } else {
+                    itemBinding.audio.root.visibility = View.GONE
+                    itemBinding.audio.playButton.setOnClickListener(null)
+                }
             }
         }
     }
@@ -116,11 +158,138 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
     data class LikeCountUpdatePayload(val likeCount: Int)
     data class CommentsCountUpdatePayload(val commentsCount: Int)
 
+    private var currentAudio: Audio? = null
+    private var currentAudioPosition: Int = -1
+    enum class AudioEventPayload {
+        ProgressChanged, IsLoading, IsPLaying, DurationChanged, Ended
+    }
+
+    fun setIsPlaying(isPlaying: Boolean, audio: Audio) {
+        if(audio == currentAudio) {
+            currentAudio?.isPlaying = isPlaying
+            if(currentAudioPosition > -1) {
+                notifyItemChanged(currentAudioPosition, AudioEventPayload.IsPLaying)
+            }
+            return
+        }
+        currentAudio?.isPlaying = false
+
+        if(currentAudioPosition > -1) {
+            notifyItemChanged(currentAudioPosition, AudioEventPayload.IsPLaying)
+        } else {
+            if(postList != null) {
+                for((index, post) in postList!!.withIndex()){
+                    post.audio?.isPlaying = false
+                    post.audio?.progress = 0
+                    post.audio?.isLoading = false
+                    if(post.audio != null) {
+                        notifyItemChanged(index)
+                    }
+                }
+
+            }
+        }
+
+        currentAudioPosition = postList?.indexOf(postList?.find { it.audio == audio }) ?: -1
+        Log.d(LOG_TAG, "setIsPlaying currentAudioPosition: $currentAudioPosition")
+
+        if(currentAudioPosition > -1) {
+            currentAudio = postList?.get(currentAudioPosition)?.audio?.also { it.isPlaying = isPlaying }
+            notifyItemChanged(currentAudioPosition, AudioEventPayload.IsPLaying)
+        }
+    }
+
+    fun setIsLoading(isLoading: Boolean, audio: Audio) {
+        if(audio == currentAudio) {
+            currentAudio?.isLoading = isLoading
+            if(currentAudioPosition > -1) {
+                notifyItemChanged(currentAudioPosition, AudioEventPayload.IsLoading)
+            }
+            return
+        }
+        currentAudio?.isPlaying = false
+        currentAudio?.isLoading = false
+
+        if(currentAudioPosition > -1) {
+            notifyItemChanged(currentAudioPosition, AudioEventPayload.IsLoading)
+        }
+
+        currentAudioPosition = postList?.indexOf(postList?.find { it.audio == audio }) ?: -1
+
+        Log.d(LOG_TAG, "setIsLoading currentAudioPosition: $currentAudioPosition")
+
+        if(currentAudioPosition > -1) {
+            postList?.get(currentAudioPosition)?.audio?.isLoading = isLoading
+            notifyItemChanged(currentAudioPosition, AudioEventPayload.IsLoading)
+        }
+    }
+
+    fun setProgress(progress: Int, audio: Audio){
+        if(audio == currentAudio) {
+            audio.progress = progress
+            if(currentAudioPosition > -1) {
+                notifyItemChanged(currentAudioPosition, AudioEventPayload.ProgressChanged)
+            }
+            return
+        }
+        currentAudio?.isPlaying = false
+        currentAudio?.progress = 0
+
+        if(currentAudioPosition > -1) {
+            notifyItemChanged(currentAudioPosition, AudioEventPayload.ProgressChanged)
+        }
+
+        currentAudioPosition = postList?.indexOf(postList?.find { it.audio == audio }) ?: -1
+
+
+        if(currentAudioPosition > -1) {
+            postList?.get(currentAudioPosition)?.audio?.progress = progress
+            notifyItemChanged(currentAudioPosition, AudioEventPayload.ProgressChanged)
+        }
+    }
+
+    fun setDuration(duration: Int, audio: Audio) {
+        if(audio == currentAudio) {
+            audio.duration = duration
+            if(currentAudioPosition > -1) {
+                notifyItemChanged(currentAudioPosition, AudioEventPayload.ProgressChanged)
+            }
+            return
+        }
+        currentAudio?.isPlaying = false
+
+        currentAudioPosition = postList?.indexOf(postList?.find { it.audio == audio }) ?: -1
+
+        if(currentAudioPosition > -1) {
+            postList?.get(currentAudioPosition)?.audio?.duration = duration
+            notifyItemChanged(currentAudioPosition, AudioEventPayload.ProgressChanged)
+        }
+    }
+
+    fun setEnded(audio: Audio) {
+        if(audio == currentAudio) {
+            audio.isPlaying = false
+            if(currentAudioPosition > -1) {
+                notifyItemChanged(currentAudioPosition, AudioEventPayload.ProgressChanged)
+            }
+            return
+        }
+        currentAudio?.isPlaying = false
+
+        if(currentAudioPosition > -1) {
+            notifyItemChanged(currentAudioPosition, AudioEventPayload.ProgressChanged)
+        }
+
+        currentAudioPosition = postList?.indexOf(postList?.find { it.audio == audio }) ?: -1
+
+        if(currentAudioPosition > -1) {
+            postList?.get(currentAudioPosition)?.audio?.isPlaying = false
+            notifyItemChanged(currentAudioPosition, AudioEventPayload.ProgressChanged)
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.post_layout, parent, false)
-
-        return FeedViewHolder(view)
+        return FeedViewHolder(PostLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     var previousSize = 0
@@ -196,5 +365,9 @@ class PostsRecyclerViewAdapter (private val markwon: Markwon, private val callba
             }
         }
 
+    }
+
+    companion object {
+        const val LOG_TAG = "PostsRecyclerViewAdapter"
     }
 }

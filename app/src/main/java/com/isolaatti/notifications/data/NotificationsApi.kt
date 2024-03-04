@@ -1,4 +1,4 @@
-package com.isolaatti.home.notifications.data
+package com.isolaatti.notifications.data
 
 import retrofit2.Call
 import retrofit2.http.GET

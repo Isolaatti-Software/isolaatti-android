@@ -1,4 +1,4 @@
-package com.isolaatti.home.notifications.ui
+package com.isolaatti.notifications.ui
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.isolaatti.R
-import com.isolaatti.home.notifications.presentation.NotificationsViewModel
+import com.isolaatti.notifications.presentation.NotificationsViewModel
 
 class NotificationsFragment : Fragment() {
 

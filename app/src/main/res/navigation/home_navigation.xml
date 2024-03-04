@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/notificationsFragment"
-        android:name="com.isolaatti.home.notifications.ui.NotificationsFragment"
+        android:name="com.isolaatti.notifications.ui.NotificationsFragment"
         android:label="fragment_notifications"
         tools:layout="@layout/fragment_notifications" >
         <action
