@@ -193,4 +193,6 @@
     <string name="likes_notification_channel_description">Get notified when someone likes your posts.</string>
     <string name="like_notification_title">%s claps to your post</string>
     <string name="like_notification_text">Tap this notification to go to the post.</string>
+    <string name="new_follower_notification_title">%s is now following you</string>
+    <string name="new_follower_notification_text">Tap this notification to see their profile.</string>
 </resources>

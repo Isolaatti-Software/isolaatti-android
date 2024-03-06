@@ -1,9 +1,12 @@
 package com.isolaatti.posting.posts.viewer.ui
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
+import androidx.core.app.TaskStackBuilder
 import androidx.core.content.res.ResourcesCompat
 import coil.imageLoader
 import coil.load
@@ -28,10 +31,23 @@ import kotlinx.coroutines.launch
 class PostViewerActivity : IsolaattiBaseActivity() {
     companion object {
         const val POST_ID = "postId"
-        fun startActivity(context: Context, postId: Long) {
-            context.startActivity(Intent(context, PostViewerActivity::class.java).apply {
+        const val LOG_TAG = "PostViewerActivity"
+
+        fun getIntent(context: Context, postId: Long): Intent {
+            return Intent(context, PostViewerActivity::class.java).apply {
                 putExtra(POST_ID, postId)
-            })
+            }
+        }
+        fun startActivity(context: Context, postId: Long) {
+            context.startActivity(getIntent(context, postId))
+        }
+
+        fun getPendingIntent(context: Context, postId: Long): PendingIntent? {
+            return TaskStackBuilder.create(context).run {
+                addNextIntentWithParentStack(Companion.getIntent(context, postId))
+
+                getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            }
         }
     }
 
@@ -106,9 +122,21 @@ class PostViewerActivity : IsolaattiBaseActivity() {
         }
 
     }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        intent?.getLongExtra(POST_ID, 0)?.let {
+            postId = it
+            viewModel.postId = postId
+            viewModel.getPost()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         postId = intent.getLongExtra(POST_ID, 0)
+        Log.d(LOG_TAG, "Post id: $postId")
 
         binding = ActivityPostViewerBinding.inflate(layoutInflater)
         markwon = Markwon.builder(this)

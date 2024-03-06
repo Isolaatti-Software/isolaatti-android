@@ -41,7 +41,7 @@ class LikeNotification(id: Long, date: ZonedDateTime, userId: Int, read: Boolean
 class FollowNotification(id: Long, date: ZonedDateTime, userId: Int, read: Boolean) : Notification(id, date, userId, read) {
 
     companion object {
-        const val TYPE = "follow"
+        const val TYPE = "follower"
     }
 
     override fun ingestPayload(notificationPayload: NotificationPayload) {

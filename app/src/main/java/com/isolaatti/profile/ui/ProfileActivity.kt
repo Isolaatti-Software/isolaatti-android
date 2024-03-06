@@ -1,8 +1,10 @@
 package com.isolaatti.profile.ui
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.app.TaskStackBuilder
 import com.isolaatti.common.IsolaattiBaseActivity
 import com.isolaatti.databinding.ActivityProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,10 +24,22 @@ class ProfileActivity : IsolaattiBaseActivity() {
     companion object {
         const val EXTRA_USER_ID = "user_id"
 
-        fun startActivity(context: Context, userId: Int) {
-            context.startActivity(Intent(context, ProfileActivity::class.java).apply {
+        fun getIntent(context: Context, userId: Int): Intent {
+            return Intent(context, ProfileActivity::class.java).apply {
                 putExtra(EXTRA_USER_ID, userId)
-            })
+            }
+        }
+
+        fun startActivity(context: Context, userId: Int) {
+            context.startActivity(getIntent(context, userId))
+        }
+
+        fun getPendingIntent(context: Context, userId: Int): PendingIntent? {
+            return TaskStackBuilder.create(context).run {
+                addNextIntentWithParentStack(getIntent(context, userId))
+
+                getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            }
         }
     }
 }
