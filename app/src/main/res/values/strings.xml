@@ -189,4 +189,8 @@
     <string name="push_notifications_dialog_title">Push notifications</string>
     <string name="push_notifications_dialog_message">Receive notifications to stay informed about your profile activity</string>
     <string name="push_notifications_dialog_rejected_message">You won\'t receive notifications. You can change this on your device settings.</string>
+    <string name="likes_notification_channel">Likes notifications</string>
+    <string name="likes_notification_channel_description">Get notified when someone likes your posts.</string>
+    <string name="like_notification_title">%s claps to your post</string>
+    <string name="like_notification_text">Tap this notification to go to the post.</string>
 </resources>

@@ -19,4 +19,17 @@ object CoilImageLoader {
                 add(SvgDecoder.Factory())
             }.build()
     }
+
+    fun getImageLoader(context: Context): ImageLoader {
+        return ImageLoader
+            .Builder(context)
+            .memoryCache {
+                MemoryCache.Builder(context)
+                    .maxSizePercent(0.25)
+                    .build()
+            }
+            .components {
+                add(SvgDecoder.Factory())
+            }.build()
+    }
 }
