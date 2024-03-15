@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface NotificationsRepository {
     fun getNotifications(after: Long?): Flow<Resource<List<Notification>>>
+    fun deleteNotifications(vararg notification: Notification): Flow<Resource<Boolean>>
 }
