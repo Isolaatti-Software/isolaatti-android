@@ -1,4 +1,4 @@
-package com.isolaatti.home.search.presentation
+package com.isolaatti.search.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
