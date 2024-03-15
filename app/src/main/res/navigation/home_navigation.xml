@@ -29,6 +29,6 @@
         android:label="ProfileActivity" />
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.isolaatti.home.search.presentation.SearchFragment"
+        android:name="com.isolaatti.search.ui.SearchFragment"
         android:label="@string/search" />
 </navigation>

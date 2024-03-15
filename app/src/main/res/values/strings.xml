@@ -195,4 +195,7 @@
     <string name="like_notification_text">Tap this notification to go to the post.</string>
     <string name="new_follower_notification_title">%s is now following you</string>
     <string name="new_follower_notification_text">Tap this notification to see their profile.</string>
+    <string name="delete_notification">Delete notification</string>
+    <string name="delete_notification_dialog_message">Remove this notification?</string>
+    <string name="error_making_request">An error ocurred</string>
 </resources>
