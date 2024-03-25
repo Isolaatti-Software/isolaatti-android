@@ -46,7 +46,7 @@ class NotificationsViewModel @Inject constructor(private val notificationsReposi
         val mutableList = notifications.value?.toMutableList()
         val removed = mutableList?.remove(notification)
         if(mutableList != null && removed == true) {
-            notifications.postValue(mutableList)
+            notifications.postValue(mutableList!!)
         }
     }
 
